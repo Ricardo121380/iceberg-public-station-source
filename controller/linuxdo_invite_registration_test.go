@@ -27,7 +27,10 @@ import (
 	"gorm.io/gorm"
 )
 
-const linuxDOInviteRegistrationTestSecret = "linuxdo-invite-registration-test-secret-0123456789"
+const (
+	linuxDOInviteRegistrationTestSecret         = "linuxdo-invite-registration-test-secret-0123456789"
+	linuxDOInviteRegistrationTestTurnstileToken = "linuxdo-invite-registration-test-turnstile-token"
+)
 
 type linuxDOInviteTestProvider struct {
 	oauthUser *oauth.OAuthUser
@@ -59,9 +62,15 @@ func (*linuxDOInviteTestProvider) GetProviderPrefix() string    { return "linuxd
 func (*linuxDOInviteTestProvider) ProviderUserIDColumn() string { return "linux_do_id" }
 
 type linuxDOInviteTestEnvironment struct {
-	database *gorm.DB
-	router   *gin.Engine
-	provider *linuxDOInviteTestProvider
+	database  *gorm.DB
+	router    *gin.Engine
+	provider  *linuxDOInviteTestProvider
+	turnstile *linuxDOInviteTestTurnstile
+}
+
+type linuxDOInviteTestTurnstile struct {
+	requests []service.TurnstileValidationRequest
+	err      error
 }
 
 func setupLinuxDOInviteRegistrationTest(t *testing.T) linuxDOInviteTestEnvironment {
@@ -77,6 +86,7 @@ func setupLinuxDOInviteRegistrationTest(t *testing.T) linuxDOInviteTestEnvironme
 	previousQuotaForNewUser := common.QuotaForNewUser
 	previousSessionSecret := common.SessionSecret
 	previousGenerateDefaultToken := constant.GenerateDefaultToken
+	previousVerifyOAuthTurnstile := verifyOAuthTurnstile
 	previousGinMode := gin.Mode()
 
 	gin.SetMode(gin.TestMode)
@@ -109,6 +119,11 @@ func setupLinuxDOInviteRegistrationTest(t *testing.T) linuxDOInviteTestEnvironme
 	t.Setenv(service.RegistrationInviteHMACSecretEnv, linuxDOInviteRegistrationTestSecret)
 
 	provider := &linuxDOInviteTestProvider{}
+	turnstile := &linuxDOInviteTestTurnstile{}
+	verifyOAuthTurnstile = func(_ context.Context, request service.TurnstileValidationRequest) error {
+		turnstile.requests = append(turnstile.requests, request)
+		return turnstile.err
+	}
 	previousProvider := oauth.GetProvider(linuxDOOAuthProviderName)
 	oauth.Register(linuxDOOAuthProviderName, provider)
 	t.Cleanup(func() {
@@ -126,16 +141,18 @@ func setupLinuxDOInviteRegistrationTest(t *testing.T) linuxDOInviteTestEnvironme
 		common.QuotaForNewUser = previousQuotaForNewUser
 		common.SessionSecret = previousSessionSecret
 		constant.GenerateDefaultToken = previousGenerateDefaultToken
+		verifyOAuthTurnstile = previousVerifyOAuthTurnstile
 		gin.SetMode(previousGinMode)
 		_ = sqlDB.Close()
 	})
 
 	router := gin.New()
+	require.NoError(t, common.ConfigureTrustedProxies(router, []string{"127.0.0.0/8"}))
 	router.GET("/api/status", GetStatus)
 	router.POST("/api/oauth/state", GenerateOAuthCode)
 	router.GET("/api/oauth/:provider", HandleOAuth)
 	router.POST("/api/user/register", Register)
-	return linuxDOInviteTestEnvironment{database: database, router: router, provider: provider}
+	return linuxDOInviteTestEnvironment{database: database, router: router, provider: provider, turnstile: turnstile}
 }
 
 func createLinuxDOInviteRegistrationTestInvite(t *testing.T) service.GeneratedRegistrationInvite {
@@ -170,11 +187,16 @@ func createLinuxDOOAuthState(t *testing.T, environment linuxDOInviteTestEnvironm
 }
 
 func requestLinuxDOOAuthState(t *testing.T, environment linuxDOInviteTestEnvironment, inviteCode string) *httptest.ResponseRecorder {
+	return requestLinuxDOOAuthStateWithTurnstileToken(t, environment, inviteCode, linuxDOInviteRegistrationTestTurnstileToken)
+}
+
+func requestLinuxDOOAuthStateWithTurnstileToken(t *testing.T, environment linuxDOInviteTestEnvironment, inviteCode string, turnstileToken string) *httptest.ResponseRecorder {
 	t.Helper()
 	body, err := common.Marshal(oauthStateRequest{
-		Provider:   linuxDOOAuthProviderName,
-		Intent:     model.AuthFlowIntentLogin,
-		InviteCode: inviteCode,
+		Provider:       linuxDOOAuthProviderName,
+		Intent:         model.AuthFlowIntentLogin,
+		InviteCode:     inviteCode,
+		TurnstileToken: turnstileToken,
 	})
 	require.NoError(t, err)
 	request := httptest.NewRequest(http.MethodPost, "/api/oauth/state", strings.NewReader(string(body)))
@@ -227,6 +249,8 @@ func TestLinuxDOInviteOAuthStateStoresOnlyInviteIDAndCreatesUser(t *testing.T) {
 	environment := setupLinuxDOInviteRegistrationTest(t)
 	invite := createLinuxDOInviteRegistrationTestInvite(t)
 	state := createLinuxDOOAuthState(t, environment, invite.Code)
+	require.Len(t, environment.turnstile.requests, 1)
+	assert.Equal(t, linuxDOInviteRegistrationTestTurnstileToken, environment.turnstile.requests[0].Token)
 
 	flow, err := model.GetAuthFlow(state, model.AuthFlowMatch{
 		Purpose:  model.AuthFlowPurposeOAuth,
@@ -235,6 +259,7 @@ func TestLinuxDOInviteOAuthStateStoresOnlyInviteIDAndCreatesUser(t *testing.T) {
 	})
 	require.NoError(t, err)
 	assert.NotContains(t, flow.Payload, invite.Code)
+	assert.NotContains(t, flow.Payload, linuxDOInviteRegistrationTestTurnstileToken)
 	var payload oauthFlowPayload
 	require.NoError(t, common.UnmarshalJsonStr(flow.Payload, &payload))
 	assert.Equal(t, invite.Id, payload.RegistrationInviteID)
@@ -244,6 +269,7 @@ func TestLinuxDOInviteOAuthStateStoresOnlyInviteIDAndCreatesUser(t *testing.T) {
 	require.Equal(t, http.StatusOK, response.Code)
 	success, message := decodeOAuthCallbackResponse(t, response)
 	assert.True(t, success, message)
+	assert.Len(t, environment.turnstile.requests, 1, "OAuth callback must not run another Turnstile challenge")
 	_, err = model.GetAuthFlow(state, model.AuthFlowMatch{Purpose: model.AuthFlowPurposeOAuth})
 	assert.ErrorIs(t, err, model.ErrAuthFlowConsumed)
 
@@ -262,6 +288,84 @@ func TestLinuxDOInviteOAuthStateStoresOnlyInviteIDAndCreatesUser(t *testing.T) {
 	require.NotNil(t, storedInvite.UsedAt)
 	require.NotNil(t, storedInvite.UsedBy)
 	assert.Equal(t, user.Id, *storedInvite.UsedBy)
+}
+
+func TestLinuxDOInviteOAuthRequiresTurnstileBeforeStateCreation(t *testing.T) {
+	t.Run("missing token does not create a state or call Siteverify", func(t *testing.T) {
+		environment := setupLinuxDOInviteRegistrationTest(t)
+		invite := createLinuxDOInviteRegistrationTestInvite(t)
+
+		response := requestLinuxDOOAuthStateWithTurnstileToken(t, environment, invite.Code, "")
+		require.Equal(t, http.StatusOK, response.Code)
+		success, message := decodeOAuthCallbackResponse(t, response)
+		assert.False(t, success)
+		assert.Equal(t, i18n.Translate(i18n.DefaultLang, i18n.MsgOAuthTurnstileVerificationUnavailable), message)
+		assert.Empty(t, environment.turnstile.requests)
+
+		var flowCount int64
+		require.NoError(t, environment.database.Model(&model.AuthFlow{}).Count(&flowCount).Error)
+		assert.Zero(t, flowCount)
+	})
+
+	t.Run("failed challenge does not validate the invitation or create a state", func(t *testing.T) {
+		environment := setupLinuxDOInviteRegistrationTest(t)
+		environment.turnstile.err = service.ErrTurnstileVerificationUnavailable
+
+		response := requestLinuxDOOAuthStateWithTurnstileToken(t, environment, "", linuxDOInviteRegistrationTestTurnstileToken)
+		require.Equal(t, http.StatusOK, response.Code)
+		success, message := decodeOAuthCallbackResponse(t, response)
+		assert.False(t, success)
+		assert.Equal(t, i18n.Translate(i18n.DefaultLang, i18n.MsgOAuthTurnstileVerificationUnavailable), message)
+		require.Len(t, environment.turnstile.requests, 1)
+
+		var flowCount int64
+		require.NoError(t, environment.database.Model(&model.AuthFlow{}).Count(&flowCount).Error)
+		assert.Zero(t, flowCount)
+	})
+
+	t.Run("uses Gin trusted proxy resolution for Siteverify remote IP", func(t *testing.T) {
+		environment := setupLinuxDOInviteRegistrationTest(t)
+		invite := createLinuxDOInviteRegistrationTestInvite(t)
+		body, err := common.Marshal(oauthStateRequest{
+			Provider:       linuxDOOAuthProviderName,
+			Intent:         model.AuthFlowIntentLogin,
+			InviteCode:     invite.Code,
+			TurnstileToken: linuxDOInviteRegistrationTestTurnstileToken,
+		})
+		require.NoError(t, err)
+		request := httptest.NewRequest(http.MethodPost, "/api/oauth/state", strings.NewReader(string(body)))
+		request.Header.Set("Content-Type", "application/json")
+		request.Header.Set("X-Forwarded-For", "203.0.113.80")
+		request.RemoteAddr = "198.51.100.24:443"
+		response := httptest.NewRecorder()
+		environment.router.ServeHTTP(response, request)
+		require.Equal(t, http.StatusOK, response.Code)
+		success, message := decodeOAuthCallbackResponse(t, response)
+		assert.True(t, success, message)
+		require.Len(t, environment.turnstile.requests, 1)
+		assert.Equal(t, "198.51.100.24", environment.turnstile.requests[0].RemoteIP)
+	})
+}
+
+func TestLinuxDOInviteStatusAdvertisesRegistrationTurnstileConfig(t *testing.T) {
+	environment := setupLinuxDOInviteRegistrationTest(t)
+	t.Setenv(service.TurnstileSiteKeyEnv, "test-registration-turnstile-site-key")
+	t.Setenv(service.TurnstileExpectedActionEnv, "linuxdo_login")
+
+	response := httptest.NewRecorder()
+	request := httptest.NewRequest(http.MethodGet, "/api/status", nil)
+	environment.router.ServeHTTP(response, request)
+	require.Equal(t, http.StatusOK, response.Code)
+
+	var payload struct {
+		Success bool           `json:"success"`
+		Data    map[string]any `json:"data"`
+	}
+	require.NoError(t, common.Unmarshal(response.Body.Bytes(), &payload))
+	require.True(t, payload.Success)
+	assert.Equal(t, true, payload.Data["registration_turnstile_required"])
+	assert.Equal(t, "test-registration-turnstile-site-key", payload.Data["registration_turnstile_site_key"])
+	assert.Equal(t, "linuxdo_login", payload.Data["registration_turnstile_action"])
 }
 
 func TestLinuxDOInviteOAuthRejectsUnavailableInvitesWithoutCreatingUsers(t *testing.T) {

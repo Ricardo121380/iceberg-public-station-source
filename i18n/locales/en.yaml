@@ -254,6 +254,7 @@ oauth.token_failed: "Failed to get token from {{.Provider}}, please check settin
 oauth.user_info_empty: "{{.Provider}} returned empty user info, please check settings"
 oauth.trust_level_low: "Linux DO trust level does not meet the minimum required by administrator"
 oauth.registration_unavailable: "Registration is unavailable. Please check your invitation code and try again."
+oauth.turnstile_verification_unavailable: "Verification is unavailable. Please refresh and try again."
 
 # Model layer error messages
 redeem.failed: "Redemption failed, please try again later"

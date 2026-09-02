@@ -25,16 +25,19 @@ const (
 )
 
 type oauthStateRequest struct {
-	Provider   string `json:"provider"`
-	Intent     string `json:"intent"`
-	Aff        string `json:"aff,omitempty"`
-	InviteCode string `json:"invite_code,omitempty"`
+	Provider       string `json:"provider"`
+	Intent         string `json:"intent"`
+	Aff            string `json:"aff,omitempty"`
+	InviteCode     string `json:"invite_code,omitempty"`
+	TurnstileToken string `json:"turnstile_token,omitempty"`
 }
 
 type oauthFlowPayload struct {
 	AffiliateCode        string `json:"affiliate_code,omitempty"`
 	RegistrationInviteID int    `json:"registration_invite_id,omitempty"`
 }
+
+var verifyOAuthTurnstile = service.VerifyTurnstile
 
 // providerParams returns map with Provider key for i18n templates
 func providerParams(name string) map[string]any {
@@ -81,6 +84,10 @@ func writeOAuthInviteRegistrationUnavailable(c *gin.Context) {
 	common.ApiErrorI18n(c, i18n.MsgOAuthRegistrationUnavailable)
 }
 
+func writeOAuthTurnstileVerificationUnavailable(c *gin.Context) {
+	common.ApiErrorI18n(c, i18n.MsgOAuthTurnstileVerificationUnavailable)
+}
+
 func resolveOAuthRegistrationInvite(rawCode string) (int, error) {
 	secret, err := service.RegistrationInviteHMACSecretFromEnv()
 	if err != nil {
@@ -110,8 +117,8 @@ func GenerateOAuthCode(c *gin.Context) {
 	if oauth.GetProvider(request.Provider) == nil ||
 		(request.Intent != model.AuthFlowIntentLogin && request.Intent != model.AuthFlowIntentBind) ||
 		len(request.Aff) > 32 ||
-		(request.Intent == model.AuthFlowIntentBind && (request.Aff != "" || request.InviteCode != "")) ||
-		(request.InviteCode != "" && (!common.RegistrationInviteRequired || request.Provider != linuxDOOAuthProviderName || request.Intent != model.AuthFlowIntentLogin)) {
+		(request.Intent == model.AuthFlowIntentBind && (request.Aff != "" || request.InviteCode != "" || request.TurnstileToken != "")) ||
+		((request.InviteCode != "" || request.TurnstileToken != "") && (!common.RegistrationInviteRequired || request.Provider != linuxDOOAuthProviderName || request.Intent != model.AuthFlowIntentLogin)) {
 		common.ApiErrorI18n(c, i18n.MsgInvalidParams)
 		return
 	}
@@ -120,6 +127,17 @@ func GenerateOAuthCode(c *gin.Context) {
 	if common.RegistrationInviteRequired && request.Provider == linuxDOOAuthProviderName && request.Intent == model.AuthFlowIntentLogin {
 		if request.Aff != "" {
 			common.ApiErrorI18n(c, i18n.MsgInvalidParams)
+			return
+		}
+		if strings.TrimSpace(request.TurnstileToken) == "" {
+			writeOAuthTurnstileVerificationUnavailable(c)
+			return
+		}
+		if err := verifyOAuthTurnstile(c.Request.Context(), service.TurnstileValidationRequest{
+			Token:    request.TurnstileToken,
+			RemoteIP: c.ClientIP(),
+		}); err != nil {
+			writeOAuthTurnstileVerificationUnavailable(c)
 			return
 		}
 		if request.InviteCode == "" {

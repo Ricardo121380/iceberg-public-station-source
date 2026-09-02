@@ -255,6 +255,7 @@ oauth.token_failed: "{{.Provider}} 獲取 Token 失敗，請檢查設定"
 oauth.user_info_empty: "{{.Provider}} 獲取使用者資訊為空，請檢查設定"
 oauth.trust_level_low: "Linux DO 信任等級未達到管理員設定的最低信任等級"
 oauth.registration_unavailable: "註冊暫時不可用，請檢查邀請碼後再試。"
+oauth.turnstile_verification_unavailable: "驗證暫時不可用，請重新整理後再試。"
 
 # Model layer error messages
 redeem.failed: "兌換失敗，請稍後重試"

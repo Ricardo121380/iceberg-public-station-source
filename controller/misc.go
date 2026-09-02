@@ -14,6 +14,7 @@ import (
 	"github.com/QuantumNous/new-api/middleware"
 	"github.com/QuantumNous/new-api/model"
 	"github.com/QuantumNous/new-api/oauth"
+	"github.com/QuantumNous/new-api/service"
 	"github.com/QuantumNous/new-api/setting"
 	"github.com/QuantumNous/new-api/setting/console_setting"
 	"github.com/QuantumNous/new-api/setting/operation_setting"
@@ -51,30 +52,33 @@ func GetStatus(c *gin.Context) {
 	legalSetting := system_setting.GetLegalSettings()
 
 	data := gin.H{
-		"version":                      common.Version,
-		"start_time":                   common.StartTime,
-		"email_verification":           common.EmailVerificationEnabled,
-		"github_oauth":                 common.GitHubOAuthEnabled && !common.RegistrationInviteRequired,
-		"github_client_id":             common.GitHubClientId,
-		"discord_oauth":                system_setting.GetDiscordSettings().Enabled && !common.RegistrationInviteRequired,
-		"discord_client_id":            system_setting.GetDiscordSettings().ClientId,
-		"linuxdo_oauth":                common.LinuxDOOAuthEnabled,
-		"linuxdo_client_id":            common.LinuxDOClientId,
-		"linuxdo_minimum_trust_level":  effectiveLinuxDOTrustLevel(),
-		"registration_invite_required": common.RegistrationInviteRequired,
-		"telegram_oauth":               common.TelegramOAuthEnabled && !common.RegistrationInviteRequired,
-		"telegram_bot_name":            common.TelegramBotName,
-		"theme":                        "default",
-		"system_name":                  common.SystemName,
-		"logo":                         common.Logo,
-		"footer_html":                  common.Footer,
-		"wechat_qrcode":                common.WeChatAccountQRCodeImageURL,
-		"wechat_login":                 common.WeChatAuthEnabled && !common.RegistrationInviteRequired,
-		"server_address":               system_setting.ServerAddress,
-		"turnstile_check":              common.TurnstileCheckEnabled,
-		"turnstile_site_key":           common.TurnstileSiteKey,
-		"docs_link":                    operation_setting.GetGeneralSetting().DocsLink,
-		"quota_per_unit":               common.QuotaPerUnit,
+		"version":                         common.Version,
+		"start_time":                      common.StartTime,
+		"email_verification":              common.EmailVerificationEnabled,
+		"github_oauth":                    common.GitHubOAuthEnabled && !common.RegistrationInviteRequired,
+		"github_client_id":                common.GitHubClientId,
+		"discord_oauth":                   system_setting.GetDiscordSettings().Enabled && !common.RegistrationInviteRequired,
+		"discord_client_id":               system_setting.GetDiscordSettings().ClientId,
+		"linuxdo_oauth":                   common.LinuxDOOAuthEnabled,
+		"linuxdo_client_id":               common.LinuxDOClientId,
+		"linuxdo_minimum_trust_level":     effectiveLinuxDOTrustLevel(),
+		"registration_invite_required":    common.RegistrationInviteRequired,
+		"telegram_oauth":                  common.TelegramOAuthEnabled && !common.RegistrationInviteRequired,
+		"telegram_bot_name":               common.TelegramBotName,
+		"theme":                           "default",
+		"system_name":                     common.SystemName,
+		"logo":                            common.Logo,
+		"footer_html":                     common.Footer,
+		"wechat_qrcode":                   common.WeChatAccountQRCodeImageURL,
+		"wechat_login":                    common.WeChatAuthEnabled && !common.RegistrationInviteRequired,
+		"server_address":                  system_setting.ServerAddress,
+		"turnstile_check":                 common.TurnstileCheckEnabled,
+		"turnstile_site_key":              common.TurnstileSiteKey,
+		"registration_turnstile_required": common.RegistrationInviteRequired,
+		"registration_turnstile_site_key": service.TurnstileSiteKeyFromEnv(),
+		"registration_turnstile_action":   service.TurnstileExpectedActionFromEnv(),
+		"docs_link":                       operation_setting.GetGeneralSetting().DocsLink,
+		"quota_per_unit":                  common.QuotaPerUnit,
 		// 兼容旧前端：保留 display_in_currency，同时提供新的 quota_display_type
 		"display_in_currency":           operation_setting.IsCurrencyDisplay(),
 		"quota_display_type":            operation_setting.GetQuotaDisplayType(),
