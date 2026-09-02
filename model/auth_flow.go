@@ -22,10 +22,14 @@ const (
 	AuthFlowPurposePasskeyStepUp     = "passkey_step_up"
 	AuthFlowPurposeTelegramBind      = "telegram_bind"
 	AuthFlowPurposeTelegramAssertion = "telegram_assertion"
-	AuthFlowIntentLogin              = "login"
-	AuthFlowIntentBind               = "bind"
-	AuthFlowTokenBytes               = 32
-	AuthFlowDefaultCleanupRetention  = 24 * time.Hour
+	// AuthFlowPurposeLinuxDORegistrationIdentity is a short-lived, atomic
+	// claim for a newly registering LinuxDO provider identity. The assertion
+	// itself is HMACed before it is persisted.
+	AuthFlowPurposeLinuxDORegistrationIdentity = "linuxdo_registration_identity"
+	AuthFlowIntentLogin                        = "login"
+	AuthFlowIntentBind                         = "bind"
+	AuthFlowTokenBytes                         = 32
+	AuthFlowDefaultCleanupRetention            = 24 * time.Hour
 )
 
 var (

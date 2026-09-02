@@ -70,6 +70,13 @@ var TelegramOAuthEnabled = false
 var TurnstileCheckEnabled = false
 var RegisterEnabled = true
 
+// RegistrationInviteRequired enables the public-station registration policy.
+// It is deliberately environment-controlled so an operator can stop new
+// registrations without interrupting established account sign-in.
+const RegistrationInviteRequiredEnv = "REGISTRATION_INVITE_REQUIRED"
+
+var RegistrationInviteRequired = false
+
 var EmailDomainRestrictionEnabled = false // 是否启用邮箱域名限制
 var EmailAliasRestrictionEnabled = false  // 是否启用邮箱别名限制
 var EmailDomainWhitelist = []string{

@@ -238,6 +238,10 @@ func Register(c *gin.Context) {
 		common.ApiErrorI18n(c, i18n.MsgUserRegisterDisabled)
 		return
 	}
+	if common.RegistrationInviteRequired {
+		common.ApiErrorI18n(c, i18n.MsgUserPasswordRegisterDisabled)
+		return
+	}
 	if !common.PasswordRegisterEnabled {
 		common.ApiErrorI18n(c, i18n.MsgUserPasswordRegisterDisabled)
 		return

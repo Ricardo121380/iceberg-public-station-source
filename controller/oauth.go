@@ -13,25 +13,88 @@ import (
 	"github.com/QuantumNous/new-api/middleware"
 	"github.com/QuantumNous/new-api/model"
 	"github.com/QuantumNous/new-api/oauth"
+	"github.com/QuantumNous/new-api/service"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
-const oauthAuthFlowTTL = 10 * time.Minute
+const (
+	oauthAuthFlowTTL               = 10 * time.Minute
+	linuxDOOAuthProviderName       = "linuxdo"
+	publicRegistrationDefaultGroup = "default"
+)
 
 type oauthStateRequest struct {
-	Provider string `json:"provider"`
-	Intent   string `json:"intent"`
-	Aff      string `json:"aff,omitempty"`
+	Provider   string `json:"provider"`
+	Intent     string `json:"intent"`
+	Aff        string `json:"aff,omitempty"`
+	InviteCode string `json:"invite_code,omitempty"`
 }
 
 type oauthFlowPayload struct {
-	AffiliateCode string `json:"affiliate_code,omitempty"`
+	AffiliateCode        string `json:"affiliate_code,omitempty"`
+	RegistrationInviteID int    `json:"registration_invite_id,omitempty"`
 }
 
 // providerParams returns map with Provider key for i18n templates
 func providerParams(name string) map[string]any {
 	return map[string]any{"Provider": name}
+}
+
+func effectiveLinuxDOTrustLevel() int {
+	minimumTrustLevel := common.LinuxDOMinimumTrustLevel
+	if common.RegistrationInviteRequired && minimumTrustLevel < 1 {
+		return 1
+	}
+	return minimumTrustLevel
+}
+
+func linuxDOTrustLevel(oauthUser *oauth.OAuthUser) int {
+	if oauthUser == nil || oauthUser.Extra == nil {
+		return 0
+	}
+
+	switch trustLevel := oauthUser.Extra["trust_level"].(type) {
+	case int:
+		return trustLevel
+	case int64:
+		return int(trustLevel)
+	case float64:
+		return int(trustLevel)
+	default:
+		return 0
+	}
+}
+
+func validateLinuxDOTrustLevel(providerName string, oauthUser *oauth.OAuthUser, required int) error {
+	if providerName != linuxDOOAuthProviderName || required <= 0 {
+		return nil
+	}
+	current := linuxDOTrustLevel(oauthUser)
+	if current < required {
+		return &oauth.TrustLevelError{Required: required, Current: current}
+	}
+	return nil
+}
+
+func writeOAuthInviteRegistrationUnavailable(c *gin.Context) {
+	common.ApiErrorI18n(c, i18n.MsgOAuthRegistrationUnavailable)
+}
+
+func resolveOAuthRegistrationInvite(rawCode string) (int, error) {
+	secret, err := service.RegistrationInviteHMACSecretFromEnv()
+	if err != nil {
+		common.SysError("registration invite HMAC configuration is invalid")
+		return 0, &OAuthInviteRegistrationError{}
+	}
+	invite, err := service.ValidateRegistrationInvite(rawCode, secret)
+	if errors.Is(service.RegistrationInvitePublicError(err), service.ErrRegistrationInviteUnavailable) {
+		return 0, &OAuthInviteRegistrationError{}
+	}
+	if err != nil {
+		return 0, err
+	}
+	return invite.InviteID, nil
 }
 
 // GenerateOAuthCode generates a state code for OAuth CSRF protection
@@ -47,9 +110,31 @@ func GenerateOAuthCode(c *gin.Context) {
 	if oauth.GetProvider(request.Provider) == nil ||
 		(request.Intent != model.AuthFlowIntentLogin && request.Intent != model.AuthFlowIntentBind) ||
 		len(request.Aff) > 32 ||
-		(request.Intent == model.AuthFlowIntentBind && request.Aff != "") {
+		(request.Intent == model.AuthFlowIntentBind && (request.Aff != "" || request.InviteCode != "")) ||
+		(request.InviteCode != "" && (!common.RegistrationInviteRequired || request.Provider != linuxDOOAuthProviderName || request.Intent != model.AuthFlowIntentLogin)) {
 		common.ApiErrorI18n(c, i18n.MsgInvalidParams)
 		return
+	}
+
+	registrationInviteID := 0
+	if common.RegistrationInviteRequired && request.Provider == linuxDOOAuthProviderName && request.Intent == model.AuthFlowIntentLogin {
+		if request.Aff != "" {
+			common.ApiErrorI18n(c, i18n.MsgInvalidParams)
+			return
+		}
+		if request.InviteCode != "" {
+			inviteID, resolveErr := resolveOAuthRegistrationInvite(request.InviteCode)
+			if resolveErr != nil {
+				var inviteError *OAuthInviteRegistrationError
+				if errors.As(resolveErr, &inviteError) {
+					writeOAuthInviteRegistrationUnavailable(c)
+					return
+				}
+				common.ApiError(c, resolveErr)
+				return
+			}
+			registrationInviteID = inviteID
+		}
 	}
 	userID := 0
 	sessionID := ""
@@ -62,7 +147,10 @@ func GenerateOAuthCode(c *gin.Context) {
 		userID = identity.UserID
 		sessionID = identity.SessionID
 	}
-	payload, err := common.Marshal(oauthFlowPayload{AffiliateCode: request.Aff})
+	payload, err := common.Marshal(oauthFlowPayload{
+		AffiliateCode:        request.Aff,
+		RegistrationInviteID: registrationInviteID,
+	})
 	if err != nil {
 		common.ApiError(c, err)
 		return
@@ -181,6 +269,12 @@ func HandleOAuth(c *gin.Context) {
 		handleOAuthError(c, err)
 		return
 	}
+	if !common.RegistrationInviteRequired {
+		if err := validateLinuxDOTrustLevel(providerName, oauthUser, common.LinuxDOMinimumTrustLevel); err != nil {
+			handleOAuthError(c, err)
+			return
+		}
+	}
 	flow, err := model.ConsumeAuthFlow(state, consumeMatch)
 	if err != nil {
 		c.JSON(http.StatusForbidden, gin.H{"success": false, "message": i18n.T(c, i18n.MsgOAuthStateInvalid)})
@@ -190,21 +284,32 @@ func HandleOAuth(c *gin.Context) {
 	// 7. Find or create user
 	var payload oauthFlowPayload
 	if err := common.UnmarshalJsonStr(flow.Payload, &payload); err != nil {
-		common.ApiError(c, err)
+		common.ApiErrorI18n(c, i18n.MsgOAuthStateInvalid)
 		return
 	}
-	user, err := findOrCreateOAuthUser(c, provider, oauthUser, payload.AffiliateCode)
+	user, err := findOrCreateOAuthUser(providerName, provider, oauthUser, payload.AffiliateCode, payload.RegistrationInviteID)
 	if err != nil {
 		if errors.Is(err, model.ErrEmailAlreadyTaken) {
 			common.ApiErrorI18n(c, i18n.MsgUserEmailAlreadyTaken)
 			return
 		}
-		switch err.(type) {
-		case *OAuthUserDeletedError:
+		var (
+			inviteError               *OAuthInviteRegistrationError
+			trustError                *oauth.TrustLevelError
+			userDeletedError          *OAuthUserDeletedError
+			registrationDisabledError *OAuthRegistrationDisabledError
+			emailAlreadyTakenError    *OAuthEmailAlreadyTakenError
+		)
+		switch {
+		case errors.As(err, &inviteError):
+			writeOAuthInviteRegistrationUnavailable(c)
+		case errors.As(err, &trustError):
+			handleOAuthError(c, trustError)
+		case errors.As(err, &userDeletedError):
 			common.ApiErrorI18n(c, i18n.MsgOAuthUserDeleted)
-		case *OAuthRegistrationDisabledError:
+		case errors.As(err, &registrationDisabledError):
 			common.ApiErrorI18n(c, i18n.MsgUserRegisterDisabled)
-		case *OAuthEmailAlreadyTakenError:
+		case errors.As(err, &emailAlreadyTakenError):
 			common.ApiErrorI18n(c, i18n.MsgUserEmailAlreadyTaken)
 		default:
 			common.ApiError(c, err)
@@ -235,6 +340,10 @@ func handleOAuthBind(c *gin.Context, provider oauth.Provider, pendingFlow *model
 	// Get user info
 	oauthUser, err := provider.GetUserInfo(c.Request.Context(), token)
 	if err != nil {
+		handleOAuthError(c, err)
+		return
+	}
+	if err := validateLinuxDOTrustLevel(pendingFlow.Provider, oauthUser, common.LinuxDOMinimumTrustLevel); err != nil {
 		handleOAuthError(c, err)
 		return
 	}
@@ -288,8 +397,8 @@ func handleOAuthBind(c *gin.Context, provider oauth.Provider, pendingFlow *model
 	})
 }
 
-// findOrCreateOAuthUser finds existing user or creates new user
-func findOrCreateOAuthUser(c *gin.Context, provider oauth.Provider, oauthUser *oauth.OAuthUser, affiliateCode string) (*model.User, error) {
+// findOrCreateOAuthUser finds an existing user by provider ID or creates a new user.
+func findOrCreateOAuthUser(providerName string, provider oauth.Provider, oauthUser *oauth.OAuthUser, affiliateCode string, registrationInviteID int) (*model.User, error) {
 	user := &model.User{}
 
 	// Check if user already exists with new ID
@@ -329,37 +438,14 @@ func findOrCreateOAuthUser(c *gin.Context, provider oauth.Provider, oauthUser *o
 	if !common.RegisterEnabled {
 		return nil, &OAuthRegistrationDisabledError{}
 	}
-
-	// Set up new user
-	user.Username = provider.GetProviderPrefix() + strconv.Itoa(model.GetMaxUserId()+1)
-
-	if oauthUser.Username != "" {
-		if exists, err := model.CheckUserExistOrDeleted(oauthUser.Username, ""); err == nil && !exists {
-			// 防止索引退化
-			if len(oauthUser.Username) <= model.UserNameMaxLength {
-				user.Username = oauthUser.Username
-			}
-		}
+	if common.RegistrationInviteRequired {
+		return createRegistrationInviteOAuthUser(providerName, provider, oauthUser, registrationInviteID)
 	}
 
-	if oauthUser.DisplayName != "" {
-		user.DisplayName = oauthUser.DisplayName
-	} else if oauthUser.Username != "" {
-		user.DisplayName = oauthUser.Username
-	} else {
-		user.DisplayName = provider.GetName() + " User"
+	user, err := buildOAuthUser(provider, oauthUser)
+	if err != nil {
+		return nil, err
 	}
-	if oauthUser.Email != "" {
-		user.Email = model.NormalizeEmail(oauthUser.Email)
-		if err := model.EnsureEmailAvailable(user.Email, 0); err != nil {
-			if errors.Is(err, model.ErrEmailAlreadyTaken) {
-				return nil, &OAuthEmailAlreadyTakenError{}
-			}
-			return nil, err
-		}
-	}
-	user.Role = common.RoleCommonUser
-	user.Status = common.UserStatusEnabled
 
 	// Handle affiliate code
 	inviterId := 0
@@ -428,6 +514,95 @@ func findOrCreateOAuthUser(c *gin.Context, provider oauth.Provider, oauthUser *o
 	return user, nil
 }
 
+func buildOAuthUser(provider oauth.Provider, oauthUser *oauth.OAuthUser) (*model.User, error) {
+	user := &model.User{
+		Username: provider.GetProviderPrefix() + strconv.Itoa(model.GetMaxUserId()+1),
+		Role:     common.RoleCommonUser,
+		Status:   common.UserStatusEnabled,
+	}
+
+	if oauthUser.Username != "" {
+		if exists, err := model.CheckUserExistOrDeleted(oauthUser.Username, ""); err == nil && !exists {
+			// 防止索引退化
+			if len(oauthUser.Username) <= model.UserNameMaxLength {
+				user.Username = oauthUser.Username
+			}
+		}
+	}
+
+	if oauthUser.DisplayName != "" {
+		user.DisplayName = oauthUser.DisplayName
+	} else if oauthUser.Username != "" {
+		user.DisplayName = oauthUser.Username
+	} else {
+		user.DisplayName = provider.GetName() + " User"
+	}
+	if oauthUser.Email != "" {
+		user.Email = model.NormalizeEmail(oauthUser.Email)
+		if err := model.EnsureEmailAvailable(user.Email, 0); err != nil {
+			if errors.Is(err, model.ErrEmailAlreadyTaken) {
+				return nil, &OAuthEmailAlreadyTakenError{}
+			}
+			return nil, err
+		}
+	}
+
+	return user, nil
+}
+
+func createRegistrationInviteOAuthUser(providerName string, provider oauth.Provider, oauthUser *oauth.OAuthUser, registrationInviteID int) (*model.User, error) {
+	if providerName != linuxDOOAuthProviderName || registrationInviteID <= 0 {
+		return nil, &OAuthInviteRegistrationError{}
+	}
+	if err := validateLinuxDOTrustLevel(providerName, oauthUser, effectiveLinuxDOTrustLevel()); err != nil {
+		return nil, err
+	}
+
+	user, err := buildOAuthUser(provider, oauthUser)
+	if err != nil {
+		return nil, err
+	}
+	user.Group = publicRegistrationDefaultGroup
+
+	err = model.DB.Transaction(func(tx *gorm.DB) error {
+		// A user can open more than one OAuth state before completing the first
+		// callback. Claiming the provider identity inside this transaction makes
+		// two different invitation codes for the same LinuxDO account compete
+		// atomically, without persisting the raw provider identity.
+		if err := model.ClaimExternalAuthAssertionWithTx(
+			tx,
+			model.AuthFlowPurposeLinuxDORegistrationIdentity,
+			oauthUser.ProviderUserID,
+			time.Now().Add(oauthAuthFlowTTL),
+		); err != nil {
+			return err
+		}
+
+		if err := user.InsertWithTx(tx, 0); err != nil {
+			return err
+		}
+
+		provider.SetProviderUserID(user, oauthUser.ProviderUserID)
+		if err := tx.Model(user).Update(provider.ProviderUserIDColumn(), oauthUser.ProviderUserID).Error; err != nil {
+			return err
+		}
+
+		return service.ConsumeRegistrationInvite(tx, registrationInviteID, user.Id)
+	})
+	if err != nil {
+		if errors.Is(service.RegistrationInvitePublicError(err), service.ErrRegistrationInviteUnavailable) {
+			return nil, &OAuthInviteRegistrationError{}
+		}
+		if errors.Is(err, model.ErrAuthFlowConsumed) || errors.Is(err, model.ErrAuthFlowInvalid) {
+			return nil, &OAuthInviteRegistrationError{}
+		}
+		return nil, err
+	}
+
+	user.FinalizeOAuthUserCreation(0)
+	return user, nil
+}
+
 // Error types for OAuth
 type OAuthUserDeletedError struct{}
 
@@ -445,6 +620,14 @@ type OAuthEmailAlreadyTakenError struct{}
 
 func (e *OAuthEmailAlreadyTakenError) Error() string {
 	return "email is already in use"
+}
+
+// OAuthInviteRegistrationError deliberately carries no invite state so public
+// responses cannot distinguish a missing, expired, revoked, or consumed code.
+type OAuthInviteRegistrationError struct{}
+
+func (e *OAuthInviteRegistrationError) Error() string {
+	return "registration invite is unavailable"
 }
 
 // handleOAuthError handles OAuth errors and returns translated message

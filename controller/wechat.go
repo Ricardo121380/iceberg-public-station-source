@@ -88,6 +88,10 @@ func WeChatAuth(c *gin.Context) {
 			return
 		}
 	} else {
+		if common.RegistrationInviteRequired {
+			writeOAuthInviteRegistrationUnavailable(c)
+			return
+		}
 		if common.RegisterEnabled {
 			user.Username = "wechat_" + strconv.Itoa(model.GetMaxUserId()+1)
 			user.DisplayName = "WeChat User"
