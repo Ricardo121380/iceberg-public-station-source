@@ -273,6 +273,39 @@ func testRegistrationInviteDomain(t *testing.T, db *gorm.DB, databaseType common
 		assert.NotEqual(t, rawCode, stored.CodeHash)
 		assert.NotContains(t, stored.CodeHash, rawCode)
 	})
+
+	t.Run("list filters by creation time and note without selecting the code hash", func(t *testing.T) {
+		clearRegistrationInvites(t, db)
+		now := common.GetTimestamp()
+		older := createRegistrationInvite(t, db, registrationInviteTestCode("N"), now+3600, func(invite *model.RegistrationInvite) {
+			invite.Note = "early release"
+			invite.CreatedAt = now - 300
+		})
+		newer := createRegistrationInvite(t, db, registrationInviteTestCode("P"), now+3600, func(invite *model.RegistrationInvite) {
+			invite.Note = "target release"
+			invite.CreatedAt = now - 100
+		})
+
+		listed, err := ListRegistrationInvites(RegistrationInviteListFilters{
+			CreatedAfter:  now - 100,
+			CreatedBefore: now - 100,
+			Note:          "target",
+		}, RegistrationInvitePagination{Limit: 10})
+		require.NoError(t, err)
+		require.Len(t, listed.Items, 1)
+		assert.Equal(t, newer.Id, listed.Items[0].Id)
+		assert.NotEqual(t, older.Id, listed.Items[0].Id)
+
+		_, err = ListRegistrationInvites(RegistrationInviteListFilters{
+			CreatedAfter:  now,
+			CreatedBefore: now - 1,
+		}, RegistrationInvitePagination{Limit: 10})
+		assert.ErrorIs(t, err, ErrRegistrationInviteFilterInvalid)
+		_, err = ListRegistrationInvites(RegistrationInviteListFilters{
+			Note: strings.Repeat("x", 256),
+		}, RegistrationInvitePagination{Limit: 10})
+		assert.ErrorIs(t, err, ErrRegistrationInviteFilterInvalid)
+	})
 }
 
 func TestRegistrationInviteDomainSQLite(t *testing.T) {

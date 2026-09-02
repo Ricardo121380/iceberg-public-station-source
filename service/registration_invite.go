@@ -37,6 +37,7 @@ var (
 	ErrRegistrationInviteGenerationExhausted = errors.New("registration invite generation retries were exhausted")
 	ErrRegistrationInviteStatusInvalid       = errors.New("registration invite status is invalid")
 	ErrRegistrationInvitePaginationInvalid   = errors.New("registration invite pagination is invalid")
+	ErrRegistrationInviteFilterInvalid       = errors.New("registration invite filter is invalid")
 	ErrRegistrationInviteUnavailable         = errors.New("registration invite is unavailable")
 )
 
@@ -82,9 +83,12 @@ type RegistrationInviteView struct {
 }
 
 type RegistrationInviteListFilters struct {
-	Status    RegistrationInviteStatus
-	CreatedBy int
-	UsedBy    int
+	Status        RegistrationInviteStatus
+	CreatedBy     int
+	UsedBy        int
+	CreatedAfter  int64
+	CreatedBefore int64
+	Note          string
 }
 
 type RegistrationInvitePagination struct {
@@ -325,6 +329,15 @@ func ListRegistrationInvites(filters RegistrationInviteListFilters, pagination R
 	if filters.UsedBy > 0 {
 		query = query.Where("used_by = ?", filters.UsedBy)
 	}
+	if filters.CreatedAfter > 0 {
+		query = query.Where("created_at >= ?", filters.CreatedAfter)
+	}
+	if filters.CreatedBefore > 0 {
+		query = query.Where("created_at <= ?", filters.CreatedBefore)
+	}
+	if filters.Note != "" {
+		query = query.Where("note LIKE ?", "%"+filters.Note+"%")
+	}
 	query, err := applyRegistrationInviteStatusFilter(query, filters.Status, now)
 	if err != nil {
 		return nil, err
@@ -355,6 +368,11 @@ func ListRegistrationInvites(filters RegistrationInviteListFilters, pagination R
 func validateRegistrationInviteListInput(filters RegistrationInviteListFilters, pagination RegistrationInvitePagination) error {
 	if filters.CreatedBy < 0 || filters.UsedBy < 0 {
 		return ErrRegistrationInvitePaginationInvalid
+	}
+	if filters.CreatedAfter < 0 || filters.CreatedBefore < 0 ||
+		(filters.CreatedAfter > 0 && filters.CreatedBefore > 0 && filters.CreatedAfter > filters.CreatedBefore) ||
+		len(filters.Note) > 255 {
+		return ErrRegistrationInviteFilterInvalid
 	}
 	if pagination.Offset < 0 || pagination.Limit < 0 || pagination.Limit > RegistrationInviteListMaximumLimit {
 		return ErrRegistrationInvitePaginationInvalid
