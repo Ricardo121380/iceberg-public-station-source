@@ -1,0 +1,63 @@
+name: Task 04 registration invite database matrix
+
+on:
+  push:
+    branches:
+      - feat/invite-admin-api
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  registration-invites:
+    name: Registration invite SQLite, MySQL, and PostgreSQL
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      GOWORK: 'off'
+      TEST_MYSQL_DSN: root:task04-test-password@tcp(127.0.0.1:3306)/new_api_task04?charset=utf8mb4&parseTime=True&loc=Local
+      TEST_POSTGRES_DSN: postgres://postgres:task04-test-password@127.0.0.1:5432/new_api_task04?sslmode=disable
+
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_DATABASE: new_api_task04
+          MYSQL_ROOT_PASSWORD: task04-test-password
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -ptask04-test-password"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_DB: new_api_task04
+          POSTGRES_PASSWORD: task04-test-password
+          POSTGRES_USER: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres -d new_api_task04"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Set up Go
+        uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6.5.0
+        with:
+          go-version-file: go.mod
+          cache-dependency-path: go.sum
+
+      - name: Run registration invite database tests
+        run: go test ./model ./service -run '^TestRegistrationInvite' -count=1
+
+      - name: Run registration invite Root API tests
+        run: go test ./controller ./router -run '^TestRegistrationInvite' -count=1
