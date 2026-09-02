@@ -26,5 +26,14 @@ commit above are the source-of-truth provenance; the annotated local tag
 4. Record the new upstream tag, SHA, local import or merge commit, image
    digest, and public source tag in the release mapping.
 
+## Secret-scan baseline
+
+`.gitleaksignore` contains ten exact findings from the imported upstream commit
+`6a9ccafea198b78c9454ec9191ea80bf29c03957`. They are audited false positives:
+test-only token masking fixtures, a dashboard-version marker, Jimeng model
+identifiers, PEM-envelope construction code, and an API-key masking example.
+The entries are fingerprinted by commit, file, rule, and line. They do not
+ignore future occurrences of the same patterns.
+
 Do not replace or remove NewAPI/QuantumNous attribution, license, notices, or
 the source-offer obligations of a public network deployment.
