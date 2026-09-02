@@ -122,19 +122,21 @@ func GenerateOAuthCode(c *gin.Context) {
 			common.ApiErrorI18n(c, i18n.MsgInvalidParams)
 			return
 		}
-		if request.InviteCode != "" {
-			inviteID, resolveErr := resolveOAuthRegistrationInvite(request.InviteCode)
-			if resolveErr != nil {
-				var inviteError *OAuthInviteRegistrationError
-				if errors.As(resolveErr, &inviteError) {
-					writeOAuthInviteRegistrationUnavailable(c)
-					return
-				}
-				common.ApiError(c, resolveErr)
+		if request.InviteCode == "" {
+			writeOAuthInviteRegistrationUnavailable(c)
+			return
+		}
+		inviteID, resolveErr := resolveOAuthRegistrationInvite(request.InviteCode)
+		if resolveErr != nil {
+			var inviteError *OAuthInviteRegistrationError
+			if errors.As(resolveErr, &inviteError) {
+				writeOAuthInviteRegistrationUnavailable(c)
 				return
 			}
-			registrationInviteID = inviteID
+			common.ApiError(c, resolveErr)
+			return
 		}
+		registrationInviteID = inviteID
 	}
 	userID := 0
 	sessionID := ""
@@ -399,6 +401,10 @@ func handleOAuthBind(c *gin.Context, provider oauth.Provider, pendingFlow *model
 
 // findOrCreateOAuthUser finds an existing user by provider ID or creates a new user.
 func findOrCreateOAuthUser(providerName string, provider oauth.Provider, oauthUser *oauth.OAuthUser, affiliateCode string, registrationInviteID int) (*model.User, error) {
+	if common.RegistrationInviteRequired && providerName == linuxDOOAuthProviderName && registrationInviteID <= 0 {
+		return nil, &OAuthInviteRegistrationError{}
+	}
+
 	user := &model.User{}
 
 	// Check if user already exists with new ID
