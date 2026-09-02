@@ -3,6 +3,8 @@ package model
 import (
 	"errors"
 	"strings"
+
+	"gorm.io/gorm"
 )
 
 const (
@@ -18,6 +20,7 @@ const (
 	registrationInviteRevokedAtIndex   = "idx_registration_invites_revoked_at"
 	registrationInviteCreatedByIndex   = "idx_registration_invites_created_by"
 	registrationInviteUsedByIndex      = "idx_registration_invites_used_by"
+	registrationInviteRevokedByIndex   = "idx_registration_invites_revoked_by"
 )
 
 var ErrRegistrationInviteCodeInvalid = errors.New("registration invite code is invalid")
@@ -35,6 +38,7 @@ type RegistrationInvite struct {
 	ExpiresAt  int64  `json:"expires_at" gorm:"bigint;not null;index:idx_registration_invites_expires_at"`
 	UsedBy     *int   `json:"used_by,omitempty" gorm:"index:idx_registration_invites_used_by"`
 	UsedAt     *int64 `json:"used_at,omitempty" gorm:"bigint;index:idx_registration_invites_used_at"`
+	RevokedBy  *int   `json:"revoked_by,omitempty" gorm:"index:idx_registration_invites_revoked_by"`
 	RevokedAt  *int64 `json:"revoked_at,omitempty" gorm:"bigint;index:idx_registration_invites_revoked_at"`
 }
 
@@ -54,4 +58,45 @@ func ValidateRegistrationInviteCode(code string) error {
 		}
 	}
 	return nil
+}
+
+// GetRegistrationInviteForUpdate reads an invite while retaining a row lock
+// until the caller's transaction ends. SQLite intentionally falls back to the
+// transaction and compare-and-swap updates below because it has no FOR UPDATE.
+func GetRegistrationInviteForUpdate(tx *gorm.DB, id int) (*RegistrationInvite, error) {
+	invite := &RegistrationInvite{}
+	if err := lockForUpdate(tx).Where("id = ?", id).First(invite).Error; err != nil {
+		return nil, err
+	}
+	return invite, nil
+}
+
+// ConsumeRegistrationInviteIfAvailable is the compare-and-swap write used by
+// the invitation registration transaction. It succeeds only once per invite.
+func ConsumeRegistrationInviteIfAvailable(tx *gorm.DB, id int, userID int, usedAt int64) (bool, error) {
+	result := tx.Model(&RegistrationInvite{}).
+		Where("id = ? AND used_at IS NULL AND revoked_at IS NULL AND expires_at > ?", id, usedAt).
+		Updates(map[string]any{
+			"used_by": userID,
+			"used_at": usedAt,
+		})
+	if result.Error != nil {
+		return false, result.Error
+	}
+	return result.RowsAffected == 1, nil
+}
+
+// RevokeRegistrationInviteIfUnused is the compare-and-swap write used by the
+// admin revoke operation. A consumed invite can never become revoked.
+func RevokeRegistrationInviteIfUnused(tx *gorm.DB, id int, operatorID int, revokedAt int64) (bool, error) {
+	result := tx.Model(&RegistrationInvite{}).
+		Where("id = ? AND used_at IS NULL AND revoked_at IS NULL", id).
+		Updates(map[string]any{
+			"revoked_by": operatorID,
+			"revoked_at": revokedAt,
+		})
+	if result.Error != nil {
+		return false, result.Error
+	}
+	return result.RowsAffected == 1, nil
 }

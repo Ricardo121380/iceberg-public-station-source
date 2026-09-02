@@ -23,6 +23,25 @@ type registrationInviteMigrationCounts struct {
 	Logs     int64
 }
 
+// registrationInviteLegacy mirrors the Task 02 schema so this migration test
+// proves that Task 03's revocation audit column upgrades an existing install.
+type registrationInviteLegacy struct {
+	Id         int    `gorm:"primaryKey"`
+	CodeHash   string `gorm:"type:char(64);not null;uniqueIndex:uk_registration_invites_code_hash"`
+	CodePrefix string `gorm:"type:varchar(8);not null"`
+	Note       string `gorm:"type:varchar(255)"`
+	CreatedBy  int    `gorm:"not null;index:idx_registration_invites_created_by"`
+	CreatedAt  int64  `gorm:"bigint;not null"`
+	ExpiresAt  int64  `gorm:"bigint;not null;index:idx_registration_invites_expires_at"`
+	UsedBy     *int   `gorm:"index:idx_registration_invites_used_by"`
+	UsedAt     *int64 `gorm:"bigint;index:idx_registration_invites_used_at"`
+	RevokedAt  *int64 `gorm:"bigint;index:idx_registration_invites_revoked_at"`
+}
+
+func (registrationInviteLegacy) TableName() string {
+	return RegistrationInviteTableName
+}
+
 func registrationInviteMigrationCountsFor(t *testing.T, db *gorm.DB) registrationInviteMigrationCounts {
 	t.Helper()
 	counts := registrationInviteMigrationCounts{}
@@ -82,11 +101,24 @@ func testRegistrationInviteMigration(t *testing.T, db *gorm.DB) {
 		Content: "legacy log",
 	}).Error)
 
+	legacyRawCode := "inv_00000000000000000000"
+	legacyInvite := &registrationInviteLegacy{
+		CodeHash:   common.HmacSha256(legacyRawCode, strings.Repeat("h", 32)),
+		CodePrefix: legacyRawCode[:RegistrationInviteCodePrefixLength],
+		Note:       "legacy registration invite",
+		CreatedBy:  user.Id,
+		CreatedAt:  time.Now().Unix(),
+		ExpiresAt:  time.Now().Add(7 * 24 * time.Hour).Unix(),
+	}
+	require.NoError(t, db.AutoMigrate(&registrationInviteLegacy{}))
+	require.NoError(t, db.Create(legacyInvite).Error)
+
 	before := registrationInviteMigrationCountsFor(t, db)
 	for range 2 {
 		require.NoError(t, migrateRegistrationInvites(db))
 	}
 	assert.True(t, db.Migrator().HasTable(&RegistrationInvite{}))
+	assert.True(t, db.Migrator().HasColumn(&RegistrationInvite{}, "RevokedBy"))
 	for _, indexName := range []string{
 		registrationInviteCodeHashIndex,
 		registrationInviteExpiresAtIndex,
@@ -94,9 +126,15 @@ func testRegistrationInviteMigration(t *testing.T, db *gorm.DB) {
 		registrationInviteRevokedAtIndex,
 		registrationInviteCreatedByIndex,
 		registrationInviteUsedByIndex,
+		registrationInviteRevokedByIndex,
 	} {
 		assert.True(t, db.Migrator().HasIndex(&RegistrationInvite{}, indexName), indexName)
 	}
+
+	var upgradedLegacy RegistrationInvite
+	require.NoError(t, db.First(&upgradedLegacy, legacyInvite.Id).Error)
+	assert.Equal(t, legacyInvite.CodeHash, upgradedLegacy.CodeHash)
+	assert.Nil(t, upgradedLegacy.RevokedBy)
 
 	rawCode := "inv_0123456789ABCDEFGHJK"
 	codeHash := common.HmacSha256(rawCode, strings.Repeat("h", 32))
