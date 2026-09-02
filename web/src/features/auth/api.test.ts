@@ -16,12 +16,29 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
-import { describe, expect, test } from 'vitest'
+import { afterEach, describe, expect, test } from 'vitest'
 
-import type { RefreshOutcome } from '@/lib/api'
+import { api, type RefreshOutcome } from '@/lib/api'
 import type { AuthBundle } from '@/stores/auth-store'
 
-import { executeLogout } from './api'
+import { createOAuthFlow, executeLogout } from './api'
+
+type OAuthApiClient = {
+  post: (
+    url: string,
+    body?: unknown,
+    config?: unknown
+  ) => Promise<{
+    data: { success?: boolean; data?: unknown; message?: string }
+  }>
+}
+
+const apiClient = api as unknown as OAuthApiClient
+const originalPost = apiClient.post
+
+afterEach(() => {
+  apiClient.post = originalPost
+})
 
 const bundle: AuthBundle = {
   access_token: 'access-token',
@@ -114,5 +131,40 @@ describe('logout coordination', () => {
         refresh: async () => transient,
       })
     ).rejects.toBe(originalError)
+  })
+})
+
+describe('OAuth state initialization', () => {
+  test('sends the invitation code and Turnstile token only in the OAuth state body', async () => {
+    const requests: Array<{
+      url: string
+      body: unknown
+      config: unknown
+    }> = []
+    apiClient.post = async (url, body, config) => {
+      requests.push({ url, body, config })
+      return { data: { success: true, data: 'flow-token' } }
+    }
+
+    await expect(
+      createOAuthFlow('linuxdo', 'login', {
+        inviteCode: ' invite-code ',
+        turnstileToken: 'turnstile-token',
+      })
+    ).resolves.toBe('flow-token')
+
+    expect(requests).toEqual([
+      {
+        url: '/api/oauth/state',
+        body: {
+          provider: 'linuxdo',
+          intent: 'login',
+          aff: undefined,
+          invite_code: 'invite-code',
+          turnstile_token: 'turnstile-token',
+        },
+        config: { skipAuthRefresh: true },
+      },
+    ])
   })
 })

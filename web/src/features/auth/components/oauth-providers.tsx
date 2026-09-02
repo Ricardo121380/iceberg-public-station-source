@@ -31,6 +31,7 @@ import { cn } from '@/lib/utils'
 
 import { useOAuthLogin } from '../hooks/use-oauth-login'
 import type { SystemStatus } from '../types'
+import { LinuxDOInviteLogin } from './linuxdo-invite-login'
 import { TelegramLoginDialog } from './telegram-login-dialog'
 
 type OAuthProvidersProps = {
@@ -75,9 +76,25 @@ export function OAuthProviders({
     setIsTelegramDialogOpen,
   } = useOAuthLogin(status, redirectTo)
 
+  const registrationInviteRequired = Boolean(
+    status?.registration_invite_required ??
+    status?.data?.registration_invite_required
+  )
+  const registrationTurnstileRequired = Boolean(
+    status?.registration_turnstile_required ??
+    status?.data?.registration_turnstile_required
+  )
+  const registrationTurnstileSiteKey = (
+    status?.registration_turnstile_site_key ??
+    status?.data?.registration_turnstile_site_key ??
+    ''
+  ).trim()
+  const registrationTurnstileAction =
+    status?.registration_turnstile_action ??
+    status?.data?.registration_turnstile_action
   const providerButtons: ProviderButton[] = []
 
-  if (status?.wechat_login && onWeChatLogin) {
+  if (!registrationInviteRequired && status?.wechat_login && onWeChatLogin) {
     providerButtons.push({
       key: 'wechat',
       label: t('Continue with WeChat'),
@@ -87,7 +104,7 @@ export function OAuthProviders({
     })
   }
 
-  if (status?.github_oauth) {
+  if (!registrationInviteRequired && status?.github_oauth) {
     providerButtons.push({
       key: 'github',
       label: githubButtonText || t('Continue with GitHub'),
@@ -97,7 +114,7 @@ export function OAuthProviders({
     })
   }
 
-  if (status?.discord_oauth) {
+  if (!registrationInviteRequired && status?.discord_oauth) {
     providerButtons.push({
       key: 'discord',
       label: t('Continue with Discord'),
@@ -106,7 +123,7 @@ export function OAuthProviders({
     })
   }
 
-  if (status?.oidc_enabled) {
+  if (!registrationInviteRequired && status?.oidc_enabled) {
     const oidcDisplayName = status.oidc_display_name?.trim() || 'OIDC'
     providerButtons.push({
       key: 'oidc',
@@ -117,7 +134,7 @@ export function OAuthProviders({
     })
   }
 
-  if (status?.linuxdo_oauth) {
+  if (!registrationInviteRequired && status?.linuxdo_oauth) {
     providerButtons.push({
       key: 'linuxdo',
       label: t('Continue with LinuxDO'),
@@ -126,7 +143,7 @@ export function OAuthProviders({
     })
   }
 
-  if (status?.telegram_oauth) {
+  if (!registrationInviteRequired && status?.telegram_oauth) {
     providerButtons.push({
       key: 'telegram',
       label: t('Continue with Telegram'),
@@ -137,7 +154,11 @@ export function OAuthProviders({
 
   // Custom OAuth providers
   const customProviders = status?.custom_oauth_providers
-  if (customProviders && customProviders.length > 0) {
+  if (
+    !registrationInviteRequired &&
+    customProviders &&
+    customProviders.length > 0
+  ) {
     for (const provider of customProviders) {
       providerButtons.push({
         key: `custom-${provider.slug}`,
@@ -147,39 +168,58 @@ export function OAuthProviders({
     }
   }
 
-  if (providerButtons.length === 0) return null
+  const linuxDOInviteLogin =
+    registrationInviteRequired && status?.linuxdo_oauth ? (
+      <LinuxDOInviteLogin
+        siteKey={
+          registrationTurnstileRequired ? registrationTurnstileSiteKey : ''
+        }
+        action={registrationTurnstileAction}
+        disabled={disabled}
+        loading={isLoading}
+        onStart={handleLinuxDOLogin}
+      />
+    ) : null
+
+  if (providerButtons.length === 0 && !linuxDOInviteLogin) return null
 
   return (
     <>
       <div className={cn('space-y-3', className)}>
-        <div className='relative'>
-          <div className='absolute inset-0 flex items-center'>
-            <span className='w-full border-t' />
-          </div>
-          <div className='relative flex justify-center text-xs uppercase'>
-            <span className='bg-background text-muted-foreground px-2'>
-              {t('Or continue with')}
-            </span>
-          </div>
-        </div>
+        {linuxDOInviteLogin}
 
-        <div className='flex flex-col gap-2'>
-          {providerButtons.map(
-            ({ key, label, onClick, icon, disabled: extraDisabled }) => (
-              <Button
-                key={key}
-                variant='outline'
-                type='button'
-                disabled={disabled || isLoading || extraDisabled}
-                onClick={onClick}
-                className='h-11 w-full justify-center gap-2 rounded-lg'
-              >
-                {icon}
-                {label}
-              </Button>
-            )
-          )}
-        </div>
+        {providerButtons.length > 0 && (
+          <>
+            <div className='relative'>
+              <div className='absolute inset-0 flex items-center'>
+                <span className='w-full border-t' />
+              </div>
+              <div className='relative flex justify-center text-xs uppercase'>
+                <span className='bg-background text-muted-foreground px-2'>
+                  {t('Or continue with')}
+                </span>
+              </div>
+            </div>
+
+            <div className='flex flex-col gap-2'>
+              {providerButtons.map(
+                ({ key, label, onClick, icon, disabled: extraDisabled }) => (
+                  <Button
+                    key={key}
+                    variant='outline'
+                    type='button'
+                    disabled={disabled || isLoading || extraDisabled}
+                    onClick={onClick}
+                    className='h-11 w-full justify-center gap-2 rounded-lg'
+                  >
+                    {icon}
+                    {label}
+                  </Button>
+                )
+              )}
+            </div>
+          </>
+        )}
       </div>
 
       <TelegramLoginDialog

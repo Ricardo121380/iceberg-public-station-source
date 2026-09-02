@@ -33,6 +33,11 @@ import { pickTelegramAuthorization } from '../lib/telegram-login'
 import type { SystemStatus, CustomOAuthProviderInfo } from '../types'
 import { useAuthRedirect } from './use-auth-redirect'
 
+type LinuxDOLoginOptions = {
+  inviteCode?: string
+  turnstileToken?: string
+}
+
 /**
  * Hook for managing OAuth login
  */
@@ -142,18 +147,36 @@ export function useOAuthLogin(
     }
   }
 
-  const handleLinuxDOLogin = async () => {
-    if (!status?.linuxdo_client_id) return
+  const handleLinuxDOLogin = async (
+    options: LinuxDOLoginOptions = {}
+  ): Promise<boolean> => {
+    if (!status?.linuxdo_client_id) return false
+
+    const registrationInviteRequired = Boolean(
+      status.registration_invite_required ??
+      status.data?.registration_invite_required
+    )
+    const inviteCode = options.inviteCode?.trim()
+    const turnstileToken = options.turnstileToken
+    if (registrationInviteRequired && (!inviteCode || !turnstileToken)) {
+      return false
+    }
 
     setIsLoading(true)
     try {
       await resetSession()
-      const state = await createOAuthFlow('linuxdo', 'login')
+      const state = await createOAuthFlow(
+        'linuxdo',
+        'login',
+        registrationInviteRequired ? { inviteCode, turnstileToken } : undefined
+      )
 
       const url = buildLinuxDOOAuthUrl(status.linuxdo_client_id, state)
       window.open(url, '_self')
+      return true
     } catch {
       toast.error(t('Failed to start LinuxDO login'))
+      return false
     } finally {
       setIsLoading(false)
     }

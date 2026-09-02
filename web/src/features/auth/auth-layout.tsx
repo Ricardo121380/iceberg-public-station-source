@@ -53,7 +53,7 @@ export function AuthLayout({ children }: AuthLayoutProps) {
           <h1 className='text-xl font-medium'>{systemName}</h1>
         )}
       </Link>
-      <div className='container flex items-center pt-16 sm:pt-0'>
+      <div className='flex w-full min-w-0 items-center px-4 pt-16 sm:px-8 sm:pt-0'>
         <div className='mx-auto flex w-full flex-col justify-center space-y-2 px-4 py-8 sm:w-[480px] sm:p-8'>
           {children}
         </div>
