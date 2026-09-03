@@ -1,0 +1,57 @@
+name: Deploy fixed public-station digest to Oracle
+
+on:
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: oracle-public-station-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: github.repository == 'Ricardo121380/iceberg-public-station' && github.ref == 'refs/heads/main'
+    name: Pull verified digest and start NewAPI
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    environment: oracle-deploy
+    permissions:
+      contents: read
+      packages: read
+
+    steps:
+      - name: Validate deployment credentials
+        env:
+          ORACLE_DEPLOY_SSH_KEY: ${{ secrets.ORACLE_DEPLOY_SSH_KEY }}
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [[ -z "$ORACLE_DEPLOY_SSH_KEY" || -z "$GHCR_TOKEN" ]]; then
+            echo 'oracle deployment key and short-lived package token are required' >&2
+            exit 1
+          fi
+
+      - name: Pull the fixed ARM64 digest through the restricted Oracle command
+        env:
+          ORACLE_DEPLOY_SSH_KEY: ${{ secrets.ORACLE_DEPLOY_SSH_KEY }}
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          key_path="$RUNNER_TEMP/oracle-public-station-deploy"
+          known_hosts_path="$RUNNER_TEMP/oracle-public-station-known-hosts"
+          umask 077
+          printf '%s\n' "$ORACLE_DEPLOY_SSH_KEY" > "$key_path"
+          cat > "$known_hosts_path" <<'EOF'
+          [140.245.126.175]:2222 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMB4kT7xyM30p1HFkYNvApW3TRTTOkt8flf4zlqeUW6k
+          EOF
+
+          printf '%s\n%s\n' "$GITHUB_ACTOR" "$GHCR_TOKEN" \
+            | ssh -T \
+                -p 2222 \
+                -i "$key_path" \
+                -o BatchMode=yes \
+                -o ClearAllForwardings=yes \
+                -o IdentitiesOnly=yes \
+                -o RequestTTY=no \
+                -o StrictHostKeyChecking=yes \
+                -o UserKnownHostsFile="$known_hosts_path" \
+                ubuntu@140.245.126.175
