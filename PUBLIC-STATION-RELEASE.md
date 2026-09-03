@@ -22,11 +22,13 @@ release is valid only when all of these refer to the same Git commit:
 2. The public source repository's identical tag.
 3. The `source_commit` field in the generated release manifest.
 
-The GitHub workflow builds only `linux/arm64`, scans the candidate image before
-publication, and then publishes the private GHCR image by immutable digest. A
-deployment must use `ghcr.io/<owner>/iceberg-public-station@sha256:<digest>`;
-it must never use `latest` or a mutable tag. Task 13 supplies the Compose
-template that consumes this digest.
+The GitHub workflow builds only `linux/arm64`, using the native build platform
+for the static frontend and Go cross-compilation while keeping the final runtime
+image ARM64. It scans the candidate image before publication and then publishes
+the private GHCR image by immutable digest. A deployment must use
+`ghcr.io/<owner>/iceberg-public-station@sha256:<digest>`; it must never use
+`latest` or a mutable tag. Task 13 supplies the Compose template that consumes
+this digest.
 
 ## Build and verification
 
