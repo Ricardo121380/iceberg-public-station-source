@@ -40,7 +40,10 @@ trap cleanup EXIT
 docker run --detach --rm --name "$container_name" -p 127.0.0.1::3000 "$image_reference" >/dev/null
 for _ in $(seq 1 45); do
   port="$(docker port "$container_name" 3000/tcp | awk -F: '{print $NF}')"
-  if [[ -n "$port" ]] && curl --fail --silent --show-error "http://127.0.0.1:${port}/api/status" | grep -Eq '"success":[[:space:]]*true'; then
+  health_status="$(docker inspect --format '{{if .State.Health}}{{.State.Health.Status}}{{end}}' "$container_name")"
+  if [[ "$health_status" == 'healthy' ]] \
+    && [[ -n "$port" ]] \
+    && curl --fail --silent --show-error "http://127.0.0.1:${port}/api/status" | grep -Eq '"success":[[:space:]]*true'; then
     exit 0
   fi
   sleep 1

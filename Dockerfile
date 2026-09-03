@@ -7,7 +7,7 @@ COPY ./web ./
 COPY ./VERSION /build/VERSION
 RUN DISABLE_ESLINT_PLUGIN='true' VITE_REACT_APP_VERSION=$(cat /build/VERSION) bun run build
 
-FROM --platform=$BUILDPLATFORM golang:1.26.1-alpine@sha256:2389ebfa5b7f43eeafbd6be0c3700cc46690ef842ad962f6c5bd6be49ed82039 AS builder2
+FROM --platform=$BUILDPLATFORM golang:1.26.6-alpine@sha256:3889b425f035be855a72fb4755265311293b6d414521f0a519d819df32222d83 AS builder2
 ENV GO111MODULE=on CGO_ENABLED=0 GOWORK=off
 
 ARG TARGETOS
@@ -26,22 +26,24 @@ RUN go mod download
 COPY . .
 COPY --from=builder /build/web/dist ./web/dist
 RUN go build -ldflags "-s -w -X 'github.com/QuantumNous/new-api/common.Version=$(cat VERSION)'" -o new-api
+RUN go build -ldflags "-s -w" -o healthcheck ./scripts/release/healthcheck.go
 
-FROM debian:bookworm-slim@sha256:f06537653ac770703bc45b4b113475bd402f451e85223f0f2837acbf89ab020a
+FROM debian:bookworm-slim@sha256:88200866dfff7ea7f5cbcb6ec7c8a701889efe6fe859fe64d6990e4b07ea4171
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends ca-certificates tzdata wget \
+    && apt-get install -y --no-install-recommends ca-certificates tzdata \
     && rm -rf /var/lib/apt/lists/* \
     && update-ca-certificates \
-    && groupadd --gid 10001 new-api \
-    && useradd --uid 10001 --gid 10001 --create-home --home-dir /data \
-        --shell /usr/sbin/nologin new-api
+    && mkdir -p /data \
+    && chown 10001:10001 /data
 
-COPY --chown=10001:10001 --from=builder2 /build/new-api /new-api
+COPY --chown=10001:10001 --from=builder2 /build/new-api /data/new-api
+COPY --chown=10001:10001 --from=builder2 /build/healthcheck /healthcheck
 COPY --chown=10001:10001 LICENSE NOTICE THIRD-PARTY-LICENSES.md /licenses/
 EXPOSE 3000
 WORKDIR /data
+ENV HOME=/data
 USER 10001:10001
 HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
-    CMD wget -q -O - http://127.0.0.1:3000/api/status | grep -Eq '"success":[[:space:]]*true' || exit 1
-ENTRYPOINT ["/new-api"]
+    CMD ["/healthcheck"]
+ENTRYPOINT ["/data/new-api"]
