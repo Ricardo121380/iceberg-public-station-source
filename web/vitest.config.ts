@@ -34,6 +34,10 @@ export default defineConfig({
     setupFiles: ['./src/test-setup.ts'],
     clearMocks: true,
     restoreMocks: true,
+    // Several integration-style UI tests exercise complete dialog workflows.
+    // Keep the timeout finite while allowing them to run under the full
+    // parallel suite on resource-constrained CI runners.
+    testTimeout: 10_000,
     include: ['src/**/*.{test,spec}.{ts,tsx}'],
   },
 })

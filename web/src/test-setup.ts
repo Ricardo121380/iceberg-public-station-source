@@ -22,6 +22,34 @@ import i18next from 'i18next'
 import { initReactI18next } from 'react-i18next'
 import { afterEach, beforeAll } from 'vitest'
 
+// Node 25 exposes an experimental global Storage object. In Vitest's jsdom
+// environment it can shadow jsdom's complete Storage implementation, leaving
+// persisted Zustand stores and test cleanup without setItem/clear. Use a
+// complete in-memory browser boundary for every test worker instead.
+function createTestStorage(): Storage {
+  const values = new Map<string, string>()
+  return {
+    get length() {
+      return values.size
+    },
+    clear: () => values.clear(),
+    getItem: (key) => values.get(key) ?? null,
+    key: (index) => [...values.keys()][index] ?? null,
+    removeItem: (key) => void values.delete(key),
+    setItem: (key, value) => void values.set(key, String(value)),
+  }
+}
+
+const testLocalStorage = createTestStorage()
+const testSessionStorage = createTestStorage()
+const testStorageDescriptors = {
+  localStorage: { configurable: true, value: testLocalStorage },
+  sessionStorage: { configurable: true, value: testSessionStorage },
+}
+
+Object.defineProperties(globalThis, testStorageDescriptors)
+Object.defineProperties(window, testStorageDescriptors)
+
 beforeAll(async () => {
   await i18next.use(initReactI18next).init({
     lng: 'en',
