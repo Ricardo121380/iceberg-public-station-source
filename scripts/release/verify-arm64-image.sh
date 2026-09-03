@@ -25,12 +25,6 @@ if [[ "$healthcheck" == 'null' || "$healthcheck" == '<nil>' ]]; then
   exit 1
 fi
 
-runtime_uid="$(docker run --rm --platform linux/arm64 --entrypoint /usr/bin/id "$image_reference" -u)"
-if [[ "$runtime_uid" != '10001' ]]; then
-  echo "expected container runtime uid 10001, got: $runtime_uid" >&2
-  exit 1
-fi
-
 container_name="public-station-health-${RANDOM}${RANDOM}"
 cleanup() {
   docker rm --force "$container_name" >/dev/null 2>&1 || true
@@ -38,6 +32,18 @@ cleanup() {
 trap cleanup EXIT
 
 docker run --detach --rm --name "$container_name" -p 127.0.0.1::3000 "$image_reference" >/dev/null
+runtime_pid="$(docker inspect --format '{{.State.Pid}}' "$container_name")"
+if [[ -z "$runtime_pid" || "$runtime_pid" == 0 ]]; then
+  docker logs "$container_name" >&2 || true
+  echo 'container did not start a runtime process' >&2
+  exit 1
+fi
+runtime_uid="$(awk '/^Uid:/{print $2; exit}' "/proc/${runtime_pid}/status")"
+if [[ "$runtime_uid" != '10001' ]]; then
+  echo "expected container runtime uid 10001, got: $runtime_uid" >&2
+  exit 1
+fi
+
 for _ in $(seq 1 45); do
   port="$(docker port "$container_name" 3000/tcp | awk -F: '{print $NF}')"
   health_status="$(docker inspect --format '{{if .State.Health}}{{.State.Health.Status}}{{end}}' "$container_name")"

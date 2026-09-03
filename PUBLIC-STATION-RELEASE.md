@@ -30,11 +30,13 @@ the private GHCR image by immutable digest. A deployment must use
 `latest` or a mutable tag. Task 13 supplies the Compose template that consumes
 this digest.
 
-The release workflow and image builder pin Go 1.26.6, while the runtime base
-image is pinned by digest. The runtime contains only CA certificates and time
-zone data, runs as numeric UID/GID `10001:10001` with writable `/data`, and
-uses the static `scripts/release/healthcheck.go` probe instead of installing a
-shell HTTP client.
+The release workflow and image builder pin Go 1.26.6. The runtime is the
+digest-pinned `gcr.io/distroless/static-debian13:nonroot` image, which supplies
+the CA certificates and time-zone data required by the static Go binary without
+a shell, package manager, or general-purpose OS tooling. It runs as numeric
+UID/GID `10001:10001` with writable `/data`, and uses the static
+`scripts/release/healthcheck.go` probe instead of installing a shell HTTP
+client.
 
 ## Build and verification
 

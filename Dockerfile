@@ -27,22 +27,16 @@ COPY . .
 COPY --from=builder /build/web/dist ./web/dist
 RUN go build -ldflags "-s -w -X 'github.com/QuantumNous/new-api/common.Version=$(cat VERSION)'" -o new-api
 RUN go build -ldflags "-s -w" -o healthcheck ./scripts/release/healthcheck.go
+RUN mkdir -p /build/runtime-data && chown 10001:10001 /build/runtime-data
 
-FROM debian:bookworm-slim@sha256:88200866dfff7ea7f5cbcb6ec7c8a701889efe6fe859fe64d6990e4b07ea4171
+FROM gcr.io/distroless/static-debian13:nonroot@sha256:1c2c046bc09ed40fad370b599a0b1ae7987f55b01e247cf27a7c27cd97e5bbc7
 
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends ca-certificates tzdata \
-    && rm -rf /var/lib/apt/lists/* \
-    && update-ca-certificates \
-    && mkdir -p /data \
-    && chown 10001:10001 /data
-
+COPY --chown=10001:10001 --from=builder2 /build/runtime-data/ /data/
 COPY --chown=10001:10001 --from=builder2 /build/new-api /data/new-api
 COPY --chown=10001:10001 --from=builder2 /build/healthcheck /healthcheck
 COPY --chown=10001:10001 LICENSE NOTICE THIRD-PARTY-LICENSES.md /licenses/
 EXPOSE 3000
 WORKDIR /data
-ENV HOME=/data
 USER 10001:10001
 HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
     CMD ["/healthcheck"]
