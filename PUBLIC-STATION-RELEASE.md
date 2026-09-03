@@ -51,9 +51,11 @@ scripts/release/verify-arm64-image.sh local/public-station:check
 
 The GitHub workflow additionally runs backend and frontend tests, Gitleaks,
 SBOM generation, and a blocking Trivy HIGH/CRITICAL vulnerability scan. The
-public-source synchronisation job requires a fine-grained
-`PUBLIC_SOURCE_PUSH_TOKEN` stored only in the private repository's `release`
-GitHub Environment. It needs `Contents: Read and write` solely for the public
-source repository. The Oracle host later receives a separate read-only GHCR
-credential in its protected configuration directory, never in this repository
-or image layer.
+public-source synchronisation job uses a write-enabled deploy key attached only
+to the public source repository. Its private half is stored as
+`PUBLIC_SOURCE_DEPLOY_KEY` only in the private repository's `release` GitHub
+Environment. The runner writes it only to its temporary directory, verifies
+GitHub's SSH host keys from the GitHub metadata endpoint, and uses an SSH remote
+without embedding credentials in Git configuration. The Oracle host later
+receives a separate read-only GHCR credential in its protected configuration
+directory, never in this repository or image layer.

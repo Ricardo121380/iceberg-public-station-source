@@ -175,7 +175,7 @@ jobs:
     timeout-minutes: 5
     environment: release
     env:
-      PUBLIC_SOURCE_PUSH_TOKEN: ${{ secrets.PUBLIC_SOURCE_PUSH_TOKEN }}
+      PUBLIC_SOURCE_DEPLOY_KEY: ${{ secrets.PUBLIC_SOURCE_DEPLOY_KEY }}
 
     steps:
       - name: Verify public-source synchronisation access
@@ -184,14 +184,21 @@ jobs:
             exit 0
           fi
 
-          if [[ -z "$PUBLIC_SOURCE_PUSH_TOKEN" ]]; then
-            echo 'PUBLIC_SOURCE_PUSH_TOKEN is required in the release environment' >&2
+          if [[ -z "$PUBLIC_SOURCE_DEPLOY_KEY" ]]; then
+            echo 'PUBLIC_SOURCE_DEPLOY_KEY is required in the release environment' >&2
             exit 1
           fi
 
-          git ls-remote \
-            "https://x-access-token:${PUBLIC_SOURCE_PUSH_TOKEN}@github.com/${PUBLIC_SOURCE_REPOSITORY}.git" \
-            HEAD >/dev/null
+          key_path="$RUNNER_TEMP/public-source-release"
+          known_hosts_path="$RUNNER_TEMP/public-source-known-hosts"
+          umask 077
+          printf '%s\n' "$PUBLIC_SOURCE_DEPLOY_KEY" > "$key_path"
+          curl --fail --silent --show-error https://api.github.com/meta \
+            | jq -r '.ssh_keys[] | "github.com " + .' > "$known_hosts_path"
+          git_ssh_command="ssh -i $key_path -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile=$known_hosts_path"
+
+          git -c core.sshCommand="$git_ssh_command" ls-remote \
+            "git@github.com:${PUBLIC_SOURCE_REPOSITORY}.git" HEAD >/dev/null
 
   arm64-candidate:
     name: Build and scan ARM64 candidate
@@ -345,7 +352,7 @@ jobs:
     timeout-minutes: 10
     environment: release
     env:
-      PUBLIC_SOURCE_PUSH_TOKEN: ${{ secrets.PUBLIC_SOURCE_PUSH_TOKEN }}
+      PUBLIC_SOURCE_DEPLOY_KEY: ${{ secrets.PUBLIC_SOURCE_DEPLOY_KEY }}
 
     steps:
       - name: Checkout release source
@@ -366,18 +373,31 @@ jobs:
             exit 1
           fi
 
-          public_remote="https://x-access-token:${PUBLIC_SOURCE_PUSH_TOKEN}@github.com/${PUBLIC_SOURCE_REPOSITORY}.git"
+          if [[ -z "$PUBLIC_SOURCE_DEPLOY_KEY" ]]; then
+            echo 'PUBLIC_SOURCE_DEPLOY_KEY is required in the release environment' >&2
+            exit 1
+          fi
+
+          key_path="$RUNNER_TEMP/public-source-release"
+          known_hosts_path="$RUNNER_TEMP/public-source-known-hosts"
+          umask 077
+          printf '%s\n' "$PUBLIC_SOURCE_DEPLOY_KEY" > "$key_path"
+          curl --fail --silent --show-error https://api.github.com/meta \
+            | jq -r '.ssh_keys[] | "github.com " + .' > "$known_hosts_path"
+          git_ssh_command="ssh -i $key_path -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile=$known_hosts_path"
+
+          public_remote="git@github.com:${PUBLIC_SOURCE_REPOSITORY}.git"
           git remote add public-release "$public_remote"
-          git fetch public-release main --no-tags
+          git -c core.sshCommand="$git_ssh_command" fetch public-release main --no-tags
 
           if ! git merge-base --is-ancestor public-release/main "$SOURCE_COMMIT"; then
             echo 'public main is not an ancestor of the release commit; refusing a non-fast-forward update' >&2
             exit 1
           fi
 
-          public_tag_commit="$(git ls-remote public-release "refs/tags/$RELEASE_TAG^{}" | awk '{print $1}')"
+          public_tag_commit="$(git -c core.sshCommand="$git_ssh_command" ls-remote public-release "refs/tags/$RELEASE_TAG^{}" | awk '{print $1}')"
           if [[ -z "$public_tag_commit" ]]; then
-            public_tag_commit="$(git ls-remote public-release "refs/tags/$RELEASE_TAG" | awk '{print $1}')"
+            public_tag_commit="$(git -c core.sshCommand="$git_ssh_command" ls-remote public-release "refs/tags/$RELEASE_TAG" | awk '{print $1}')"
           fi
           if [[ -n "$public_tag_commit" ]]; then
             if [[ "$public_tag_commit" != "$SOURCE_COMMIT" ]]; then
@@ -386,9 +406,9 @@ jobs:
             fi
           fi
 
-          git push public-release "$SOURCE_COMMIT:refs/heads/main"
+          git -c core.sshCommand="$git_ssh_command" push public-release "$SOURCE_COMMIT:refs/heads/main"
           if [[ -z "$public_tag_commit" ]]; then
-            git push public-release "refs/tags/$RELEASE_TAG:refs/tags/$RELEASE_TAG"
+            git -c core.sshCommand="$git_ssh_command" push public-release "refs/tags/$RELEASE_TAG:refs/tags/$RELEASE_TAG"
           fi
 
           echo "### Public source synchronised" >> "$GITHUB_STEP_SUMMARY"
