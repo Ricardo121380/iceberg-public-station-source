@@ -30,12 +30,18 @@ RUN go build -ldflags "-s -w -X 'github.com/QuantumNous/new-api/common.Version=$
 FROM debian:bookworm-slim@sha256:f06537653ac770703bc45b4b113475bd402f451e85223f0f2837acbf89ab020a
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends ca-certificates tzdata libasan8 wget \
+    && apt-get install -y --no-install-recommends ca-certificates tzdata wget \
     && rm -rf /var/lib/apt/lists/* \
-    && update-ca-certificates
+    && update-ca-certificates \
+    && groupadd --gid 10001 new-api \
+    && useradd --uid 10001 --gid 10001 --create-home --home-dir /data \
+        --shell /usr/sbin/nologin new-api
 
-COPY --from=builder2 /build/new-api /
-COPY LICENSE NOTICE THIRD-PARTY-LICENSES.md /licenses/
+COPY --chown=10001:10001 --from=builder2 /build/new-api /new-api
+COPY --chown=10001:10001 LICENSE NOTICE THIRD-PARTY-LICENSES.md /licenses/
 EXPOSE 3000
 WORKDIR /data
+USER 10001:10001
+HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
+    CMD wget -q -O - http://127.0.0.1:3000/api/status | grep -Eq '"success":[[:space:]]*true' || exit 1
 ENTRYPOINT ["/new-api"]

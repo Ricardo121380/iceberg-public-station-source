@@ -1,0 +1,395 @@
+name: Public station ARM64 release
+
+on:
+  push:
+    tags:
+      - 'public-station-v*'
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: Release tag in public-station-vX.Y.Z.N form
+        required: true
+        type: string
+      source_ref:
+        description: Source ref for a verify-only run or the matching release tag
+        required: true
+        default: main
+        type: string
+      publish:
+        description: Publish only when source_ref resolves to the named release tag on main
+        required: true
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+concurrency:
+  group: public-station-release-${{ github.event_name == 'workflow_dispatch' && inputs.release_tag || github.ref_name }}
+  cancel-in-progress: false
+
+env:
+  BUN_VERSION: '1.4.0'
+  GOWORK: 'off'
+  PUBLIC_SOURCE_REPOSITORY: Ricardo121380/iceberg-public-station-source
+
+jobs:
+  release-metadata:
+    name: Validate release metadata
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    outputs:
+      image: ${{ steps.metadata.outputs.image }}
+      publish: ${{ steps.metadata.outputs.publish }}
+      release_tag: ${{ steps.metadata.outputs.release_tag }}
+      source_commit: ${{ steps.metadata.outputs.source_commit }}
+
+    steps:
+      - name: Checkout release source
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event_name == 'workflow_dispatch' && inputs.source_ref || github.ref }}
+
+      - name: Validate tag and source mapping
+        id: metadata
+        env:
+          DISPATCH_PUBLISH: ${{ inputs.publish }}
+          DISPATCH_RELEASE_TAG: ${{ inputs.release_tag }}
+        run: |
+          if [[ "$GITHUB_EVENT_NAME" == 'workflow_dispatch' ]]; then
+            release_tag="$DISPATCH_RELEASE_TAG"
+            publish="$DISPATCH_PUBLISH"
+          else
+            release_tag="${GITHUB_REF#refs/tags/}"
+            publish=true
+          fi
+
+          scripts/release/validate-release-tag.sh "$release_tag"
+          scripts/release/verify-public-source.sh
+
+          source_commit="$(git rev-parse HEAD)"
+          if [[ "$publish" == true ]]; then
+            git fetch origin main --no-tags
+            if [[ "$(git rev-parse origin/main)" != "$source_commit" ]]; then
+              echo 'publishable release must point at the current private main commit' >&2
+              exit 1
+            fi
+
+            tag_commit="$(git rev-list -n 1 "refs/tags/$release_tag")"
+            if [[ "$tag_commit" != "$source_commit" ]]; then
+              echo 'publishable release tag does not resolve to the checked-out source commit' >&2
+              exit 1
+            fi
+          fi
+
+          image="ghcr.io/${GITHUB_REPOSITORY,,}"
+          printf 'image=%s\n' "$image" >> "$GITHUB_OUTPUT"
+          printf 'publish=%s\n' "$publish" >> "$GITHUB_OUTPUT"
+          printf 'release_tag=%s\n' "$release_tag" >> "$GITHUB_OUTPUT"
+          printf 'source_commit=%s\n' "$source_commit" >> "$GITHUB_OUTPUT"
+
+  backend-regression:
+    name: Backend regression
+    needs: release-metadata
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+
+    steps:
+      - name: Checkout release source
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          ref: ${{ needs.release-metadata.outputs.source_commit }}
+
+      - name: Set up Go
+        uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6.5.0
+        with:
+          go-version-file: go.mod
+          cache-dependency-path: |
+            go.sum
+            relaykit/go.sum
+
+      - name: Create frontend embed placeholder
+        run: |
+          mkdir -p web/dist
+          touch web/dist/index.html
+
+      - name: Run complete Go regression suite
+        run: make test
+
+  frontend-regression:
+    name: Frontend regression
+    needs: release-metadata
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    defaults:
+      run:
+        working-directory: web
+
+    steps:
+      - name: Checkout release source
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          ref: ${{ needs.release-metadata.outputs.source_commit }}
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Typecheck
+        run: bun run typecheck
+
+      - name: Run complete Vitest suite
+        run: bun run test
+
+      - name: Build production frontend
+        run: bun run build
+
+  secret-scan:
+    name: Gitleaks release scan
+    needs: release-metadata
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout complete history
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          fetch-depth: 0
+          ref: ${{ needs.release-metadata.outputs.source_commit }}
+
+      - name: Scan committed content
+        uses: gitleaks/gitleaks-action@ff98106e4c7b2bc287b24eaf42907196329070c7 # v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  release-credentials:
+    name: Verify release credentials
+    needs: release-metadata
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    environment: release
+    env:
+      PUBLIC_SOURCE_PUSH_TOKEN: ${{ secrets.PUBLIC_SOURCE_PUSH_TOKEN }}
+
+    steps:
+      - name: Verify public-source synchronisation access
+        run: |
+          if [[ "${{ needs.release-metadata.outputs.publish }}" != true ]]; then
+            exit 0
+          fi
+
+          if [[ -z "$PUBLIC_SOURCE_PUSH_TOKEN" ]]; then
+            echo 'PUBLIC_SOURCE_PUSH_TOKEN is required in the release environment' >&2
+            exit 1
+          fi
+
+          git ls-remote \
+            "https://x-access-token:${PUBLIC_SOURCE_PUSH_TOKEN}@github.com/${PUBLIC_SOURCE_REPOSITORY}.git" \
+            HEAD >/dev/null
+
+  arm64-candidate:
+    name: Build and scan ARM64 candidate
+    needs:
+      - backend-regression
+      - frontend-regression
+      - release-credentials
+      - release-metadata
+      - secret-scan
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout release source
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          ref: ${{ needs.release-metadata.outputs.source_commit }}
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@c7c53464625b32c7a7e944ae62b3e17d2b600130 # v3.6.0
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@bb05f3f5519dd87d3ba754cc423b652a5edd6d2c # v4.2.0
+
+      - name: Build candidate image without publishing
+        uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7.3.0
+        with:
+          context: .
+          load: true
+          platforms: linux/arm64
+          provenance: false
+          sbom: false
+          tags: local/public-station:${{ needs.release-metadata.outputs.release_tag }}
+
+      - name: Verify platform, runtime user, healthcheck, and status endpoint
+        run: scripts/release/verify-arm64-image.sh local/public-station:${{ needs.release-metadata.outputs.release_tag }}
+
+      - name: Generate SPDX SBOM for candidate image
+        uses: anchore/sbom-action@006b7ce8314066bdf1765b4500370d40fa6917a3 # v0.24.2
+        with:
+          format: spdx-json
+          image: local/public-station:${{ needs.release-metadata.outputs.release_tag }}
+          output-file: sbom.spdx.json
+          upload-artifact: false
+          upload-release-assets: false
+
+      - name: Scan candidate image for HIGH and CRITICAL vulnerabilities
+        uses: aquasecurity/trivy-action@a9c7b0f06e461e9d4b4d1711f154ee024b8d7ab8 # v0.36.0
+        with:
+          exit-code: '1'
+          format: json
+          ignore-unfixed: 'false'
+          image-ref: local/public-station:${{ needs.release-metadata.outputs.release_tag }}
+          output: trivy-report.json
+          severity: HIGH,CRITICAL
+          vuln-type: os,library
+
+      - name: Upload candidate security evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          if-no-files-found: warn
+          name: candidate-security-${{ needs.release-metadata.outputs.release_tag }}
+          path: |
+            sbom.spdx.json
+            trivy-report.json
+          retention-days: 30
+
+  publish-arm64:
+    name: Publish immutable ARM64 image
+    needs:
+      - arm64-candidate
+      - release-metadata
+    if: needs.release-metadata.outputs.publish == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    permissions:
+      attestations: write
+      contents: read
+      id-token: write
+      packages: write
+    outputs:
+      digest: ${{ steps.build.outputs.digest }}
+
+    steps:
+      - name: Checkout release source
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          ref: ${{ needs.release-metadata.outputs.source_commit }}
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@c7c53464625b32c7a7e944ae62b3e17d2b600130 # v3.6.0
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@bb05f3f5519dd87d3ba754cc423b652a5edd6d2c # v4.2.0
+
+      - name: Log in to GHCR
+        uses: docker/login-action@c99871dec2022cc055c062a10cc1a1310835ceb4 # v4.3.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and publish ARM64 image
+        id: build
+        uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7.3.0
+        with:
+          context: .
+          labels: |
+            org.opencontainers.image.licenses=AGPL-3.0-or-later
+            org.opencontainers.image.revision=${{ needs.release-metadata.outputs.source_commit }}
+            org.opencontainers.image.source=https://github.com/${{ github.repository }}
+            org.opencontainers.image.version=${{ needs.release-metadata.outputs.release_tag }}
+          platforms: linux/arm64
+          provenance: mode=max
+          push: true
+          sbom: true
+          tags: ${{ needs.release-metadata.outputs.image }}:${{ needs.release-metadata.outputs.release_tag }}
+
+      - name: Verify published ARM64 manifest
+        run: |
+          image_reference="${{ needs.release-metadata.outputs.image }}@${{ steps.build.outputs.digest }}"
+          docker buildx imagetools inspect "$image_reference" | tee image-inspect.txt
+          grep -Eq 'Platform:[[:space:]]+linux/arm64' image-inspect.txt
+
+      - name: Write commit-to-digest mapping
+        run: |
+          scripts/release/write-release-manifest.sh \
+            "${{ needs.release-metadata.outputs.release_tag }}" \
+            "${{ needs.release-metadata.outputs.image }}" \
+            "${{ steps.build.outputs.digest }}" \
+            "${{ needs.release-metadata.outputs.source_commit }}" \
+            "$PUBLIC_SOURCE_REPOSITORY" \
+            release-manifest.json
+
+      - name: Upload release mapping
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: release-manifest-${{ needs.release-metadata.outputs.release_tag }}
+          path: |
+            image-inspect.txt
+            release-manifest.json
+          retention-days: 365
+
+  sync-public-source:
+    name: Synchronise public source tag
+    needs:
+      - publish-arm64
+      - release-metadata
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    environment: release
+    env:
+      PUBLIC_SOURCE_PUSH_TOKEN: ${{ secrets.PUBLIC_SOURCE_PUSH_TOKEN }}
+
+    steps:
+      - name: Checkout release source
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          fetch-depth: 0
+          ref: ${{ needs.release-metadata.outputs.source_commit }}
+
+      - name: Push matching main and immutable tag to public source
+        env:
+          RELEASE_TAG: ${{ needs.release-metadata.outputs.release_tag }}
+          SOURCE_COMMIT: ${{ needs.release-metadata.outputs.source_commit }}
+        run: |
+          scripts/release/verify-public-source.sh
+          git fetch origin main --no-tags
+          if [[ "$(git rev-parse origin/main)" != "$SOURCE_COMMIT" ]]; then
+            echo 'private main moved after the release was validated' >&2
+            exit 1
+          fi
+
+          public_remote="https://x-access-token:${PUBLIC_SOURCE_PUSH_TOKEN}@github.com/${PUBLIC_SOURCE_REPOSITORY}.git"
+          git remote add public-release "$public_remote"
+          git fetch public-release main --no-tags
+
+          if ! git merge-base --is-ancestor public-release/main "$SOURCE_COMMIT"; then
+            echo 'public main is not an ancestor of the release commit; refusing a non-fast-forward update' >&2
+            exit 1
+          fi
+
+          public_tag_commit="$(git ls-remote public-release "refs/tags/$RELEASE_TAG^{}" | awk '{print $1}')"
+          if [[ -z "$public_tag_commit" ]]; then
+            public_tag_commit="$(git ls-remote public-release "refs/tags/$RELEASE_TAG" | awk '{print $1}')"
+          fi
+          if [[ -n "$public_tag_commit" ]]; then
+            if [[ "$public_tag_commit" != "$SOURCE_COMMIT" ]]; then
+              echo 'public release tag already exists at a different commit' >&2
+              exit 1
+            fi
+          fi
+
+          git push public-release "$SOURCE_COMMIT:refs/heads/main"
+          if [[ -z "$public_tag_commit" ]]; then
+            git push public-release "refs/tags/$RELEASE_TAG:refs/tags/$RELEASE_TAG"
+          fi
+
+          echo "### Public source synchronised" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Source tag: \`$RELEASE_TAG\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Source commit: \`$SOURCE_COMMIT\`" >> "$GITHUB_STEP_SUMMARY"
