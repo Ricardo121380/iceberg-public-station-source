@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/QuantumNous/new-api/common"
 	"github.com/gin-gonic/gin"
@@ -35,7 +36,12 @@ func SetUpLogger(server *gin.Engine) {
 			param.Latency,
 			param.ClientIP,
 			param.Method,
-			param.Path,
+			accessLogPath(param.Path),
 		)
 	}))
+}
+
+func accessLogPath(rawPath string) string {
+	path, _, _ := strings.Cut(rawPath, "?")
+	return path
 }
