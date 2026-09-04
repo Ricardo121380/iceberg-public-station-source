@@ -1,6 +1,10 @@
 package middleware
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/stretchr/testify/require"
+)
 
 func TestAccessLogPathOmitsQuery(t *testing.T) {
 	tests := map[string]string{
@@ -10,8 +14,6 @@ func TestAccessLogPathOmitsQuery(t *testing.T) {
 	}
 
 	for rawPath, expected := range tests {
-		if actual := accessLogPath(rawPath); actual != expected {
-			t.Fatalf("accessLogPath(%q) = %q, want %q", rawPath, actual, expected)
-		}
+		require.Equal(t, expected, accessLogPath(rawPath))
 	}
 }
