@@ -2,6 +2,11 @@ name: Deploy fixed public-station digest to Oracle
 
 on:
   workflow_dispatch:
+    inputs:
+      image_digest:
+        description: Immutable GHCR digest in sha256:<64 lowercase hex> form
+        required: true
+        type: string
 
 permissions: {}
 
@@ -30,6 +35,10 @@ jobs:
             echo 'oracle deployment key and short-lived package token are required' >&2
             exit 1
           fi
+          if [[ ! "${{ inputs.image_digest }}" =~ ^sha256:[a-f0-9]{64}$ ]]; then
+            echo 'image_digest must be an immutable sha256 digest' >&2
+            exit 1
+          fi
 
       - name: Pull the fixed ARM64 digest through the restricted Oracle command
         env:
@@ -44,7 +53,7 @@ jobs:
           [140.245.126.175]:2222 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMB4kT7xyM30p1HFkYNvApW3TRTTOkt8flf4zlqeUW6k
           EOF
 
-          printf '%s\n%s\n' "$GITHUB_ACTOR" "$GHCR_TOKEN" \
+          printf '%s\n%s\n%s\n' "$GITHUB_ACTOR" "$GHCR_TOKEN" "${{ inputs.image_digest }}" \
             | ssh -T \
                 -p 2222 \
                 -i "$key_path" \
