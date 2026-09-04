@@ -16,7 +16,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
-import { readFileSync } from 'node:fs'
+import { existsSync, readFileSync } from 'node:fs'
 import path from 'node:path'
 
 import { describe, expect, test } from 'vitest'
@@ -57,5 +57,26 @@ describe('static HTML brand shell', () => {
 
     expect(fallback).toContain('冰山公益站')
     expect(fallback).toContain('New API')
+  })
+
+  test('uses the station mark before JavaScript loads', () => {
+    const favicon = document.querySelector<HTMLLinkElement>('link[rel="icon"]')
+    const touchIcon = document.querySelector<HTMLLinkElement>(
+      'link[rel="apple-touch-icon"]'
+    )
+    const faviconHref = favicon?.getAttribute('href')
+    const touchIconHref = touchIcon?.getAttribute('href')
+
+    expect(faviconHref).toBe('/iceberg-station-favicon-v2.png')
+    expect(favicon?.getAttribute('sizes')).toBe('64x64')
+    expect(touchIconHref).toBe('/apple-touch-icon-v2.png')
+    expect(touchIcon?.getAttribute('sizes')).toBe('180x180')
+
+    for (const href of [faviconHref, touchIconHref]) {
+      expect(href).toBeTruthy()
+      expect(
+        existsSync(path.resolve(process.cwd(), 'public', href!.slice(1)))
+      ).toBe(true)
+    }
   })
 })
