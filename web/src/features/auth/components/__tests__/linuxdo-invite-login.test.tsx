@@ -19,7 +19,7 @@ For commercial licensing, please contact support@quantumnous.com
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { describe, expect, test, vi } from 'vitest'
 
-import { LinuxDOInviteLogin } from './linuxdo-invite-login'
+import { LinuxDOInviteLogin } from '../linuxdo-invite-login'
 
 vi.mock('@/components/turnstile', () => ({
   Turnstile: ({ onVerify }: { onVerify: (token: string) => void }) => (
@@ -30,22 +30,33 @@ vi.mock('@/components/turnstile', () => ({
 }))
 
 describe('LinuxDOInviteLogin', () => {
-  test('lets an existing user start LinuxDO without an invitation or human check', async () => {
+  test('shows only direct LinuxDO authorization in sign-in mode', async () => {
     const onStart = vi.fn().mockResolvedValue(true)
-    render(<LinuxDOInviteLogin siteKey='site-key' onStart={onStart} />)
+    render(<LinuxDOInviteLogin mode='sign-in' onStart={onStart} />)
+
+    expect(screen.queryByLabelText('Invitation Code')).not.toBeInTheDocument()
+    expect(
+      screen.queryByRole('button', { name: 'Register with LinuxDO' })
+    ).not.toBeInTheDocument()
 
     const continueButton = screen.getByRole('button', {
       name: 'Continue with LinuxDO',
     })
     expect(continueButton).toBeEnabled()
-
     fireEvent.click(continueButton)
+
     await waitFor(() => expect(onStart).toHaveBeenCalledWith({}))
   })
 
-  test('requires an invitation and completed human check before registration', async () => {
+  test('shows invite verification only in sign-up mode', async () => {
     const onStart = vi.fn().mockResolvedValue(true)
-    render(<LinuxDOInviteLogin siteKey='site-key' onStart={onStart} />)
+    render(
+      <LinuxDOInviteLogin mode='sign-up' siteKey='site-key' onStart={onStart} />
+    )
+
+    expect(
+      screen.queryByRole('button', { name: 'Continue with LinuxDO' })
+    ).not.toBeInTheDocument()
 
     const inviteCode = screen.getByLabelText('Invitation Code')
     const registerButton = screen.getByRole('button', {
@@ -73,7 +84,9 @@ describe('LinuxDOInviteLogin', () => {
 
   test('keeps the invitation code when OAuth state creation does not start', async () => {
     const onStart = vi.fn().mockResolvedValue(false)
-    render(<LinuxDOInviteLogin siteKey='site-key' onStart={onStart} />)
+    render(
+      <LinuxDOInviteLogin mode='sign-up' siteKey='site-key' onStart={onStart} />
+    )
 
     const inviteCode = screen.getByLabelText('Invitation Code')
     fireEvent.change(inviteCode, { target: { value: 'keep-this-code' } })
@@ -88,7 +101,7 @@ describe('LinuxDOInviteLogin', () => {
     expect(inviteCode).toHaveValue('keep-this-code')
   })
 
-  test('prevents a repeated OAuth state submission while one is pending', async () => {
+  test('prevents repeated direct login while OAuth state creation is pending', async () => {
     let resolveStart: (started: boolean) => void = () => undefined
     const onStart = vi.fn(
       () =>
@@ -96,7 +109,7 @@ describe('LinuxDOInviteLogin', () => {
           resolveStart = resolve
         })
     )
-    render(<LinuxDOInviteLogin siteKey='site-key' onStart={onStart} />)
+    render(<LinuxDOInviteLogin mode='sign-in' onStart={onStart} />)
 
     const continueButton = screen.getByRole('button', {
       name: 'Continue with LinuxDO',

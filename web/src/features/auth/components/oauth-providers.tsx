@@ -36,6 +36,7 @@ import { TelegramLoginDialog } from './telegram-login-dialog'
 
 type OAuthProvidersProps = {
   status: SystemStatus | null
+  flow?: 'sign-in' | 'sign-up'
   disabled?: boolean
   className?: string
   onWeChatLogin?: () => void
@@ -53,6 +54,7 @@ type ProviderButton = {
 
 export function OAuthProviders({
   status,
+  flow = 'sign-in',
   disabled = false,
   className,
   onWeChatLogin,
@@ -168,9 +170,10 @@ export function OAuthProviders({
     }
   }
 
-  const linuxDOInviteLogin =
+  const linuxDOFlow =
     registrationInviteRequired && status?.linuxdo_oauth ? (
       <LinuxDOInviteLogin
+        mode={flow}
         siteKey={
           registrationTurnstileRequired ? registrationTurnstileSiteKey : ''
         }
@@ -181,12 +184,12 @@ export function OAuthProviders({
       />
     ) : null
 
-  if (providerButtons.length === 0 && !linuxDOInviteLogin) return null
+  if (providerButtons.length === 0 && !linuxDOFlow) return null
 
   return (
     <>
       <div className={cn('space-y-3', className)}>
-        {linuxDOInviteLogin}
+        {linuxDOFlow}
 
         {providerButtons.length > 0 && (
           <>

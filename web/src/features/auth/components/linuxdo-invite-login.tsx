@@ -27,7 +27,8 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 
 type LinuxDOInviteLoginProps = {
-  siteKey: string
+  mode?: 'sign-in' | 'sign-up'
+  siteKey?: string
   action?: string
   disabled?: boolean
   loading?: boolean
@@ -38,7 +39,8 @@ type LinuxDOInviteLoginProps = {
 }
 
 export function LinuxDOInviteLogin({
-  siteKey,
+  mode = 'sign-in',
+  siteKey = '',
   action,
   disabled = false,
   loading = false,
@@ -114,23 +116,8 @@ export function LinuxDOInviteLogin({
     void handleRegistration()
   }
 
-  return (
-    <div
-      className='space-y-3'
-      role='group'
-      aria-labelledby='linuxdo-login-title'
-    >
-      <div className='space-y-1'>
-        <p id='linuxdo-login-title' className='text-sm font-medium'>
-          {t('Continue with LinuxDO')}
-        </p>
-        <p className='text-muted-foreground text-xs'>
-          {t(
-            'Existing users can sign in directly. An invitation code is only required for first-time registration.'
-          )}
-        </p>
-      </div>
-
+  if (mode === 'sign-in') {
+    return (
       <Button
         type='button'
         disabled={blocked}
@@ -144,8 +131,19 @@ export function LinuxDOInviteLogin({
         )}
         {t('Continue with LinuxDO')}
       </Button>
+    )
+  }
 
-      <div className='border-border border-t pt-3'>
+  return (
+    <div
+      className='space-y-3'
+      role='group'
+      aria-labelledby='linuxdo-registration-title'
+    >
+      <div className='space-y-1'>
+        <p id='linuxdo-registration-title' className='text-sm font-medium'>
+          {t('Register with LinuxDO')}
+        </p>
         <p className='text-muted-foreground text-xs'>
           {t('First time here? Register with an invitation code.')}
         </p>
