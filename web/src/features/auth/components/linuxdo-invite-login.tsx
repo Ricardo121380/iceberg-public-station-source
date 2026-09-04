@@ -32,8 +32,8 @@ type LinuxDOInviteLoginProps = {
   disabled?: boolean
   loading?: boolean
   onStart: (input: {
-    inviteCode: string
-    turnstileToken: string
+    inviteCode?: string
+    turnstileToken?: string
   }) => Promise<boolean>
 }
 
@@ -53,7 +53,7 @@ export function LinuxDOInviteLogin({
   const [widgetFailed, setWidgetFailed] = useState(false)
 
   const blocked = disabled || loading || isSubmitting
-  const canStart = Boolean(
+  const canRegister = Boolean(
     !blocked && siteKey && inviteCode.trim() && turnstileToken
   )
 
@@ -63,7 +63,19 @@ export function LinuxDOInviteLogin({
     setWidgetKey((current) => current + 1)
   }
 
-  const handleStart = async () => {
+  const handleDirectLogin = async () => {
+    if (blocked) return
+
+    setMessage('')
+    setIsSubmitting(true)
+    try {
+      await onStart({})
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  const handleRegistration = async () => {
     if (blocked) return
 
     const trimmedInviteCode = inviteCode.trim()
@@ -99,7 +111,7 @@ export function LinuxDOInviteLogin({
   const handleInviteKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key !== 'Enter') return
     event.preventDefault()
-    void handleStart()
+    void handleRegistration()
   }
 
   return (
@@ -114,8 +126,28 @@ export function LinuxDOInviteLogin({
         </p>
         <p className='text-muted-foreground text-xs'>
           {t(
-            'Every LinuxDO sign-in requires an invitation code. Existing accounts are reused without consuming it.'
+            'Existing users can sign in directly. An invitation code is only required for first-time registration.'
           )}
+        </p>
+      </div>
+
+      <Button
+        type='button'
+        disabled={blocked}
+        onClick={() => void handleDirectLogin()}
+        className='h-11 w-full justify-center gap-2 rounded-lg'
+      >
+        {isSubmitting || loading ? (
+          <Loader2 className='h-4 w-4 animate-spin' />
+        ) : (
+          <IconLinuxDo className='h-4 w-4' aria-hidden='true' />
+        )}
+        {t('Continue with LinuxDO')}
+      </Button>
+
+      <div className='border-border border-t pt-3'>
+        <p className='text-muted-foreground text-xs'>
+          {t('First time here? Register with an invitation code.')}
         </p>
       </div>
 
@@ -137,7 +169,7 @@ export function LinuxDOInviteLogin({
         />
         <p id='linuxdo-invite-description' className='sr-only'>
           {t(
-            'Every LinuxDO sign-in requires an invitation code. Existing accounts are reused without consuming it.'
+            'Existing users can sign in directly. An invitation code is only required for first-time registration.'
           )}
         </p>
       </div>
@@ -193,8 +225,9 @@ export function LinuxDOInviteLogin({
 
       <Button
         type='button'
-        disabled={!canStart}
-        onClick={() => void handleStart()}
+        variant='outline'
+        disabled={!canRegister}
+        onClick={() => void handleRegistration()}
         className='h-11 w-full justify-center gap-2 rounded-lg'
       >
         {isSubmitting || loading ? (
@@ -202,7 +235,7 @@ export function LinuxDOInviteLogin({
         ) : (
           <IconLinuxDo className='h-4 w-4' aria-hidden='true' />
         )}
-        {t('Continue with LinuxDO')}
+        {t('Register with LinuxDO')}
       </Button>
     </div>
   )

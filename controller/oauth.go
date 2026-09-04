@@ -129,32 +129,30 @@ func GenerateOAuthCode(c *gin.Context) {
 			common.ApiErrorI18n(c, i18n.MsgInvalidParams)
 			return
 		}
-		if strings.TrimSpace(request.TurnstileToken) == "" {
-			writeOAuthTurnstileVerificationUnavailable(c)
-			return
-		}
-		if err := verifyOAuthTurnstile(c.Request.Context(), service.TurnstileValidationRequest{
-			Token:    request.TurnstileToken,
-			RemoteIP: c.ClientIP(),
-		}); err != nil {
-			writeOAuthTurnstileVerificationUnavailable(c)
-			return
-		}
-		if request.InviteCode == "" {
-			writeOAuthInviteRegistrationUnavailable(c)
-			return
-		}
-		inviteID, resolveErr := resolveOAuthRegistrationInvite(request.InviteCode)
-		if resolveErr != nil {
-			var inviteError *OAuthInviteRegistrationError
-			if errors.As(resolveErr, &inviteError) {
-				writeOAuthInviteRegistrationUnavailable(c)
+		if request.InviteCode != "" {
+			if strings.TrimSpace(request.TurnstileToken) == "" {
+				writeOAuthTurnstileVerificationUnavailable(c)
 				return
 			}
-			common.ApiError(c, resolveErr)
-			return
+			if err := verifyOAuthTurnstile(c.Request.Context(), service.TurnstileValidationRequest{
+				Token:    request.TurnstileToken,
+				RemoteIP: c.ClientIP(),
+			}); err != nil {
+				writeOAuthTurnstileVerificationUnavailable(c)
+				return
+			}
+			inviteID, resolveErr := resolveOAuthRegistrationInvite(request.InviteCode)
+			if resolveErr != nil {
+				var inviteError *OAuthInviteRegistrationError
+				if errors.As(resolveErr, &inviteError) {
+					writeOAuthInviteRegistrationUnavailable(c)
+					return
+				}
+				common.ApiError(c, resolveErr)
+				return
+			}
+			registrationInviteID = inviteID
 		}
-		registrationInviteID = inviteID
 	}
 	userID := 0
 	sessionID := ""
@@ -419,10 +417,6 @@ func handleOAuthBind(c *gin.Context, provider oauth.Provider, pendingFlow *model
 
 // findOrCreateOAuthUser finds an existing user by provider ID or creates a new user.
 func findOrCreateOAuthUser(providerName string, provider oauth.Provider, oauthUser *oauth.OAuthUser, affiliateCode string, registrationInviteID int) (*model.User, error) {
-	if common.RegistrationInviteRequired && providerName == linuxDOOAuthProviderName && registrationInviteID <= 0 {
-		return nil, &OAuthInviteRegistrationError{}
-	}
-
 	user := &model.User{}
 
 	// Check if user already exists with new ID

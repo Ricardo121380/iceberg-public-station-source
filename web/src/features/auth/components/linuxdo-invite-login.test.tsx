@@ -30,23 +30,36 @@ vi.mock('@/components/turnstile', () => ({
 }))
 
 describe('LinuxDOInviteLogin', () => {
-  test('requires an invitation and completed human check before starting LinuxDO', async () => {
+  test('lets an existing user start LinuxDO without an invitation or human check', async () => {
+    const onStart = vi.fn().mockResolvedValue(true)
+    render(<LinuxDOInviteLogin siteKey='site-key' onStart={onStart} />)
+
+    const continueButton = screen.getByRole('button', {
+      name: 'Continue with LinuxDO',
+    })
+    expect(continueButton).toBeEnabled()
+
+    fireEvent.click(continueButton)
+    await waitFor(() => expect(onStart).toHaveBeenCalledWith({}))
+  })
+
+  test('requires an invitation and completed human check before registration', async () => {
     const onStart = vi.fn().mockResolvedValue(true)
     render(<LinuxDOInviteLogin siteKey='site-key' onStart={onStart} />)
 
     const inviteCode = screen.getByLabelText('Invitation Code')
-    const continueButton = screen.getByRole('button', {
-      name: 'Continue with LinuxDO',
+    const registerButton = screen.getByRole('button', {
+      name: 'Register with LinuxDO',
     })
 
-    expect(continueButton).toBeDisabled()
+    expect(registerButton).toBeDisabled()
     fireEvent.change(inviteCode, { target: { value: ' invite-code ' } })
-    expect(continueButton).toBeDisabled()
+    expect(registerButton).toBeDisabled()
 
     fireEvent.click(
       screen.getByRole('button', { name: 'Complete human check' })
     )
-    await waitFor(() => expect(continueButton).toBeEnabled())
+    await waitFor(() => expect(registerButton).toBeEnabled())
 
     fireEvent.keyDown(inviteCode, { key: 'Enter' })
     await waitFor(() =>
@@ -68,7 +81,7 @@ describe('LinuxDOInviteLogin', () => {
       screen.getByRole('button', { name: 'Complete human check' })
     )
     fireEvent.click(
-      screen.getByRole('button', { name: 'Continue with LinuxDO' })
+      screen.getByRole('button', { name: 'Register with LinuxDO' })
     )
 
     await waitFor(() => expect(onStart).toHaveBeenCalledTimes(1))
@@ -85,13 +98,6 @@ describe('LinuxDOInviteLogin', () => {
     )
     render(<LinuxDOInviteLogin siteKey='site-key' onStart={onStart} />)
 
-    fireEvent.change(screen.getByLabelText('Invitation Code'), {
-      target: { value: 'invite-code' },
-    })
-    fireEvent.click(
-      screen.getByRole('button', { name: 'Complete human check' })
-    )
-
     const continueButton = screen.getByRole('button', {
       name: 'Continue with LinuxDO',
     })
@@ -100,6 +106,6 @@ describe('LinuxDOInviteLogin', () => {
 
     expect(onStart).toHaveBeenCalledTimes(1)
     resolveStart(true)
-    await waitFor(() => expect(continueButton).toBeDisabled())
+    await waitFor(() => expect(continueButton).toBeEnabled())
   })
 })

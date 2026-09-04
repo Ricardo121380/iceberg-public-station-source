@@ -158,7 +158,7 @@ export function useOAuthLogin(
     )
     const inviteCode = options.inviteCode?.trim()
     const turnstileToken = options.turnstileToken
-    if (registrationInviteRequired && (!inviteCode || !turnstileToken)) {
+    if (registrationInviteRequired && inviteCode && !turnstileToken) {
       return false
     }
 
@@ -168,7 +168,9 @@ export function useOAuthLogin(
       const state = await createOAuthFlow(
         'linuxdo',
         'login',
-        registrationInviteRequired ? { inviteCode, turnstileToken } : undefined
+        registrationInviteRequired && inviteCode
+          ? { inviteCode, turnstileToken }
+          : undefined
       )
 
       const url = buildLinuxDOOAuthUrl(status.linuxdo_client_id, state)

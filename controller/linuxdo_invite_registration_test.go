@@ -187,7 +187,11 @@ func createLinuxDOOAuthState(t *testing.T, environment linuxDOInviteTestEnvironm
 }
 
 func requestLinuxDOOAuthState(t *testing.T, environment linuxDOInviteTestEnvironment, inviteCode string) *httptest.ResponseRecorder {
-	return requestLinuxDOOAuthStateWithTurnstileToken(t, environment, inviteCode, linuxDOInviteRegistrationTestTurnstileToken)
+	turnstileToken := ""
+	if inviteCode != "" {
+		turnstileToken = linuxDOInviteRegistrationTestTurnstileToken
+	}
+	return requestLinuxDOOAuthStateWithTurnstileToken(t, environment, inviteCode, turnstileToken)
 }
 
 func requestLinuxDOOAuthStateWithTurnstileToken(t *testing.T, environment linuxDOInviteTestEnvironment, inviteCode string, turnstileToken string) *httptest.ResponseRecorder {
@@ -309,9 +313,10 @@ func TestLinuxDOInviteOAuthRequiresTurnstileBeforeStateCreation(t *testing.T) {
 
 	t.Run("failed challenge does not validate the invitation or create a state", func(t *testing.T) {
 		environment := setupLinuxDOInviteRegistrationTest(t)
+		invite := createLinuxDOInviteRegistrationTestInvite(t)
 		environment.turnstile.err = service.ErrTurnstileVerificationUnavailable
 
-		response := requestLinuxDOOAuthStateWithTurnstileToken(t, environment, "", linuxDOInviteRegistrationTestTurnstileToken)
+		response := requestLinuxDOOAuthStateWithTurnstileToken(t, environment, invite.Code, linuxDOInviteRegistrationTestTurnstileToken)
 		require.Equal(t, http.StatusOK, response.Code)
 		success, message := decodeOAuthCallbackResponse(t, response)
 		assert.False(t, success)
@@ -369,17 +374,18 @@ func TestLinuxDOInviteStatusAdvertisesRegistrationTurnstileConfig(t *testing.T) 
 }
 
 func TestLinuxDOInviteOAuthRejectsUnavailableInvitesWithoutCreatingUsers(t *testing.T) {
-	t.Run("missing invitation", func(t *testing.T) {
+	t.Run("missing invitation cannot register a new user", func(t *testing.T) {
 		environment := setupLinuxDOInviteRegistrationTest(t)
-		response := requestLinuxDOOAuthState(t, environment, "")
+		state := createLinuxDOOAuthState(t, environment, "")
+		response := executeLinuxDOOAuthCallback(t, environment, state, linuxDOOAuthUser("missing-invite", 1))
 		require.Equal(t, http.StatusOK, response.Code)
 		success, message := decodeOAuthCallbackResponse(t, response)
 		assert.False(t, success)
 		assert.Equal(t, i18n.Translate(i18n.DefaultLang, i18n.MsgOAuthRegistrationUnavailable), message)
 		assertLinuxDOInviteRegistrationUserCount(t, environment.database, 0)
-		var flowCount int64
-		require.NoError(t, environment.database.Model(&model.AuthFlow{}).Count(&flowCount).Error)
-		assert.Zero(t, flowCount)
+		assert.Empty(t, environment.turnstile.requests)
+		_, err := model.GetAuthFlow(state, model.AuthFlowMatch{Purpose: model.AuthFlowPurposeOAuth})
+		assert.ErrorIs(t, err, model.ErrAuthFlowConsumed)
 	})
 
 	tests := []struct {
@@ -429,7 +435,7 @@ func TestLinuxDOInviteOAuthRejectsUnavailableInvitesWithoutCreatingUsers(t *test
 	}
 }
 
-func TestLinuxDOExistingUserRequiresInvitationButDoesNotConsumeIt(t *testing.T) {
+func TestLinuxDOExistingUserSignsInWithoutInvitationOrTurnstile(t *testing.T) {
 	environment := setupLinuxDOInviteRegistrationTest(t)
 	existing := &model.User{
 		Username:    "linuxdo-existing",
@@ -445,19 +451,14 @@ func TestLinuxDOExistingUserRequiresInvitationButDoesNotConsumeIt(t *testing.T) 
 	require.NoError(t, environment.database.Create(existing).Error)
 	invite := createLinuxDOInviteRegistrationTestInvite(t)
 
-	missingInviteResponse := requestLinuxDOOAuthState(t, environment, "")
-	require.Equal(t, http.StatusOK, missingInviteResponse.Code)
-	success, message := decodeOAuthCallbackResponse(t, missingInviteResponse)
-	assert.False(t, success)
-	assert.Equal(t, i18n.Translate(i18n.DefaultLang, i18n.MsgOAuthRegistrationUnavailable), message)
-
-	state := createLinuxDOOAuthState(t, environment, invite.Code)
+	state := createLinuxDOOAuthState(t, environment, "")
 
 	response := executeLinuxDOOAuthCallback(t, environment, state, linuxDOOAuthUser(existing.LinuxDOId, 0))
 	require.Equal(t, http.StatusOK, response.Code)
-	success, message = decodeOAuthCallbackResponse(t, response)
+	success, message := decodeOAuthCallbackResponse(t, response)
 	assert.True(t, success, message)
 	assertLinuxDOInviteRegistrationUserCount(t, environment.database, 1)
+	assert.Empty(t, environment.turnstile.requests)
 
 	var storedInvite model.RegistrationInvite
 	require.NoError(t, environment.database.First(&storedInvite, invite.Id).Error)
@@ -483,41 +484,6 @@ func TestLinuxDOInviteRegistrationRequiresTL1(t *testing.T) {
 }
 
 func TestLinuxDOInviteOAuthRejectsTamperedExpiredAndReplayedState(t *testing.T) {
-	t.Run("state without invitation cannot sign in existing user", func(t *testing.T) {
-		environment := setupLinuxDOInviteRegistrationTest(t)
-		existing := &model.User{
-			Username:    "linuxdo-existing-state",
-			Password:    "password-placeholder",
-			DisplayName: "Existing LinuxDO user",
-			Role:        common.RoleCommonUser,
-			Status:      common.UserStatusEnabled,
-			Group:       publicRegistrationDefaultGroup,
-			LinuxDOId:   "existing-state-linuxdo-id",
-			AffCode:     "linuxdo-existing-state-aff",
-			AuthVersion: 1,
-		}
-		require.NoError(t, environment.database.Create(existing).Error)
-		invite := createLinuxDOInviteRegistrationTestInvite(t)
-		state := createLinuxDOOAuthState(t, environment, invite.Code)
-		flow, err := model.GetAuthFlow(state, model.AuthFlowMatch{Purpose: model.AuthFlowPurposeOAuth})
-		require.NoError(t, err)
-		require.NoError(t, environment.database.Model(&model.AuthFlow{}).Where("id = ?", flow.Id).Update("payload", `{}`).Error)
-
-		response := executeLinuxDOOAuthCallback(t, environment, state, linuxDOOAuthUser(existing.LinuxDOId, 0))
-		require.Equal(t, http.StatusOK, response.Code)
-		success, message := decodeOAuthCallbackResponse(t, response)
-		assert.False(t, success)
-		assert.Equal(t, i18n.Translate(i18n.DefaultLang, i18n.MsgOAuthRegistrationUnavailable), message)
-		assertLinuxDOInviteRegistrationUserCount(t, environment.database, 1)
-		_, err = model.GetAuthFlow(state, model.AuthFlowMatch{Purpose: model.AuthFlowPurposeOAuth})
-		assert.ErrorIs(t, err, model.ErrAuthFlowConsumed)
-
-		var storedInvite model.RegistrationInvite
-		require.NoError(t, environment.database.First(&storedInvite, invite.Id).Error)
-		assert.Nil(t, storedInvite.UsedAt)
-		assert.Nil(t, storedInvite.UsedBy)
-	})
-
 	t.Run("tampered state", func(t *testing.T) {
 		environment := setupLinuxDOInviteRegistrationTest(t)
 		invite := createLinuxDOInviteRegistrationTestInvite(t)
