@@ -22,6 +22,10 @@ import path from 'node:path'
 import { describe, expect, test } from 'vitest'
 
 const shell = readFileSync(path.resolve(process.cwd(), 'index.html'), 'utf8')
+const rsbuildConfig = readFileSync(
+  path.resolve(process.cwd(), 'rsbuild.config.ts'),
+  'utf8'
+)
 const document = new DOMParser().parseFromString(shell, 'text/html')
 
 describe('static HTML brand shell', () => {
@@ -64,15 +68,16 @@ describe('static HTML brand shell', () => {
     const touchIcon = document.querySelector<HTMLLinkElement>(
       'link[rel="apple-touch-icon"]'
     )
-    const faviconHref = favicon?.getAttribute('href')
     const touchIconHref = touchIcon?.getAttribute('href')
 
-    expect(faviconHref).toBe('/iceberg-station-favicon-v2.png')
-    expect(favicon?.getAttribute('sizes')).toBe('64x64')
+    expect(favicon).toBeNull()
+    expect(rsbuildConfig).toContain(
+      "favicon: './public/iceberg-station-favicon-v2.png'"
+    )
     expect(touchIconHref).toBe('/apple-touch-icon-v2.png')
     expect(touchIcon?.getAttribute('sizes')).toBe('180x180')
 
-    for (const href of [faviconHref, touchIconHref]) {
+    for (const href of ['/iceberg-station-favicon-v2.png', touchIconHref]) {
       expect(href).toBeTruthy()
       expect(
         existsSync(path.resolve(process.cwd(), 'public', href!.slice(1)))

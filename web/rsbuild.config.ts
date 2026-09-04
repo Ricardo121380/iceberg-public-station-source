@@ -64,6 +64,7 @@ export default defineConfig(({ envMode }) => {
     },
     html: {
       template: './index.html',
+      favicon: './public/iceberg-station-favicon-v2.png',
     },
     server: {
       host: '0.0.0.0',
