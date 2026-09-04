@@ -16,7 +16,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
-import { api } from '@/lib/api'
+import { api, type ApiRequestConfig } from '@/lib/api'
 
 import {
   REGISTRATION_INVITE_STATUS_VALUES,
@@ -29,7 +29,8 @@ import {
 } from './types'
 
 export async function getRegistrationInvites(
-  params: RegistrationInviteListParams = {}
+  params: RegistrationInviteListParams = {},
+  requestConfig: ApiRequestConfig = {}
 ): Promise<ApiResponse<RegistrationInviteListData>> {
   const search = new URLSearchParams()
 
@@ -47,7 +48,10 @@ export async function getRegistrationInvites(
   if (params.note) search.set('note', params.note)
 
   const suffix = search.size > 0 ? `?${search.toString()}` : ''
-  const response = await api.get(`/api/registration-invites${suffix}`)
+  const response = await api.get(
+    `/api/registration-invites${suffix}`,
+    requestConfig
+  )
   return response.data
 }
 
@@ -70,11 +74,14 @@ export async function getRegistrationInviteStats(): Promise<
 > {
   const responses = await Promise.all(
     REGISTRATION_INVITE_STATUS_VALUES.map(async (status) => {
-      const response = await getRegistrationInvites({
-        p: 1,
-        page_size: 1,
-        status,
-      })
+      const response = await getRegistrationInvites(
+        {
+          p: 1,
+          page_size: 1,
+          status,
+        },
+        { skipBusinessError: true }
+      )
       return { response, status }
     })
   )

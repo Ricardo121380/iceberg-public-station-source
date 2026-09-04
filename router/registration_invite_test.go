@@ -184,6 +184,17 @@ func TestRegistrationInviteCreateEnforcesBoundsAndKeepsRawCodesOneTime(t *testin
 
 func TestRegistrationInviteListRejectsUnknownStatusAndInvalidPageSize(t *testing.T) {
 	environment := setupRegistrationInviteRouterTest(t)
+	minimumPageSize := performRegistrationInviteRequest(
+		t,
+		environment.router,
+		http.MethodGet,
+		"/api/registration-invites?p=1&page_size=1&status=active",
+		environment.rootToken,
+		"",
+	)
+	require.Equal(t, http.StatusOK, minimumPageSize.Code)
+	assert.Contains(t, minimumPageSize.Body.String(), `"success":true`)
+
 	for _, path := range []string{
 		"/api/registration-invites?status=unknown",
 		"/api/registration-invites?page_size=101",

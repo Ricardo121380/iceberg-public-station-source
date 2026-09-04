@@ -184,7 +184,7 @@ func registrationInviteListRequest(c *gin.Context) (service.RegistrationInviteLi
 		return service.RegistrationInviteListFilters{}, 0, 0, false
 	}
 	maxInt := int(^uint(0) >> 1)
-	if page > maxInt/pageSize+1 {
+	if page-1 > maxInt/pageSize {
 		return service.RegistrationInviteListFilters{}, 0, 0, false
 	}
 
