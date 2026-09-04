@@ -132,6 +132,12 @@ func InitEnv() {
 	CriticalRateLimitEnable = GetEnvOrDefaultBool("CRITICAL_RATE_LIMIT_ENABLE", true)
 	CriticalRateLimitNum = GetEnvOrDefault("CRITICAL_RATE_LIMIT", 20)
 	CriticalRateLimitDuration = int64(GetEnvOrDefault("CRITICAL_RATE_LIMIT_DURATION", 20*60))
+	AuthSessionRateLimitNum = GetEnvOrDefault("AUTH_SESSION_RATE_LIMIT", 60)
+	AuthSessionRateLimitDuration = int64(GetEnvOrDefault("AUTH_SESSION_RATE_LIMIT_DURATION", 10*60))
+	OAuthStateRateLimitNum = GetEnvOrDefault("OAUTH_STATE_RATE_LIMIT", 10)
+	OAuthStateRateLimitDuration = int64(GetEnvOrDefault("OAUTH_STATE_RATE_LIMIT_DURATION", 10*60))
+	OAuthCallbackRateLimitNum = GetEnvOrDefault("OAUTH_CALLBACK_RATE_LIMIT", 10)
+	OAuthCallbackRateLimitDuration = int64(GetEnvOrDefault("OAUTH_CALLBACK_RATE_LIMIT_DURATION", 10*60))
 
 	SearchRateLimitEnable = GetEnvOrDefaultBool("SEARCH_RATE_LIMIT_ENABLE", true)
 	SearchRateLimitNum = GetEnvOrDefault("SEARCH_RATE_LIMIT", 10)

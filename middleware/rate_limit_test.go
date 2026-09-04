@@ -93,6 +93,64 @@ func TestRedisUserRateLimiterUsesSharedFixedWindow(t *testing.T) {
 	assert.Equal(t, 23*time.Second, redisServer.TTL(key))
 }
 
+func TestAuthenticationRateLimitersUseSeparateFixedWindows(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	_, _ = useRateLimitMiniRedis(t)
+
+	previousCriticalEnabled := common.CriticalRateLimitEnable
+	previousCriticalNum := common.CriticalRateLimitNum
+	previousCriticalDuration := common.CriticalRateLimitDuration
+	previousAuthSessionNum := common.AuthSessionRateLimitNum
+	previousAuthSessionDuration := common.AuthSessionRateLimitDuration
+	previousOAuthStateNum := common.OAuthStateRateLimitNum
+	previousOAuthStateDuration := common.OAuthStateRateLimitDuration
+	previousOAuthCallbackNum := common.OAuthCallbackRateLimitNum
+	previousOAuthCallbackDuration := common.OAuthCallbackRateLimitDuration
+	common.CriticalRateLimitEnable = true
+	common.CriticalRateLimitNum = 1
+	common.CriticalRateLimitDuration = 31
+	common.AuthSessionRateLimitNum = 2
+	common.AuthSessionRateLimitDuration = 32
+	common.OAuthStateRateLimitNum = 1
+	common.OAuthStateRateLimitDuration = 33
+	common.OAuthCallbackRateLimitNum = 1
+	common.OAuthCallbackRateLimitDuration = 34
+	t.Cleanup(func() {
+		common.CriticalRateLimitEnable = previousCriticalEnabled
+		common.CriticalRateLimitNum = previousCriticalNum
+		common.CriticalRateLimitDuration = previousCriticalDuration
+		common.AuthSessionRateLimitNum = previousAuthSessionNum
+		common.AuthSessionRateLimitDuration = previousAuthSessionDuration
+		common.OAuthStateRateLimitNum = previousOAuthStateNum
+		common.OAuthStateRateLimitDuration = previousOAuthStateDuration
+		common.OAuthCallbackRateLimitNum = previousOAuthCallbackNum
+		common.OAuthCallbackRateLimitDuration = previousOAuthCallbackDuration
+	})
+
+	router := gin.New()
+	require.NoError(t, router.SetTrustedProxies(nil))
+	router.GET("/critical", CriticalRateLimit(), func(c *gin.Context) { c.Status(http.StatusNoContent) })
+	router.GET("/refresh", AuthSessionRateLimit(), func(c *gin.Context) { c.Status(http.StatusNoContent) })
+	router.GET("/logout", AuthSessionRateLimit(), func(c *gin.Context) { c.Status(http.StatusNoContent) })
+	router.GET("/oauth-state", OAuthStateRateLimit(), func(c *gin.Context) { c.Status(http.StatusNoContent) })
+	router.GET("/oauth-callback", OAuthCallbackRateLimit(), func(c *gin.Context) { c.Status(http.StatusNoContent) })
+
+	remoteAddr := "192.0.2.70:12345"
+	assert.Equal(t, http.StatusNoContent, performRateLimitRequest(router, "/critical", remoteAddr).Code)
+	assert.Equal(t, http.StatusTooManyRequests, performRateLimitRequest(router, "/critical", remoteAddr).Code)
+	assert.Equal(t, http.StatusNoContent, performRateLimitRequest(router, "/refresh", remoteAddr).Code)
+	assert.Equal(t, http.StatusNoContent, performRateLimitRequest(router, "/logout", remoteAddr).Code)
+	assert.Equal(t, http.StatusTooManyRequests, performRateLimitRequest(router, "/refresh", remoteAddr).Code)
+	assert.Equal(t, http.StatusNoContent, performRateLimitRequest(router, "/oauth-state", remoteAddr).Code)
+	stateLimited := performRateLimitRequest(router, "/oauth-state", remoteAddr)
+	assert.Equal(t, http.StatusTooManyRequests, stateLimited.Code)
+	assert.Equal(t, "33", stateLimited.Header().Get("Retry-After"))
+	assert.Equal(t, http.StatusNoContent, performRateLimitRequest(router, "/oauth-callback", remoteAddr).Code)
+	callbackLimited := performRateLimitRequest(router, "/oauth-callback", remoteAddr)
+	assert.Equal(t, http.StatusTooManyRequests, callbackLimited.Code)
+	assert.Equal(t, "34", callbackLimited.Header().Get("Retry-After"))
+}
+
 func TestRedisEmailVerificationRateLimiterPreservesResponseAndTTL(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	redisServer, _ := useRateLimitMiniRedis(t)

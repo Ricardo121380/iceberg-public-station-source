@@ -16,11 +16,13 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
+import axios from 'axios'
 import { useState, useRef, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 
 import { clearAuthentication, isAuthBundle } from '@/lib/api'
+import { useAuthStore } from '@/stores/auth-store'
 
 import { createOAuthFlow, logout, telegramLogin } from '../api'
 import {
@@ -30,7 +32,11 @@ import {
   buildLinuxDOOAuthUrl,
 } from '../lib/oauth'
 import { pickTelegramAuthorization } from '../lib/telegram-login'
-import type { SystemStatus, CustomOAuthProviderInfo } from '../types'
+import type {
+  SystemStatus,
+  CustomOAuthProviderInfo,
+  OAuthStartResult,
+} from '../types'
 import { useAuthRedirect } from './use-auth-redirect'
 
 type LinuxDOLoginOptions = {
@@ -65,6 +71,16 @@ export function useOAuthLogin(
   }, [t])
 
   const resetSession = async () => {
+    const auth = useAuthStore.getState().auth
+    if (
+      auth.bootstrapState === 'complete' &&
+      !auth.session &&
+      !auth.accessToken
+    ) {
+      clearAuthentication()
+      return
+    }
+
     const response = await logout()
     if (!response.success) {
       throw new Error(response.message || t('Failed to sign out session'))
@@ -149,8 +165,10 @@ export function useOAuthLogin(
 
   const handleLinuxDOLogin = async (
     options: LinuxDOLoginOptions = {}
-  ): Promise<boolean> => {
-    if (!status?.linuxdo_client_id) return false
+  ): Promise<OAuthStartResult> => {
+    if (!status?.linuxdo_client_id) {
+      return { started: false, preserveVerification: true }
+    }
 
     const registrationInviteRequired = Boolean(
       status.registration_invite_required ??
@@ -159,7 +177,7 @@ export function useOAuthLogin(
     const inviteCode = options.inviteCode?.trim()
     const turnstileToken = options.turnstileToken
     if (registrationInviteRequired && inviteCode && !turnstileToken) {
-      return false
+      return { started: false, preserveVerification: true }
     }
 
     setIsLoading(true)
@@ -175,10 +193,27 @@ export function useOAuthLogin(
 
       const url = buildLinuxDOOAuthUrl(status.linuxdo_client_id, state)
       window.open(url, '_self')
-      return true
-    } catch {
+      return { started: true, preserveVerification: false }
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error) && error.response?.status === 429) {
+        const retryAfter = Number.parseInt(
+          String(error.response.headers?.['retry-after'] ?? ''),
+          10
+        )
+        if (Number.isFinite(retryAfter) && retryAfter > 0) {
+          toast.error(
+            t('Too many requests. Please try again in {{seconds}} seconds.', {
+              seconds: retryAfter,
+            })
+          )
+        } else {
+          toast.error(t('Too many requests'))
+        }
+        return { started: false, preserveVerification: true }
+      }
+
       toast.error(t('Failed to start LinuxDO login'))
-      return false
+      return { started: false, preserveVerification: false }
     } finally {
       setIsLoading(false)
     }

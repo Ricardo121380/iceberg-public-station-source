@@ -86,6 +86,11 @@ export interface ApiResponse<T = unknown> {
   data?: T
 }
 
+export type OAuthStartResult = {
+  started: boolean
+  preserveVerification: boolean
+}
+
 // ============================================================================
 // System Status
 // ============================================================================

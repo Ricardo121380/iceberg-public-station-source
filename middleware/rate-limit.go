@@ -178,6 +178,27 @@ func CriticalRateLimit() func(c *gin.Context) {
 	return defNext
 }
 
+func AuthSessionRateLimit() func(c *gin.Context) {
+	if common.CriticalRateLimitEnable {
+		return rateLimitFactory(common.AuthSessionRateLimitNum, common.AuthSessionRateLimitDuration, "AUTH_SESSION")
+	}
+	return defNext
+}
+
+func OAuthStateRateLimit() func(c *gin.Context) {
+	if common.CriticalRateLimitEnable {
+		return rateLimitFactory(common.OAuthStateRateLimitNum, common.OAuthStateRateLimitDuration, "OAUTH_STATE")
+	}
+	return defNext
+}
+
+func OAuthCallbackRateLimit() func(c *gin.Context) {
+	if common.CriticalRateLimitEnable {
+		return rateLimitFactory(common.OAuthCallbackRateLimitNum, common.OAuthCallbackRateLimitDuration, "OAUTH_CALLBACK")
+	}
+	return defNext
+}
+
 func UserCriticalRateLimit(scope string) func(c *gin.Context) {
 	if !common.CriticalRateLimitEnable {
 		return defNext

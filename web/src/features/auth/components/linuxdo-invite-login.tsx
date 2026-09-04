@@ -26,6 +26,8 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 
+import type { OAuthStartResult } from '../types'
+
 type LinuxDOInviteLoginProps = {
   mode?: 'sign-in' | 'sign-up'
   siteKey?: string
@@ -35,7 +37,7 @@ type LinuxDOInviteLoginProps = {
   onStart: (input: {
     inviteCode?: string
     turnstileToken?: string
-  }) => Promise<boolean>
+  }) => Promise<OAuthStartResult>
 }
 
 export function LinuxDOInviteLogin({
@@ -97,14 +99,17 @@ export function LinuxDOInviteLogin({
     const submittedToken = turnstileToken
     setMessage('')
     setIsSubmitting(true)
-    resetWidget()
 
     try {
-      const started = await onStart({
+      const result = await onStart({
         inviteCode: trimmedInviteCode,
         turnstileToken: submittedToken,
       })
-      if (started) setInviteCode('')
+      if (result.started) {
+        setInviteCode('')
+      } else if (!result.preserveVerification) {
+        resetWidget()
+      }
     } finally {
       setIsSubmitting(false)
     }

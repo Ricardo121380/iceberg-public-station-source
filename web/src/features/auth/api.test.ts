@@ -163,7 +163,7 @@ describe('OAuth state initialization', () => {
           invite_code: 'invite-code',
           turnstile_token: 'turnstile-token',
         },
-        config: { skipAuthRefresh: true },
+        config: { skipAuthRefresh: true, skipErrorHandler: true },
       },
     ])
   })

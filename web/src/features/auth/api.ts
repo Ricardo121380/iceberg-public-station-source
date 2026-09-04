@@ -185,7 +185,7 @@ export async function createOAuthFlow(
       invite_code: inviteCode || undefined,
       turnstile_token: options?.turnstileToken || undefined,
     },
-    { skipAuthRefresh: intent === 'login' }
+    { skipAuthRefresh: intent === 'login', skipErrorHandler: true }
   )
   if (res.data?.success) {
     if (typeof res.data.data === 'string') return res.data.data
