@@ -240,6 +240,8 @@ func RecordAbuseEvent(e *AbuseEvent) error {
 	})
 }
 
+var ErrAbuseNotSuspended = errors.New("account is not suspended")
+
 func UnfreezeAbuseUser(userID, operator int, reason string) error {
 	return DB.Transaction(func(tx *gorm.DB) error {
 		_, err := lockAbusePolicy(tx)
@@ -251,7 +253,7 @@ func UnfreezeAbuseUser(userID, operator int, reason string) error {
 			return err
 		}
 		if state.BlockedUntil <= time.Now().Unix() {
-			return errors.New("account is not suspended")
+			return ErrAbuseNotSuspended
 		}
 		state.Round++
 		state.BlockedUntil = 0

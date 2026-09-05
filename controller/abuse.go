@@ -1,6 +1,8 @@
 package controller
 
 import (
+	"errors"
+	"gorm.io/gorm"
 	"net/http"
 	"strconv"
 	"strings"
@@ -159,6 +161,10 @@ func UnfreezeAbuseUser(c *gin.Context) {
 		return
 	}
 	if err = model.UnfreezeAbuseUser(userID, c.GetInt("id"), strings.TrimSpace(req.Reason)); err != nil {
+		if !errors.Is(err, model.ErrAbuseNotSuspended) && !errors.Is(err, gorm.ErrRecordNotFound) {
+			abuseDatabaseError(c)
+			return
+		}
 		c.JSON(409, gin.H{"success": false, "message": i18n.T(c, "abuse.release_failed")})
 		return
 	}
