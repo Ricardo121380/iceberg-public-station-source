@@ -81,7 +81,7 @@ export function StationOpening() {
           return
         }
         setPlaying(true)
-        finishTimer = setTimeout(dismiss, 2400)
+        finishTimer = setTimeout(dismiss, 3400)
       })
       .catch(() => {
         cancelled = true

@@ -90,3 +90,11 @@ User requested an abrupt close-up after breaking the iceberg. The impact now add
 - CSS-only revision; the existing 2.4-second lifecycle, first-visit and reduced-motion handling, skip behavior, and application operations are unchanged.
 - Desktop and 390px mobile collision, approach, and close-up frames visually inspected. Production build and diff whitespace checks passed.
 - Current preview: workspace `output/playwright/opening-v3/虾船破冰-突脸版.gif`. Not deployed.
+
+## Opening revision 4 — slower continuous approach
+
+After .13 production feedback, extended the sequence from 2400 ms to 3400 ms. Replaced the three separate accelerating scale segments with one continuous cubic-bezier approach from impact to close-up, softened the stage shake and iceberg easing, and extended the final fade to 408 ms. First-visit storage, immediate skip, reduced-motion and all operating logic remain unchanged.
+
+- Updated lifecycle regression first failed against .13, then all eight opening tests passed; typecheck and production build passed. Changed-file lint has no errors; formatting findings remain the 25 pre-existing files.
+- Desktop and 390px mobile impact/approach/close-up frames inspected together; the approved original icon assets and scene remain unchanged.
+- Preview frames are in workspace `output/playwright/opening-slow/`. Release target: public-station-v1.0.0.14.

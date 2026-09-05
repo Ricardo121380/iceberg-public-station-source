@@ -62,6 +62,10 @@ describe('First visit opening', () => {
       screen.getByRole('button', { name: 'Skip opening animation' })
     ).toBeVisible()
     act(() => vi.advanceTimersByTime(2400))
+    expect(
+      screen.getByRole('button', { name: 'Skip opening animation' })
+    ).toBeVisible()
+    act(() => vi.advanceTimersByTime(1000))
     expect(screen.queryByTestId('station-opening')).not.toBeInTheDocument()
     view.unmount()
     render(<StationOpening />)
