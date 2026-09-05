@@ -285,3 +285,13 @@ custom_oauth.name_empty: "Provider name cannot be empty"
 custom_oauth.has_bindings: "Cannot delete provider with existing user bindings"
 custom_oauth.binding_not_found: "OAuth binding not found"
 custom_oauth.provider_id_field_invalid: "Could not extract user ID from provider response"
+
+# Account safety control
+abuse.suspended: "Model access is temporarily suspended"
+abuse.unavailable: "Safety service temporarily unavailable"
+abuse.invalid_settings: "Invalid safety settings"
+abuse.unverified_rule: "Only verified safety rules may be enabled"
+abuse.invalid_pagination: "Invalid pagination"
+abuse.invalid_filter: "Invalid filter"
+abuse.reason_required: "A reason of 1–300 characters is required"
+abuse.release_failed: "Unable to release suspension; refresh and retry"

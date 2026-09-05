@@ -95,6 +95,38 @@ jobs:
     needs: release-metadata
     runs-on: ubuntu-24.04
     timeout-minutes: 25
+    services:
+      abuse-redis:
+        image: redis:7-alpine
+        ports:
+          - 36379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s --health-timeout 5s --health-retries 20
+      abuse-postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_PASSWORD: abuse-fixture-only
+          POSTGRES_DB: abuse_test
+        ports:
+          - 35432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d abuse_test"
+          --health-interval 5s --health-timeout 5s --health-retries 20
+      abuse-mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: abuse-fixture-only
+          MYSQL_DATABASE: abuse_test
+        ports:
+          - 33306:3306
+        options: >-
+          --health-cmd "mysqladmin ping -h localhost"
+          --health-interval 5s --health-timeout 5s --health-retries 30
+    env:
+      ABUSE_TEST_REDIS_ADDR: 127.0.0.1:36379
+      ABUSE_TEST_POSTGRES_DSN: host=127.0.0.1 port=35432 user=postgres password=abuse-fixture-only dbname=abuse_test sslmode=disable
+      ABUSE_TEST_MYSQL_DSN: root:abuse-fixture-only@tcp(127.0.0.1:33306)/abuse_test?parseTime=true
 
     steps:
       - name: Checkout release source

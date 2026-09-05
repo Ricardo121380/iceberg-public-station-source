@@ -286,3 +286,13 @@ custom_oauth.name_empty: "提供商名称不能为空"
 custom_oauth.has_bindings: "无法删除已有用户绑定的提供商"
 custom_oauth.binding_not_found: "OAuth 绑定不存在"
 custom_oauth.provider_id_field_invalid: "无法从提供商响应中提取用户 ID"
+
+# Account safety control
+abuse.suspended: "模型调用暂时停用"
+abuse.unavailable: "风控服务暂时不可用，请稍后重试"
+abuse.invalid_settings: "风控设置无效"
+abuse.unverified_rule: "仅可启用经过验证的风控规则"
+abuse.invalid_pagination: "分页参数无效"
+abuse.invalid_filter: "筛选条件无效"
+abuse.reason_required: "请填写 1 至 300 字的解冻原因"
+abuse.release_failed: "解冻失败，请刷新账号状态后重试"

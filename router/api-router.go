@@ -18,6 +18,7 @@ func SetApiRouter(router *gin.Engine) {
 	apiRouter.Use(gzip.Gzip(gzip.DefaultCompression))
 	apiRouter.Use(middleware.BodyStorageCleanup()) // 清理请求体存储
 	apiRouter.Use(middleware.GlobalAPIRateLimit())
+	registerAbuseRoutes(apiRouter)
 	anonymousRequestBodyLimit := middleware.AnonymousRequestBodyLimit()
 	{
 		apiRouter.GET("/setup", controller.GetSetup)
@@ -402,4 +403,14 @@ func SetApiRouter(router *gin.Engine) {
 			deploymentsRoute.DELETE("/:id", controller.DeleteDeployment)
 		}
 	}
+}
+
+func registerAbuseRoutes(apiRouter *gin.RouterGroup) {
+	abuseRouter := apiRouter.Group("/abuse", middleware.RootAuth(), middleware.DisableCache())
+	abuseRouter.GET("/settings", controller.GetAbuseSettings)
+	abuseRouter.PUT("/settings", middleware.SessionCookieOriginGuard(), middleware.UserCriticalRateLimit("abuse-settings"), controller.UpdateAbuseSettings)
+	abuseRouter.GET("/events", controller.GetAbuseEvents)
+	abuseRouter.GET("/users", controller.GetAbuseUsers)
+	abuseRouter.POST("/users/:id/unfreeze", middleware.SessionCookieOriginGuard(), middleware.UserCriticalRateLimit("abuse-unfreeze"), controller.UnfreezeAbuseUser)
+	apiRouter.GET("/user/self/abuse", middleware.UserAuth(), middleware.DisableCache(), controller.GetSelfAbuse)
 }

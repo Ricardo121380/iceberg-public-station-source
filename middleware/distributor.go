@@ -33,6 +33,17 @@ type ModelRequest struct {
 
 func Distribute() func(c *gin.Context) {
 	return func(c *gin.Context) {
+		finishSafety, safetyErr := service.BeginSafetyObservation(c)
+		if safetyErr != nil {
+			common.SysError("abuse_control: state_unavailable")
+			c.AbortWithStatusJSON(http.StatusServiceUnavailable, gin.H{"error": gin.H{"code": "safety_state_unavailable", "message": i18n.T(c, "abuse.unavailable")}})
+			return
+		}
+		if c.IsAborted() {
+			return
+		}
+		defer finishSafety()
+
 		var channel *model.Channel
 		constraints := service.GetChannelConstraints(c)
 		constraints.AddFilter(taskdto.ChannelFilter{

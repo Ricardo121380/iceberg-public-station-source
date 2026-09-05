@@ -16,6 +16,8 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
+import { AbuseConsole } from '@/features/abuse'
+
 import { RateLimitSection } from '../request-limits/rate-limit-section'
 import { SensitiveWordsSection } from '../request-limits/sensitive-words-section'
 import { SSRFSection } from '../request-limits/ssrf-section'
@@ -24,6 +26,7 @@ import type { SecuritySettings } from '../types'
 import { createSectionRegistry } from '../utils/section-registry'
 
 const SECURITY_SECTIONS = [
+  { id: 'abuse', titleKey: 'Safety control', build: () => <AbuseConsole /> },
   {
     id: 'rate-limit',
     titleKey: 'Rate Limiting',
