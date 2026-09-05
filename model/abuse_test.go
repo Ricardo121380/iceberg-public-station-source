@@ -41,7 +41,12 @@ func abuseDB(t *testing.T, dialector gorm.Dialector) *gorm.DB {
 	require.NoError(t, err)
 	sqlDB.SetMaxOpenConns(1)
 	server := miniredis.RunT(t)
-	common.RDB = redis.NewClient(&redis.Options{Addr: server.Addr()})
+	redisAddress := server.Addr()
+	if configured := os.Getenv("ABUSE_TEST_REDIS_ADDR"); configured != "" {
+		redisAddress = configured
+	}
+	common.RDB = redis.NewClient(&redis.Options{Addr: redisAddress})
+	require.NoError(t, common.RDB.Ping(t.Context()).Err())
 	t.Cleanup(func() {
 		_ = common.RDB.Close()
 		DB = prevDB
@@ -52,6 +57,22 @@ func abuseDB(t *testing.T, dialector gorm.Dialector) *gorm.DB {
 		}
 		_ = sqlDB.Close()
 	})
+	// First exercise a genuinely empty database, including repeated migration.
+	require.NoError(t, MigrateAbuse(db))
+	require.NoError(t, MigrateAbuse(db))
+	var fresh AbusePolicy
+	require.NoError(t, db.First(&fresh, 1).Error)
+	assert.Equal(t, "observe", fresh.Mode)
+	for _, table := range []any{&AbuseEvent{}, &AbuseState{}, &AbusePolicy{}} {
+		require.NoError(t, db.Migrator().DropTable(table))
+	}
+	var version string
+	query := "SELECT version()"
+	if db.Dialector.Name() == "sqlite" {
+		query = "SELECT sqlite_version()"
+	}
+	require.NoError(t, db.Raw(query).Scan(&version).Error)
+	t.Logf("database version: %s", version)
 	// Representative released schema and data exist before installing abuse tables.
 	require.NoError(t, db.AutoMigrate(&User{}, &Token{}, &Log{}))
 	require.NoError(t, db.Create(&User{Id: 1, Username: "abuse-test", Role: common.RoleCommonUser, Status: common.UserStatusEnabled, Quota: 123, AuthVersion: 1}).Error)
