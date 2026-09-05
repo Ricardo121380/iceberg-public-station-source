@@ -143,7 +143,10 @@ describe('Safety management', () => {
   it('prevents non-root users from querying administrative evidence', async () => {
     const state = useAuthStore.getState()
     useAuthStore.setState({
-      auth: { ...state.auth, user: { ...state.auth.user, id: 1, username: 'user', role: ROLE.USER } },
+      auth: {
+        ...state.auth,
+        user: { ...state.auth.user, id: 1, username: 'user', role: ROLE.USER },
+      },
     })
     const get = vi.spyOn(api, 'get')
     mount(<AbuseConsole />)
