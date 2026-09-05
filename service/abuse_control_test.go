@@ -4,7 +4,10 @@ import (
 	"fmt"
 	"github.com/alicebob/miniredis/v2"
 	"github.com/go-redis/redis/v8"
+	"io"
+	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 	"time"
 
@@ -140,4 +143,21 @@ func TestAbuseVerifiedFixtureFreezesAfterThreeRequests(t *testing.T) {
 	_, err = BeginSafetyObservation(c)
 	require.NoError(t, err)
 	assert.True(t, c.IsAborted())
+}
+
+func TestAbuseHTTPErrorHandlerPreservesSafetyCode(t *testing.T) {
+	c, db := safetyTestContext(t)
+	finish, err := BeginSafetyObservation(c)
+	require.NoError(t, err)
+	response := &http.Response{StatusCode: 400, Body: io.NopCloser(strings.NewReader(`{"error":{"type":"invalid_request_error","code":"content_policy_violation","message":"echoed sensitive prompt"}}`))}
+	apiErr := RelayErrorHandler(c, response, false)
+	require.NotNil(t, apiErr)
+	assert.Equal(t, 400, apiErr.StatusCode)
+	finish()
+	var events []model.AbuseEvent
+	require.NoError(t, db.Find(&events).Error)
+	require.Len(t, events, 1)
+	assert.Equal(t, "content_policy_violation", events[0].Signal)
+	assert.False(t, events[0].Actionable)
+	assert.NotContains(t, events[0].Summary, "echoed sensitive prompt")
 }
