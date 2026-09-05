@@ -1,11 +1,11 @@
-# Iceberg mascot and liquid glass — revision 2
+# Ice sea as interface — revision 3
 
-User correction on 2026-09-05: the photographic/serif design does not match the existing icon. Reference the icon's style and add moderate Liquid Glass. This explicit visual reference supersedes the first photographic direction and the random catalog (seed 597bf079, assigned index 6 acknowledged).
+User rejected the enlarged central logo: derive the frontend design from the icon instead of placing an oversized icon in the page. Original mascot remains only in normal header/footer branding; StationArt is removed. Prior user caption “轻舟已撞大冰山” stays beside ICEBERG.
 
-FIRST VIEWPORT: original transparent mascot/boat/iceberg artwork at its native 512px scale, light-blue glass lens and water ripples. Strong sans-serif headings, ice-blue emphasis, coral/rose primary action reflecting the boat, navy ink reflecting the outlines. Existing information and actions retained.
-GLASS: floating nav, secondary action/caption, connection workspace, authentication panel and utility controls. Use blur + saturation, specular inset edges and offset translucent shadows. Avoid full-page blur. Keep fields opaque and text contrast stable. Explicit reduced-transparency and unsupported-browser fallbacks.
-MOTION: one 800ms entrance on the original artwork. No perpetual decorative movement. Reduced-motion removes entrance and button transform.
-AUTH: same reference artwork and glass panel. On mobile, title and small artwork sit side-by-side above form. At 320px retain 300px inner width for Turnstile.
-SCOPE: homepage and sign-in/sign-up styling only. No OAuth, registration, billing, service configuration, or monitoring changes. Original brand artwork retained byte-for-byte. Public Sans plus self-hosted Noto Sans SC title subset. Retire photographic assets and serif subset from this revision.
+FIRST VIEWPORT: a full-width pale ice sea, explicit faceted background geometry, coral wake and navy typography. The hero text and real interactive API launchpad form one composed scene. Geometry is authored as flat SVG paths, never a traced or enlarged logo; it is decorative and inaccessible to assistive technology. No stock photo or replacement raster. The translucent panel contains a real selectable/copyable URL and model/key links. Signed-out key link preserves /keys as login redirect; signed-in goes directly to /keys.
 
-HOMEPAGE CAPTION: user-requested copy “轻舟已撞大冰山” beside ICEBERG. Authentication caption stays unchanged.
+TRANSLATION FROM ICON: triangular ice planes become the landscape and angular step markers; navy outline becomes thin component definition; the coral boat becomes the CTA and curved route; white wake becomes long scroll composition; blue sea becomes surfaces. Glass exists primarily on the practical launchpad, floating nav and auth panel.
+
+OTHER SURFACES: onboarding uses an outlined route sequence and flatter information rows. Login/signup get a cross-page ice landscape, route steps and existing form in glass. At mobile widths the form follows a compact headline; no large icon or mascot is inserted anywhere.
+
+BOUNDARIES: all previous factual copy preserved. No backend/auth/payment/monitoring changes. Code-led concrete user direction; seed 926b7822 acknowledged, user correction overrides catalog. Retain reduced-motion, reduced-transparency, dark theme and 320px verification width. New launchpad functionality requires clipboard failure and signed-in/out destination tests.

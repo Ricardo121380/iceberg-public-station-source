@@ -46,3 +46,17 @@ The user asked to match the original illustrated icon. Replaced photo/serif desi
 - The prior third-party photo and serif font subset are removed. Original station logo is unchanged; new Noto Sans SC title subset has its OFL record.
 - Screenshots: workspace `.impeccable/review-v2/`.
 - Still local preview only; production Turnstile/OAuth end-to-end acceptance is not claimed.
+
+# Revision 3 — derive the interface from the icon
+
+User explicitly rejected the enlarged logo composition. Removed `StationArt` and introduced a flat SVG background of ice facets and sweeping wake curves, functional `StationLaunchpad`, outlined onboarding markers and shared full-scene auth styling. The station mark remains only at normal branding sizes. User's “轻舟已撞大冰山” caption is preserved.
+
+- New launchpad tests cover clipboard success/failure, manual selection, signed-out login redirect to /keys, and signed-in direct /keys link.
+- 24 tests across five auth/connection/launchpad files: PASS.
+- Typecheck, scoped lint, formatter and production build: PASS.
+- Detector `[]`; no large brand illustration remains in page content.
+- Screenshots at 1440, 390, 320 registration, 820 English, plus dark theme. No document overflow; measured large raster images (>70px wide) = 0.
+- Decorative flat SVG uses explicit geometry rather than a generated raster or logo trace. No new dependencies/assets required.
+- Existing Turnstile fails on localhost and correctly keeps registration disabled with retry. Live verification still requires the trusted deployment domain; no production change was made.
+
+Revision 3 final review: **ship**. Independent reviewer opened all eight final captures and inspected source; no material presentation issues in scope. Functional browser verification: public address copied successfully; key link reached `/sign-in?redirect=%2Fkeys`. Reduced-preference behavior is verified on the new launchpad, not inferred from v2. No live OAuth success is asserted.

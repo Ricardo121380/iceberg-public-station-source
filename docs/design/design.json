@@ -1,9 +1,9 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-09-05T07:14:49.647252+00:00",
+  "generatedAt": "2026-09-05T07:51:39.035955+00:00",
   "title": "Design System: 冰山公益站",
   "extensions": {
-    "revision": 2,
+    "revision": 3,
     "source": "web/src/styles/iceberg.css",
     "themes": {
       "light": {
@@ -274,21 +274,6 @@
           "oklch(84% 0.1090 236.81)",
           "oklch(95% 0.1090 236.81)"
         ]
-      },
-      "station-glow": {
-        "role": "neutral",
-        "displayName": "station-glow",
-        "canonical": "#bbe6fc",
-        "tonalRamp": [
-          "oklch(15% 0.0539 230.31)",
-          "oklch(27% 0.0539 230.31)",
-          "oklch(38% 0.0539 230.31)",
-          "oklch(49% 0.0539 230.31)",
-          "oklch(61% 0.0539 230.31)",
-          "oklch(72% 0.0539 230.31)",
-          "oklch(84% 0.0539 230.31)",
-          "oklch(95% 0.0539 230.31)"
-        ]
       }
     },
     "rampNote": "Synthesized OKLCH ramps are preview aids; source CSS defines actual colors and alpha.",
@@ -304,15 +289,19 @@
         "value": "inset 0 1px 0 1px var(--station-rim), inset 0 -1px 0 #4a99c029, 0 12px 36px var(--station-shadow)"
       },
       {
+        "name": "launchpad",
+        "value": "inset 0 1px 1px 1px #ffffffed, inset 0 -1px 0 #4483ac45, 0 24px 55px #1c6b9829"
+      },
+      {
         "name": "auth-panel",
-        "value": "inset 0 1px 1px 1px var(--station-rim), inset 0 -1px 1px #50a0c333, 0 24px 64px var(--station-shadow)"
+        "value": "inset 0 1px 1px 1px #fff, inset 0 -1px 0 #4383a524, 0 24px 70px #14537b18"
       }
     ],
     "motion": [
       {
-        "name": "station-arrive",
-        "value": "800ms cubic-bezier(0.16, 1, 0.3, 1)",
-        "purpose": "One mascot entrance: translateY(12px) rotate(-2deg), opacity .8 to resting position."
+        "name": "launchpad-arrive",
+        "value": "700ms cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "One entrance from translateY(12px), opacity .8, retaining 1deg rotation; desktop resting 1deg, mobile resting upright."
       },
       {
         "name": "action-transition",
@@ -322,38 +311,80 @@
     ],
     "breakpoints": [
       {
-        "name": "compact-spacing-max",
+        "name": "compact-spacing",
         "value": "1100px"
       },
       {
-        "name": "compact-navigation-max",
+        "name": "compact-navigation",
         "value": "1000px"
       },
       {
-        "name": "stack-max",
+        "name": "stacked-layout",
         "value": "760px"
       },
       {
-        "name": "narrow-max",
+        "name": "narrow-form",
         "value": "380px"
       }
     ],
     "verification": {
       "narrowWidth": "320px",
       "authInnerWidth": "300px",
-      "visualReview": "Original icon and six captures compared; reviewer returned ship. Documentation update adds no browser or auth test."
+      "visualReview": "composition_review returned ship after all eight v3 screenshots and source review; no material issues. No enlarged logo; facets/wake define the interface.",
+      "screenshots": [
+        "desktop",
+        "mobile",
+        "login-desktop",
+        "login-mobile",
+        "register-320",
+        "dark-desktop",
+        "tablet-english",
+        "hero"
+      ],
+      "screenshotDirectory": "/Users/huangrui/AgentProjects/冰山公益站/.impeccable/review-v3",
+      "checks": "24 related tests, typecheck, lint and build passed; browser clipboard and signed-out /sign-in?redirect=%2Fkeys destination verified by parent task.",
+      "scope": "Source and screenshot verification, not live OAuth authentication."
     },
     "accessibility": {
       "focus": "2px ring outline; 5px offset",
-      "reducedMotion": "Remove image entrance, scoped transitions, smooth scrolling and button transforms.",
-      "reducedTransparency": "Opaque #f7fbff / #203955 glass fills; remove listed backdrop filters. Decorative lens gradients remain.",
+      "reducedMotion": "Remove launchpad entrance, scoped transitions, smooth scrolling and primary action hover/press transforms. Launchpad link arrow still shifts on hover without transition.",
+      "reducedTransparency": "Opaque #f7fbff / #203955 glass fills; remove backdrop filters. Decorative landscape opacity remains.",
       "unsupportedBackdropFilter": "Opaque glass fills when neither standard nor WebKit filtering is supported."
     },
     "artwork": {
-      "path": "/iceberg-station-mark-v2.png",
-      "width": 512,
-      "height": 512,
-      "policy": "Original asset unchanged; decorative surrounding lens/ripples/droplets are hidden from accessibility APIs."
+      "source": "web/src/components/station-landscape.tsx",
+      "viewBox": "0 0 1440 860",
+      "policy": "Flat authored decorative SVG facets and wake; aria-hidden, nonfocusable, pointer-events none. Original logo appears only at normal header/footer branding scale. StationArt removed."
+    },
+    "materials": {
+      "launchpad": {
+        "light": "#ffffffe0",
+        "dark": "#142e46eb",
+        "blur": "20px",
+        "saturate": 1.35
+      },
+      "auth-panel": {
+        "light": "#ffffffeb",
+        "dark": "#182f49ed",
+        "blur": "24px",
+        "saturate": 1.35
+      },
+      "navigation": {
+        "fill": "var(--station-glass)",
+        "blur": "22px",
+        "saturate": 1.5
+      },
+      "connection": "Opaque muted fill, border, no blur or shadow",
+      "models": "Transparent divided information row, no blur or shadow"
+    },
+    "launchpadBehavior": {
+      "address": "https://iceberg.tiktok.vip/v1",
+      "clipboard": "Success status or manual-selection fallback",
+      "models": "/pricing",
+      "keysSignedIn": "/keys",
+      "keysSignedOut": "/sign-in?redirect=%2Fkeys",
+      "guide": "#connect",
+      "locale": "Existing useTranslation strings; Chinese motto is 轻舟已撞大冰山."
     }
   },
   "components": [
@@ -363,7 +394,7 @@
       "refersTo": "button-primary",
       "description": "Homepage coral/rose action.",
       "html": "<button class=\"ds-button\">Sign in with LinuxDO</button>",
-      "css": ".ds-button{font-family:\"Public Sans Variable\",\"PingFang SC\",sans-serif;display:inline-flex;align-items:center;justify-content:center;min-height:50px;padding:13px 23px;border:0;border-radius:17px;background:linear-gradient(170deg,#d93d61,#b72060);color:white;font-size:14px;font-weight:700;box-shadow:inset 0 1px 1px #ffffffa8,inset 0 -2px 2px #821b4240,0 7px 18px #cf337727;transition:transform .22s cubic-bezier(.16,1,.3,1),box-shadow .22s;cursor:pointer}.ds-button:hover{transform:translateY(-2px);box-shadow:inset 0 1px 1px #ffffffa8,inset 0 -2px 2px #821b4240,0 11px 24px #cf337739}.ds-button:active{transform:translateY(0) scale(.98)}.ds-button:focus-visible{outline:2px solid var(--ring,#007bad);outline-offset:5px}@media(prefers-reduced-motion:reduce){.ds-button{transition:none}.ds-button:hover,.ds-button:active{transform:none}}"
+      "css": ".ds-button{font-family:\"Public Sans Variable\",\"PingFang SC\",sans-serif;display:inline-flex;align-items:center;justify-content:center;min-height:50px;padding:13px 23px;border:0;border-radius:12px;background:linear-gradient(170deg,#d93d61,#b72060);color:white;font-size:14px;font-weight:700;box-shadow:inset 0 1px 1px #ffffffa8,inset 0 -2px 2px #821b4240,0 7px 18px #cf337727;transition:transform .22s cubic-bezier(.16,1,.3,1),box-shadow .22s;cursor:pointer}.ds-button:hover{transform:translateY(-2px);box-shadow:inset 0 1px 1px #ffffffa8,inset 0 -2px 2px #821b4240,0 11px 24px #cf337739}.ds-button:active{transform:translateY(0) scale(.98)}.ds-button:focus-visible{outline:2px solid var(--ring,#007bad);outline-offset:5px}@media(prefers-reduced-motion:reduce){.ds-button{transition:none}.ds-button:hover,.ds-button:active{transform:none}}"
     },
     {
       "name": "Secondary action",
@@ -371,7 +402,7 @@
       "refersTo": "button-secondary",
       "description": "Homepage glass companion action.",
       "html": "<button class=\"ds-button ds-secondary ds-glass\">Register with an invitation</button>",
-      "css": ".ds-button{font-family:\"Public Sans Variable\",\"PingFang SC\",sans-serif;display:inline-flex;align-items:center;justify-content:center;min-height:50px;padding:13px 23px;border:0;border-radius:17px;background:linear-gradient(170deg,#d93d61,#b72060);color:white;font-size:14px;font-weight:700;box-shadow:inset 0 1px 1px #ffffffa8,inset 0 -2px 2px #821b4240,0 7px 18px #cf337727;transition:transform .22s cubic-bezier(.16,1,.3,1),box-shadow .22s;cursor:pointer}.ds-button:hover{transform:translateY(-2px);box-shadow:inset 0 1px 1px #ffffffa8,inset 0 -2px 2px #821b4240,0 11px 24px #cf337739}.ds-button:active{transform:translateY(0) scale(.98)}.ds-button:focus-visible{outline:2px solid var(--ring,#007bad);outline-offset:5px}@media(prefers-reduced-motion:reduce){.ds-button{transition:none}.ds-button:hover,.ds-button:active{transform:none}}.ds-secondary{background:var(--station-glass,#ffffffb8);box-shadow:inset 0 1px 1px 1px var(--station-rim,#ffffffed),0 10px 30px var(--station-shadow,#247ead1c);color:var(--foreground,#172b46);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}.ds-secondary:hover{box-shadow:inset 0 1px 1px 1px var(--station-rim,#ffffffed),inset 0 -1px 0 #5295b540,0 10px 24px var(--station-shadow,#247ead1c)}@media(prefers-reduced-transparency:reduce){.ds-glass{background:var(--card,#fff);backdrop-filter:none;-webkit-backdrop-filter:none}}@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){.ds-glass{background:var(--card,#fff)}}"
+      "css": ".ds-button{font-family:\"Public Sans Variable\",\"PingFang SC\",sans-serif;display:inline-flex;align-items:center;justify-content:center;min-height:50px;padding:13px 23px;border:0;border-radius:12px;background:linear-gradient(170deg,#d93d61,#b72060);color:white;font-size:14px;font-weight:700;box-shadow:inset 0 1px 1px #ffffffa8,inset 0 -2px 2px #821b4240,0 7px 18px #cf337727;transition:transform .22s cubic-bezier(.16,1,.3,1),box-shadow .22s;cursor:pointer}.ds-button:hover{transform:translateY(-2px);box-shadow:inset 0 1px 1px #ffffffa8,inset 0 -2px 2px #821b4240,0 11px 24px #cf337739}.ds-button:active{transform:translateY(0) scale(.98)}.ds-button:focus-visible{outline:2px solid var(--ring,#007bad);outline-offset:5px}@media(prefers-reduced-motion:reduce){.ds-button{transition:none}.ds-button:hover,.ds-button:active{transform:none}}.ds-secondary{background:var(--station-glass,#ffffffb8);box-shadow:inset 0 1px 1px 1px var(--station-rim,#ffffffed),0 10px 30px var(--station-shadow,#247ead1c);color:var(--foreground,#172b46);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}.ds-secondary:hover{box-shadow:inset 0 1px 1px 1px var(--station-rim,#ffffffed),inset 0 -1px 0 #5295b540,0 10px 24px var(--station-shadow,#247ead1c)}@media(prefers-reduced-transparency:reduce){.ds-glass{background:var(--card,#fff);backdrop-filter:none;-webkit-backdrop-filter:none}}@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){.ds-glass{background:var(--card,#fff)}}"
     },
     {
       "name": "API address",
@@ -387,14 +418,14 @@
       "refersTo": "navigation",
       "description": "Material preview; production navigation remains configuration-driven and becomes compact at 1000px.",
       "html": "<nav class=\"ds-nav ds-glass\" aria-label=\"Station\"><a href=\"#home\">冰山公益站</a><a href=\"#connect\">Connect</a></nav>",
-      "css": ".ds-nav{font-family:\"Public Sans Variable\",\"PingFang SC\",sans-serif;background:var(--station-glass,#ffffffb8);box-shadow:inset 0 1px 1px 1px var(--station-rim,#ffffffed),0 10px 30px var(--station-shadow,#247ead1c);display:flex;align-items:center;justify-content:space-between;height:64px;padding:8px 20px;border-radius:24px;backdrop-filter:blur(22px) saturate(1.5);-webkit-backdrop-filter:blur(22px) saturate(1.5)}.ds-nav a{padding:8px;border-radius:14px;color:var(--foreground,#172b46);text-decoration:none}.ds-nav a:hover{background:var(--accent,#e0f2fd)}.ds-nav a:focus-visible{outline:2px solid var(--ring,#007bad);outline-offset:5px}@media(prefers-reduced-transparency:reduce){.ds-glass{background:var(--card,#fff);backdrop-filter:none;-webkit-backdrop-filter:none}}@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){.ds-glass{background:var(--card,#fff)}}"
+      "css": ".ds-nav{font-family:\"Public Sans Variable\",\"PingFang SC\",sans-serif;background:var(--station-glass,#ffffffb8);box-shadow:inset 0 1px 1px 1px var(--station-rim,#ffffffed),0 10px 30px var(--station-shadow,#247ead1c);display:flex;align-items:center;justify-content:space-between;height:64px;padding:8px 20px;border-radius:18px;backdrop-filter:blur(22px) saturate(1.5);-webkit-backdrop-filter:blur(22px) saturate(1.5)}.ds-nav a{padding:8px;border-radius:14px;color:var(--foreground,#172b46);text-decoration:none}.ds-nav a:hover{background:var(--accent,#e0f2fd)}.ds-nav a:focus-visible{outline:2px solid var(--ring,#007bad);outline-offset:5px}@media(prefers-reduced-transparency:reduce){.ds-glass{background:var(--card,#fff);backdrop-filter:none;-webkit-backdrop-filter:none}}@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){.ds-glass{background:var(--card,#fff)}}"
     },
     {
-      "name": "Model information panel",
+      "name": "Model information row",
       "kind": "card",
-      "description": "Single translucent information row; no backdrop blur.",
-      "html": "<section class=\"ds-models ds-glass\"><div><h2>The right model for your next idea.</h2><p>Browse model IDs, supported interfaces, and quota rates before connecting.</p></div><a href=\"#models\">Explore models and quota</a></section>",
-      "css": ".ds-models{font-family:\"Public Sans Variable\",\"PingFang SC\",sans-serif;background:var(--station-glass,#ffffffb8);box-shadow:inset 0 1px 1px 1px var(--station-rim,#ffffffed),0 10px 30px var(--station-shadow,#247ead1c);padding:28px 32px;border-radius:24px;color:var(--foreground,#172b46)}.ds-models h2{font-size:18px;font-weight:700;margin:0 0 9px}.ds-models p{color:var(--muted-foreground,#506781);font-size:14px;line-height:1.9}.ds-models a{color:var(--station-blue,#0877ac);font-size:14px;font-weight:700;text-decoration:none}.ds-models a:hover{text-decoration:underline}.ds-models a:focus-visible{outline:2px solid var(--ring,#007bad);outline-offset:5px}@media(prefers-reduced-transparency:reduce){.ds-glass{background:var(--card,#fff);backdrop-filter:none;-webkit-backdrop-filter:none}}@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){.ds-glass{background:var(--card,#fff)}}"
+      "description": "Flat divided row linking to the actual model catalog.",
+      "html": "<section class=\"ds-models\"><div><h2>The right model for your next idea.</h2><p>Browse model IDs, supported interfaces, and quota rates before connecting.</p></div><a href=\"/pricing\">Explore models and quota</a></section>",
+      "css": ".ds-models{font-family:\"Public Sans Variable\",\"PingFang SC\",sans-serif;display:flex;align-items:center;justify-content:space-between;gap:28px;padding:30px 0;border-bottom:1px solid var(--border,#c9dfed);color:var(--foreground,#172b46)}.ds-models h2{font-size:18px;font-weight:700;margin:0 0 9px}.ds-models p{color:var(--muted-foreground,#506781);font-size:14px;line-height:1.9}.ds-models a{color:var(--station-blue,#0877ac);font-size:14px;font-weight:700;text-decoration:none}.ds-models a:hover{text-decoration:underline}.ds-models a:focus-visible{outline:2px solid var(--ring,#007bad);outline-offset:5px}@media(max-width:760px){.ds-models{flex-direction:column;align-items:flex-start;padding:26px 0;gap:12px}}"
     },
     {
       "name": "FAQ disclosure",
@@ -402,30 +433,39 @@
       "description": "Native flat disclosure with plus/minus indicator.",
       "html": "<details class=\"ds-question\"><summary>Do I need an invitation every time?</summary><p>No. Invitations are only required for first-time registration.</p></details>",
       "css": ".ds-question{font-family:\"Public Sans Variable\",\"PingFang SC\",sans-serif;border-bottom:1px solid var(--border,#c9dfed);color:var(--foreground,#172b46)}.ds-question summary{display:flex;justify-content:space-between;gap:24px;padding:22px 0;cursor:pointer;font-size:15px;font-weight:600;list-style:none}.ds-question summary::-webkit-details-marker{display:none}.ds-question summary:after{content:\"+\";color:var(--station-blue,#0877ac);font:400 21px/1 sans-serif}.ds-question[open] summary:after{content:\"−\"}.ds-question p{color:var(--muted-foreground,#506781);font-size:14px;line-height:1.95;padding:0 30px 22px 0}.ds-question summary:focus-visible{outline:2px solid var(--ring,#007bad);outline-offset:5px}"
+    },
+    {
+      "name": "API launchpad",
+      "kind": "card",
+      "refersTo": "launchpad",
+      "description": "Material specimen of the titled launchpad; use StationLaunchpad for working clipboard/status and auth-aware navigation.",
+      "html": "<aside class=\"ds-launchpad\"><h2>One address. A new connection.</h2><label for=\"ds-launchpad-url\">API Base URL</label><input id=\"ds-launchpad-url\" readonly value=\"https://iceberg.tiktok.vip/v1\"><a href=\"/pricing\">Explore models and quota →</a></aside>",
+      "css": ".ds-launchpad{max-width:440px;padding:27px 28px 18px;border-radius:24px;background:#ffffffe0;color:var(--foreground,#172b46);font-family:\"Public Sans Variable\",\"PingFang SC\",sans-serif;backdrop-filter:blur(20px) saturate(1.35);-webkit-backdrop-filter:blur(20px) saturate(1.35);box-shadow:inset 0 1px 1px 1px #ffffffed,inset 0 -1px 0 #4483ac45,0 24px 55px #1c6b9829;transform:rotate(1deg)}.ds-launchpad h2{font-size:19px;font-weight:750;letter-spacing:-.025em;padding-bottom:24px;border-bottom:1px solid var(--border,#c9dfed)}.ds-launchpad label{font-size:11px;color:var(--muted-foreground,#506781)}.ds-launchpad input{display:block;width:100%;border:0;background:transparent;color:inherit;font:16px ui-monospace,monospace;padding:9px 0 13px}.ds-launchpad a{display:block;padding:18px 0;color:var(--station-blue,#0877ac);font-size:14px;text-decoration:none}.ds-launchpad a:hover{text-decoration:underline}.ds-launchpad :is(a,input):focus-visible{outline:2px solid var(--ring,#007bad);outline-offset:5px}@media(max-width:760px){.ds-launchpad{transform:none;padding:23px 24px 18px}.ds-launchpad input{font-size:14px}}@media(prefers-reduced-transparency:reduce){.ds-launchpad{background:#f7fbff;backdrop-filter:none;-webkit-backdrop-filter:none}}@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){.ds-launchpad{background:#f7fbff}}"
     }
   ],
   "narrative": {
-    "northStar": "Original mascot, a little liquid glass",
-    "overview": "The original station icon sets the visual language: a friendly mascot, faceted blue icebergs, navy outlines and a coral/rose boat. Ice-blue surfaces and strong sans-serif headings carry that identity into the default homepage and sign-in/sign-up shell. Moderate Liquid Glass adds light-catching edges to selected controls and panels while fields remain opaque and text stays clear.\n\nThis code-derived revision 2 record supersedes the previous photographic/serif system. Product constraints live in [PRODUCT.md](PRODUCT.md); the approved surface direction lives in [direction.md](direction.md). The scoped implementation remains authoritative when documentation drifts.",
+    "northStar": "Ice sea as interface",
+    "overview": "The original icon supplies faceted blue ice, navy definition and a coral wake. Those elements become a full hero landscape, clear typography, outlined route markers and practical controls. The mascot remains small in normal header/footer branding; the user rejected enlarging it as page artwork. Moderate Liquid Glass gives the navigation, API launchpad and auth panel depth over this scene.\n\nThis code-derived revision 3 supersedes the large-mascot revision. Product constraints live in [PRODUCT.md](PRODUCT.md); the approved surface direction lives in [direction.md](direction.md). Read the complete scoped stylesheet: later v3 declarations override earlier base rules.",
     "keyCharacteristics": [
-      "Original 512px mascot artwork, blue emphasis and coral/rose actions.",
-      "Readable sans-serif hierarchy with open spacing and selected translucent surfaces.",
-      "Finite entrance motion, clear focus and explicit accessibility fallbacks."
+      "Flat decorative ice facets and coral wake across the homepage hero and auth background.",
+      "Strong navy sans-serif headings and a real, titled API launchpad.",
+      "Selected glass surfaces, flatter information rows and explicit accessibility fallbacks."
     ],
     "rules": [
       {
         "section": "Elevation & Depth",
         "name": "The Limited Glass Rule",
-        "body": "Reserve blur for the floating navigation, secondary action, artwork caption, connection workspace, auth utility controls and auth panel. Model and step surfaces share translucent fill and inset rims without blur; text fields use opaque card backgrounds."
+        "body": "Reserve blur for floating navigation, the secondary action, the launchpad, auth utility controls and the auth panel. Models are a flat divided row; the connection workspace uses a muted opaque fill and border. Auth and connection fields use opaque card surfaces; the launchpad address is transparent over its high-opacity panel."
       }
     ],
     "dos": [
-      "**Do** reuse the original illustration and preserve its colors, proportions and transparent silhouette.",
+      "**Do** translate the icon into ice facets, navy definition and coral wake while keeping branding small.",
       "**Do** extend the opt-in station scope with existing semantic tokens and maintain light/dark parity.",
       "**Do** preserve authentic registration, model, quota and account state, accessible controls and normal page scrolling.",
       "**Do** keep font licensing and expand the Chinese title subset when adding display copy."
     ],
     "donts": [
+      "**Don't** enlarge the mascot as hero or authentication artwork.",
       "**Don't** restore photographic hero art or serif typography for these surfaces.",
       "**Don't** apply blur to the whole page or nest glass panels throughout routine content.",
       "**Don't** replace authentication or configuration-driven navigation behavior to achieve a visual match.",

@@ -1,6 +1,6 @@
 ---
 name: 冰山公益站
-description: Original illustrated station identity with moderate Liquid Glass
+description: Ice sea as interface, derived from the icon with selected Liquid Glass
 colors:
   primary: "#bc285d"
   primary-foreground: "#ffffff"
@@ -17,11 +17,17 @@ colors:
   station-glass: "#ffffffb8"
   station-rim: "#ffffffed"
   station-shadow: "#247ead1c"
-  station-glow: "#bbe6fc"
+  launchpad: "#ffffffe0"
+  auth-glass: "#ffffffeb"
+  ice-light: "#d4eefa"
+  ice-mid: "#99d9f1"
+  ice-white: "#f8fdff"
+  ice-blue: "#5fc0e6"
+  route: "#e95383"
 typography:
   display:
     fontFamily: "Public Sans Variable, Iceberg Sans CJK, PingFang SC, sans-serif"
-    fontSize: "clamp(42px, 4.6vw, 66px)"
+    fontSize: "clamp(44px, 4.65vw, 67px)"
     fontWeight: 750
     lineHeight: 1.23
     letterSpacing: "-0.035em"
@@ -36,13 +42,13 @@ typography:
 rounded:
   field: "12px"
   control: "14px"
-  action: "17px"
-  nav: "24px"
-  connection: "26px"
-  auth-panel: "30px"
+  action: "12px"
+  nav: "18px"
+  connection: "22px"
+  auth-panel: "24px"
 spacing:
   action-gap: "12px"
-  hero-gap: "48px"
+  hero-gap: "96px"
   section: "64px"
 components:
   button-primary:
@@ -65,8 +71,12 @@ components:
     rounded: "{rounded.nav}"
     height: "64px"
     padding: "8px 20px"
+  launchpad:
+    backgroundColor: "{colors.launchpad}"
+    rounded: "{rounded.auth-panel}"
+    padding: "27px 28px 18px"
   auth-panel:
-    backgroundColor: "{colors.station-glass}"
+    backgroundColor: "{colors.auth-glass}"
     rounded: "{rounded.auth-panel}"
     padding: "42px"
 ---
@@ -75,78 +85,81 @@ components:
 
 ## Overview
 
-**Creative North Star: "Original mascot, a little liquid glass"**
+**Creative North Star: "Ice sea as interface"**
 
-The original station icon sets the visual language: a friendly mascot, faceted blue icebergs, navy outlines and a coral/rose boat. Ice-blue surfaces and strong sans-serif headings carry that identity into the default homepage and sign-in/sign-up shell. Moderate Liquid Glass adds light-catching edges to selected controls and panels while fields remain opaque and text stays clear.
+The original icon supplies faceted blue ice, navy definition and a coral wake. Those elements become a full hero landscape, clear typography, outlined route markers and practical controls. The mascot remains small in normal header/footer branding; the user rejected enlarging it as page artwork. Moderate Liquid Glass gives the navigation, API launchpad and auth panel depth over this scene.
 
-This code-derived revision 2 record supersedes the previous photographic/serif system. Product constraints live in [PRODUCT.md](PRODUCT.md); the approved surface direction lives in [direction.md](direction.md). The scoped implementation remains authoritative when documentation drifts.
+This code-derived revision 3 supersedes the large-mascot revision. Product constraints live in [PRODUCT.md](PRODUCT.md); the approved surface direction lives in [direction.md](direction.md). Read the complete scoped stylesheet: later v3 declarations override earlier base rules.
 
 **Key Characteristics:**
 
-- Original 512px mascot artwork, blue emphasis and coral/rose actions.
-- Readable sans-serif hierarchy with open spacing and selected translucent surfaces.
-- Finite entrance motion, clear focus and explicit accessibility fallbacks.
+- Flat decorative ice facets and coral wake across the homepage hero and auth background.
+- Strong navy sans-serif headings and a real, titled API launchpad.
+- Selected glass surfaces, flatter information rows and explicit accessibility fallbacks.
 
 ## Colors
 
-Primary coral/rose comes from the boat and identifies the main action; station blue emphasizes headings, links and step numbers. Navy foreground, ice-white background and pale blue muted surfaces provide the reading base. The homepage primary action uses a coral-to-rose gradient (`linear-gradient(170deg, #d93d61, #b72060)`), while shared auth controls use the semantic primary token.
+Coral/rose identifies actions and the route through the ice; station blue identifies links and small accents. Navy headings sit on ice-white and pale blue surfaces. Both hero title lines are navy; the second receives a short irregular coral underline. The homepage primary action uses `linear-gradient(170deg, #d93d61, #b72060)`; shared auth actions use the semantic primary token.
 
-Dark mode supplies a navy background (`#101e34`), pale foreground (`#edf5ff`), rose primary (`#ff9fbb`), ice-blue station accent (`#85d6ff`) and dark glass (`#203955cc`). Complete light/dark mappings come from the scoped CSS and are recorded in the sidecar. Glass rim, glow and shadow tokens provide material cues rather than additional content colors.
+Dark mode supplies a navy background, pale foreground, rose primary and ice-blue links. Facet colors also switch to blue/navy, preserving the geometry. Full mappings and material overrides live in the sidecar. Do not turn informational sections into repeated translucent cards.
 
 ## Typography
 
-Public Sans is used for Latin display and body text. Chinese display headings use the self-hosted Noto Sans SC weight-750 subset exposed as `Iceberg Sans CJK`, with `font-display: swap`; body Chinese falls back to PingFang SC / Microsoft YaHei. Preserve `web/public/iceberg/OFL-sans.txt` and asset provenance. New Chinese headings may require an expanded subset.
+Public Sans is used for Latin text. Chinese display headings use the self-hosted Noto Sans SC weight-750 subset exposed as `Iceberg Sans CJK`, with `font-display: swap`; body Chinese falls back to PingFang SC / Microsoft YaHei. Preserve `web/public/iceberg/OFL-sans.txt` and asset provenance. New Chinese headings may require an expanded subset.
 
-Hero headings use the display token with two explicit lines and blue emphasis on the second line. Section headings use `clamp(28px, 3vw, 38px)` at 1.4 line-height. Auth form headings are 31px/1.4 at weight 750, reducing to 28px on mobile. Supporting prose is generally 13–14px at 1.9–1.95 line-height; form inputs remain 16px with a 46px minimum height. API text uses `ui-monospace, monospace`.
+Hero headings use the display token with two explicit lines. Section headings use `clamp(28px, 3vw, 38px)` at 1.4 line-height. Desktop auth landscape headings are 43px, falling to 37px below 1100px, 27px below 760px and 25px below 380px. Form headings are 31px/1.4 at weight 750, reducing to 28px on mobile. Supporting prose is generally 13–14px at 1.9–1.95 line-height; auth inputs remain 16px with a 46px minimum height. API text uses `ui-monospace, monospace`. The hero footer pairs ICEBERG with the translated motto, “轻舟已撞大冰山” in Chinese.
 
 ## Layout
 
-Desktop content width is `min(1220px, calc(100% - 96px))`. The hero uses 1.08:1 columns, a 48px gap and 162px/50px block padding. Models sit in a single horizontal panel; three onboarding steps precede a 1:1.15 connection grid. FAQ uses 0.8:1.2 columns. The connection anchor has a 104px scroll margin.
+Desktop content width is `min(1220px, calc(100% - 96px))`. The full-width hero scene contains a 1.1:1 grid, 96px gap, 186px/80px block padding and 754px minimum height. The titled launchpad is capped at 440px and sits over the landscape; the motto closes the scene. A flat model-information row leads into three outlined onboarding steps, a 1:1.15 connection workspace and a 0.8:1.2 FAQ grid. The connection anchor has a 104px scroll margin.
 
-- At 1100px and below, content gutters become 32px, hero gap 24px and connection/auth spacing tightens.
-- At 1000px and below, the homepage switches to the existing compact navigation and mobile menu.
-- At 760px and below, content gutters become 20px and hero, steps, connection and FAQ stack. Hero headings use `clamp(37px, 9vw, 52px)`; artwork is capped at 360px. The nav becomes 60px tall. Code scrolls within its own region.
-- At 380px and below, homepage gutters become 16px and auth gutters 10px; auth panel horizontal padding becomes zero. The 320px verification width therefore retains 300px for Turnstile and the form.
+- At 1100px and below, content gutters become 32px; hero gap becomes 45px, top padding 155px and minimum height 720px.
+- At 1000px and below, the homepage uses the existing compact navigation and mobile menu.
+- At 760px and below, content gutters become 20px; hero, steps, connection and FAQ stack. Hero padding is 128px/38px with a 42px gap and no minimum height. The launchpad is upright and centered; the landscape widens and shifts behind it. Navigation becomes 60px tall. Code scrolls inside its own region.
+- At 380px and below, homepage gutters become 16px and auth gutters 10px; auth panel horizontal padding becomes zero. A 320px viewport retains a full 300px for the form and Turnstile.
 
-Authentication has a 96px header, a two-column main area capped at 1200px, and a form capped at 390px. It uses minimum height so registration can scroll. On mobile the header becomes 84px; title and a 144px mascot sit side-by-side above the form (120px mascot column below 380px). Secondary illustration copy/footer and back-home text hide; the home-linked brand, language and theme controls remain.
+Authentication has a 96px header and two-column main area capped at 1180px with a 100px gap, reducing to 48px below 1100px. The form is capped at 390px. Minimum height allows registration to scroll. Below 760px, the header becomes 84px; a compact heading precedes the form. Route steps, supporting landscape copy/footer and back-home text hide; home-linked branding, language and theme controls remain. There is no mobile mascot column.
 
 ## Elevation & Depth
 
-**The Limited Glass Rule.** Reserve blur for the floating navigation, secondary action, artwork caption, connection workspace, auth utility controls and auth panel. Model and step surfaces share translucent fill and inset rims without blur; text fields use opaque card backgrounds.
+**The Limited Glass Rule.** Reserve blur for floating navigation, the secondary action, the launchpad, auth utility controls and the auth panel. Models are a flat divided row; the connection workspace uses a muted opaque fill and border. Auth and connection fields use opaque card surfaces; the launchpad address is transparent over its high-opacity panel.
 
-Blur ranges from 14px on the secondary action to 24px on the auth panel. White inset rims, subtle lower edges and blue-tinted offset shadows create the material. The mascot sits over a circular lens and ripples with two small colored droplets. These accents remain subordinate to the unchanged artwork.
+Navigation uses the shared glass token with 22px blur; the secondary action uses 14px and auth tools 18px. The launchpad uses 20px blur and an approximately 88% white fill (92% dark fill). The auth panel uses 24px blur and approximately 92% white fill (93% dark fill). Inset rims and restrained blue shadows distinguish these layers. The launchpad rests at a 1° angle on desktop and upright on mobile.
 
-Reduced transparency sets glass to opaque light (`#f7fbff`) or dark (`#203955`) and removes the listed backdrop filters. Browsers supporting neither standard nor WebKit backdrop filtering receive the same opaque fills. Decorative lens gradients remain; this is a glass-surface fallback, not an all-transparency removal.
+Reduced transparency uses opaque light (`#f7fbff`) or dark (`#203955`) fills and removes those backdrop filters. Browsers supporting neither standard nor WebKit filtering receive opaque fills. Decorative landscape opacity remains; this fallback concerns glass surfaces.
 
 ## Shapes
 
-Rounded controls and broad panels echo the illustration's friendly character: fields 12px, auth/header controls 14px, homepage actions 17px, floating navigation/model panel 24px, connection workspace 26px and auth panel 30px. Mobile radii tighten. The illustration lens, ripples and droplets are circular or elliptical; retain these as artwork accents.
+Faceted SVG planes and asymmetrically rounded outlined step markers translate the icon into interface geometry. Fields and homepage actions use 12px corners, auth controls 14px, navigation 18px, connection workspace 22px, and launchpad/auth panels 24px. The hero title underline and coral wake are curved accents. Keep the original logo at ordinary branding scale.
 
 ## Components
 
-**Original artwork.** `StationArt` reuses `/iceberg-station-mark-v2.png` with intrinsic dimensions of 512 × 512 and descriptive translated alt text. Lens, ripples and droplets are decorative and hidden from accessibility APIs. The image scales within available space; do not redraw or replace the source asset.
+**Landscape.** `StationLandscape` is a flat decorative SVG with a 1440 × 860 viewBox, authored facets, shore, wake and coral route. It spans the hero and auth background, with responsive positioning. It is nonfocusable, hidden from accessibility APIs and ignores pointer events. `StationArt` and its enlarged logo, lens, ripples and droplets have been removed.
 
-**Actions and navigation.** Homepage actions have a 50px minimum height, weight 700, inset highlights and a 2px hover lift; press resets the lift and scales to 0.98. Secondary actions use glass. Auth buttons remain the shared components with scoped 46px minimum height and inset highlight. The floating header retains configuration-driven navigation and the existing menu behavior.
+**Launchpad.** `StationLaunchpad` has a real heading, labelled selectable read-only API address and clipboard action. Success and manual-copy failure instructions use a status region. Model links go to `/pricing`; signed-in key links go to `/keys`, while signed-out links go to `/sign-in` with `/keys` as the redirect. The guide jumps to `#connect`. All visible strings continue through the existing translations.
 
-**Connection and disclosure.** The selectable read-only address has an opaque field and a 44px copy control. Shared accessible Tabs use a muted track with an opaque selected tab; panel minimum height is 230px (265px on mobile). Preserve copy status/manual fallback and keyboard-focusable code. Native FAQ details/summary rows use bottom dividers and plus/minus indicators.
+**Actions and navigation.** Homepage actions have a 50px minimum height, weight 700, inset highlights and a 2px hover lift; press resets the lift and scales to 0.98. Signed-in primary actions go to the dashboard; signed-out actions go to sign-in. Registration appears only when permitted by current configuration. Shared auth buttons retain a scoped 46px minimum height. Navigation remains configuration-driven with existing menu behavior.
 
-**Authentication and scope.** The shell wraps sign-in/sign-up while retaining configured logo/name, existing forms, language/theme controls, invitation/OAuth/Turnstile/consent logic and New API / QuantumNous attribution. Original auth and route logic is unchanged. Custom homepages, dashboard and other routes retain their existing branches and styling; portalled controls may inherit the broader application theme.
+**Connection and disclosure.** The connection address has an opaque field and 44px copy control. Shared accessible Tabs have a muted track and opaque selected tab; panels have a 230px minimum height (265px on mobile). Preserve copy status/manual fallback and keyboard-focusable code. Native FAQ details/summary rows retain bottom dividers and plus/minus indicators.
 
-**Focus and motion.** Scoped links, buttons, inputs, summaries and code receive a 2px ring with 5px offset on visible focus. Skip links appear on focus. The mascot has one 800ms entrance (`cubic-bezier(0.16, 1, 0.3, 1)`), from 12px lower / −2° / 0.8 opacity to its resting position. No perpetual animation is introduced. Reduced motion removes the entrance, transitions, smooth scrolling and button hover/press transforms.
+**Authentication and scope.** The sign-in/sign-up shell retains configured logo/name, existing forms, language/theme controls, invitation/OAuth/Turnstile/consent logic and New API / QuantumNous attribution. Existing authentication and route logic is retained. Custom homepages, dashboard and other routes retain their branches and styling; portalled controls may inherit the broader application theme. Models, quota and eligibility must reflect real configuration.
 
-The v2 visual review compared the original icon with six captures and returned ship. The completed review included 320px as the narrow verification width; this document records the implementation and does not imply new browser or authentication testing.
+**Focus and motion.** Scoped links, buttons, inputs, summaries and code receive a 2px ring with 5px offset on visible focus; skip links appear on focus. The launchpad has one 700ms entrance using `cubic-bezier(0.16, 1, 0.3, 1)`, from 12px lower and 0.8 opacity to its resting position. No perpetual animation is introduced. Reduced motion removes this entrance, scoped transitions, smooth scrolling and primary action hover/press transforms. The launchpad link arrow still shifts on hover without a transition.
+
+The v3 reviewer inspected all eight desktop, mobile, auth, narrow, dark and English/tablet captures plus source and returned ship. The parent task reports 24 related tests, typecheck, lint and build passing, with browser clipboard and signed-out key redirect verified. This is source/screenshot coverage, not live OAuth authentication. Evidence is recorded in the sidecar.
 
 ## Do's and Don'ts
 
 ### Do:
 
-- **Do** reuse the original illustration and preserve its colors, proportions and transparent silhouette.
+- **Do** translate the icon into ice facets, navy definition and coral wake while keeping branding small.
 - **Do** extend the opt-in station scope with existing semantic tokens and maintain light/dark parity.
 - **Do** preserve authentic registration, model, quota and account state, accessible controls and normal page scrolling.
 - **Do** keep font licensing and expand the Chinese title subset when adding display copy.
 
 ### Don't:
 
+- **Don't** enlarge the mascot as hero or authentication artwork.
 - **Don't** restore photographic hero art or serif typography for these surfaces.
 - **Don't** apply blur to the whole page or nest glass panels throughout routine content.
 - **Don't** replace authentication or configuration-driven navigation behavior to achieve a visual match.

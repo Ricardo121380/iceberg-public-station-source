@@ -22,7 +22,7 @@ import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { LanguageSwitcher } from '@/components/language-switcher'
-import { StationArt } from '@/components/station-art'
+import { StationLandscape } from '@/components/station-landscape'
 import { ThemeSwitch } from '@/components/theme-switch'
 import { useSystemConfig } from '@/hooks/use-system-config'
 
@@ -51,6 +51,7 @@ export function StationAuthLayout(props: { children: ReactNode }) {
           </Link>
         </div>
       </header>
+      <StationLandscape />
       <main className='station-auth-main'>
         <aside className='station-auth-art'>
           <div className='station-auth-art-copy'>
@@ -61,7 +62,21 @@ export function StationAuthLayout(props: { children: ReactNode }) {
             </h1>
             <p>{t('A community AI API station for LinuxDO.')}</p>
           </div>
-          <StationArt />
+
+          <ol className='station-auth-route'>
+            <li>
+              <span>1</span>
+              {t('Join with LinuxDO')}
+            </li>
+            <li>
+              <span>2</span>
+              {t('Create your API key')}
+            </li>
+            <li>
+              <span>3</span>
+              {t('Connect your tools')}
+            </li>
+          </ol>
           <div className='station-auth-art-footer'>
             <span>ICEBERG</span>
             <span>{t('A little space for curiosity.')}</span>

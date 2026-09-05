@@ -20,10 +20,11 @@ import { Link } from '@tanstack/react-router'
 import { ArrowDown, ArrowRight, ArrowUpRight, Check } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
-import { StationArt } from '@/components/station-art'
+import { StationLandscape } from '@/components/station-landscape'
 import { useStatus } from '@/hooks/use-status'
 
 import { StationConnection } from './station-connection'
+import { StationLaunchpad } from './station-launchpad'
 
 export function StationHome(props: { isAuthenticated: boolean }) {
   const { t } = useTranslation()
@@ -33,58 +34,60 @@ export function StationHome(props: { isAuthenticated: boolean }) {
 
   return (
     <main id='station-main' className='station-main'>
-      <section
-        className='station-hero station-container'
-        aria-labelledby='station-title'
-      >
-        <div className='station-hero-copy'>
-          <h1 id='station-title' className='station-display'>
-            <span>{t('Explore AI.')}</span>
-            <span>{t('Find a new beginning.')}</span>
-          </h1>
-          <p className='station-intro'>
-            {t(
-              'A community AI API station for LinuxDO. Discover available models, connect your favorite tools, and keep exploring.'
-            )}
-          </p>
-          <div className='station-actions'>
-            <Link
-              to={props.isAuthenticated ? '/dashboard' : '/sign-in'}
-              className='station-button'
-            >
+      <div className='station-hero-scene'>
+        <StationLandscape />
+        <section
+          className='station-hero station-container'
+          aria-labelledby='station-title'
+        >
+          <div className='station-hero-copy'>
+            <h1 id='station-title' className='station-display'>
+              <span>{t('Explore AI.')}</span>
+              <span>{t('Find a new beginning.')}</span>
+            </h1>
+            <p className='station-intro'>
               {t(
-                props.isAuthenticated
-                  ? 'Go to Dashboard'
-                  : 'Sign in with LinuxDO'
+                'A community AI API station for LinuxDO. Discover available models, connect your favorite tools, and keep exploring.'
               )}
-              <ArrowRight size={17} aria-hidden='true' />
-            </Link>
-            {!props.isAuthenticated && registrationOpen && (
+            </p>
+            <div className='station-actions'>
               <Link
-                to='/sign-up'
-                className='station-button station-button-secondary'
+                to={props.isAuthenticated ? '/dashboard' : '/sign-in'}
+                className='station-button'
               >
-                {t('Register with an invitation')}
+                {t(
+                  props.isAuthenticated
+                    ? 'Go to Dashboard'
+                    : 'Sign in with LinuxDO'
+                )}
+                <ArrowRight size={17} aria-hidden='true' />
               </Link>
-            )}
+              {!props.isAuthenticated && registrationOpen && (
+                <Link
+                  to='/sign-up'
+                  className='station-button station-button-secondary'
+                >
+                  {t('Register with an invitation')}
+                </Link>
+              )}
+            </div>
+            <p className='station-eligibility'>
+              <Check size={15} aria-hidden='true' />
+              {t('New here? Bring an invitation and a LinuxDO TL1+ account.')}
+            </p>
+            <a href='#connect' className='station-scroll-link'>
+              <ArrowDown size={17} aria-hidden='true' />
+              {t('See how to connect')}
+            </a>
           </div>
-          <p className='station-eligibility'>
-            <Check size={15} aria-hidden='true' />
-            {t('New here? Bring an invitation and a LinuxDO TL1+ account.')}
-          </p>
-          <a href='#connect' className='station-scroll-link'>
-            <ArrowDown size={17} aria-hidden='true' />
-            {t('See how to connect')}
-          </a>
+          <StationLaunchpad isAuthenticated={props.isAuthenticated} />
+        </section>
+        <div className='station-motto station-container'>
+          <span>ICEBERG</span>
+          <p>{t('A little boat meets a big iceberg.')}</p>
+          <span className='station-motto-rule' aria-hidden='true' />
         </div>
-        <figure className='station-hero-art'>
-          <StationArt />
-          <figcaption>
-            <span>ICEBERG</span>
-            <span>{t('A little boat meets a big iceberg.')}</span>
-          </figcaption>
-        </figure>
-      </section>
+      </div>
 
       <section
         className='station-models station-container'
