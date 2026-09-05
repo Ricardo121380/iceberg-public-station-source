@@ -21,8 +21,8 @@ import { useTranslation } from 'react-i18next'
 
 import { useStatus } from '@/hooks/use-status'
 
-import { AuthLayout } from '../auth-layout'
 import { TermsFooter } from '../components/terms-footer'
+import { StationAuthLayout as AuthLayout } from '../station-auth-layout'
 import { UserAuthForm } from './components/user-auth-form'
 
 export function SignIn() {
@@ -35,8 +35,13 @@ export function SignIn() {
       <div className='w-full space-y-8'>
         <div className='space-y-2'>
           <h2 className='text-center text-2xl font-semibold tracking-tight sm:text-left'>
-            {t('Sign in')}
+            {t('Welcome back to Iceberg')}
           </h2>
+          <p className='station-auth-intro'>
+            {t(
+              'Continue with your linked LinuxDO account. Your next idea is waiting.'
+            )}
+          </p>
           {!status?.self_use_mode_enabled &&
             status?.register_enabled !== false && (
               <p className='text-muted-foreground text-left text-sm sm:text-base'>
@@ -47,12 +52,16 @@ export function SignIn() {
                 >
                   {t('Sign up')}
                 </Link>
-                .
               </p>
             )}
         </div>
 
         <UserAuthForm redirectTo={redirect} />
+        <p className='station-auth-note'>
+          {t(
+            'Already registered? No invitation or security check is needed to sign in.'
+          )}
+        </p>
 
         <TermsFooter
           variant='sign-in'

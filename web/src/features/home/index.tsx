@@ -26,7 +26,9 @@ import { useTheme } from '@/context/theme-provider'
 import { isLikelyHtml } from '@/lib/content-format'
 import { useAuthStore } from '@/stores/auth-store'
 
-import { CTA, Features, Hero, HowItWorks, Stats } from './components'
+import '@/styles/iceberg.css'
+
+import { StationHome } from './components/station-home'
 import { useHomePageContent } from './hooks'
 
 export function Home() {
@@ -121,13 +123,14 @@ export function Home() {
   }
 
   return (
-    <PublicLayout showMainContainer={false}>
-      <Hero isAuthenticated={isAuthenticated} />
-      <Stats />
-      <Features />
-      <HowItWorks />
-      <CTA isAuthenticated={isAuthenticated} />
-      <Footer />
-    </PublicLayout>
+    <div className='station-site'>
+      <a href='#station-main' className='station-skip'>
+        {t('Skip to content')}
+      </a>
+      <PublicLayout showMainContainer={false}>
+        <StationHome isAuthenticated={isAuthenticated} />
+        <Footer className='station-footer' />
+      </PublicLayout>
+    </div>
   )
 }

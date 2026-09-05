@@ -21,8 +21,8 @@ import { useTranslation } from 'react-i18next'
 
 import { useStatus } from '@/hooks/use-status'
 
-import { AuthLayout } from '../auth-layout'
 import { TermsFooter } from '../components/terms-footer'
+import { StationAuthLayout as AuthLayout } from '../station-auth-layout'
 import { SignUpForm } from './components/sign-up-form'
 
 export function SignUp() {
@@ -34,8 +34,11 @@ export function SignUp() {
       <div className='w-full space-y-8'>
         <div className='space-y-2'>
           <h2 className='text-center text-2xl font-semibold tracking-tight sm:text-left'>
-            {t('Create an account')}
+            {t('Join Iceberg')}
           </h2>
+          <p className='station-auth-intro'>
+            {t('Bring your invitation. A new connection starts here.')}
+          </p>
           <p className='text-muted-foreground text-left text-sm sm:text-base'>
             {t('Already have an account?')}{' '}
             <Link
@@ -44,11 +47,20 @@ export function SignUp() {
             >
               {t('Sign in')}
             </Link>
-            .
           </p>
         </div>
 
+        <ul className='station-register-rules'>
+          <li>{t('Valid invitation')}</li>
+          <li>LinuxDO TL1+</li>
+          <li>{t('Security verification')}</li>
+        </ul>
         <SignUpForm />
+        <p className='station-auth-note'>
+          {t(
+            'Invitations can be used once. Check your account and invitation before continuing to LinuxDO.'
+          )}
+        </p>
 
         <TermsFooter
           variant='sign-up'
