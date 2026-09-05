@@ -98,3 +98,12 @@ After .13 production feedback, extended the sequence from 2400 ms to 3400 ms. Re
 - Updated lifecycle regression first failed against .13, then all eight opening tests passed; typecheck and production build passed. Changed-file lint has no errors; formatting findings remain the 25 pre-existing files.
 - Desktop and 390px mobile impact/approach/close-up frames inspected together; the approved original icon assets and scene remain unchanged.
 - Preview frames are in workspace `output/playwright/opening-slow/`. Release target: public-station-v1.0.0.14.
+
+## Opening revision 5 — clean vector layers
+
+The original 348px-wide boat and smaller ice PNGs became visibly soft when scaled for the close-up. Replaced only the opening's five image references with editable SVG adaptations, preserving original branding assets. Curves and facets are manually cleaned, removing raster halos and isolated water remnants; the boat's occluded lower contour is completed. Automated VTracer candidates were rejected for contour artifacts and are not shipped. No Python dependency is needed to build or serve the SVGs.
+
+- Five SVGs total 6588 bytes before transfer compression. No embedded raster, scripts or external dependencies. New `vector-v1/` URLs avoid old cached artwork.
+- Desktop and 390px mobile impact/approach/close-up frames inspected, including the full-size final boat edge. The 3.4-second CSS timeline and all operation/input behavior are unchanged.
+- Eight existing opening behavior tests and typecheck pass; production build passes. Browser confirms all SVG images decode successfully.
+- Comparison and animation evidence: workspace `output/playwright/opening-clean/`. Release target public-station-v1.0.0.15.

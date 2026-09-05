@@ -60,7 +60,7 @@ export function StationOpening() {
           images.push(image)
           image.onload = () => resolve()
           image.onerror = () => reject(new Error('Opening artwork unavailable'))
-          image.src = `/iceberg/intro/${part}.png`
+          image.src = `/iceberg/intro/vector-v1/${part}.svg`
         })
     )
 
@@ -109,28 +109,32 @@ export function StationOpening() {
         <div className='opening-water' />
         <img
           className='opening-ice opening-ice-left'
-          src='/iceberg/intro/ice-left.png'
+          src='/iceberg/intro/vector-v1/ice-left.svg'
           alt=''
         />
         <img
           className='opening-ice opening-ice-right'
-          src='/iceberg/intro/ice-right.png'
+          src='/iceberg/intro/vector-v1/ice-right.svg'
           alt=''
         />
-        <img className='opening-boat' src='/iceberg/intro/boat.png' alt='' />
+        <img
+          className='opening-boat'
+          src='/iceberg/intro/vector-v1/boat.svg'
+          alt=''
+        />
         <img
           className='opening-splash'
-          src='/iceberg/intro/splash.png'
+          src='/iceberg/intro/vector-v1/splash.svg'
           alt=''
         />
         <img
           className='opening-chip opening-chip-one'
-          src='/iceberg/intro/chip.png'
+          src='/iceberg/intro/vector-v1/chip.svg'
           alt=''
         />
         <img
           className='opening-chip opening-chip-two'
-          src='/iceberg/intro/chip.png'
+          src='/iceberg/intro/vector-v1/chip.svg'
           alt=''
         />
         <p className='opening-caption'>

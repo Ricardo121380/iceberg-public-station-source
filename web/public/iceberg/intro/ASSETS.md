@@ -1,3 +1,5 @@
 # Opening animation layers
 
 All five PNGs are masked crops of the existing `../../iceberg-station-mark-v2.png`. No generated, redrawn, or external artwork. Original logo remains unchanged. Boat mask includes the existing shrimp and hull; ice masks exclude overlapping shrimp/boat pixels. Extraction source: `docs/design/extract-opening-assets.py` (run from repository root with Pillow).
+
+The opening now uses `vector-v1/*.svg`: manually cleaned vector adaptations of those five layers. The shrimp, eye, antennae, hull, ice facets and palette follow the original mark; obscured hull edges are completed and small raster/water artifacts are removed. These SVGs contain only local paths, fills and clipping geometry, with no bitmap embedding, scripts, fonts or external references. They are editable source assets, not outputs of the experimental VTracer conversion. The original PNGs and site logo remain unchanged. A versioned path prevents the previous long-lived PNG cache from affecting the new artwork.
