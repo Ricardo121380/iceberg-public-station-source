@@ -1,0 +1,295 @@
+/*
+Copyright (C) 2023-2026 QuantumNous
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of the
+License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program. If not, see <https://www.gnu.org/licenses/>.
+
+For commercial licensing, please contact support@quantumnous.com
+*/
+.station-opening {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: #f3faffef;
+  animation: opening-exit 2400ms ease-out both;
+}
+.dark .station-opening {
+  background: #102339f5;
+}
+.opening-stage {
+  position: relative;
+  width: min(620px, 94vw, 105vh);
+  aspect-ratio: 1.25;
+  isolation: isolate;
+  animation: opening-impact 2400ms linear both;
+}
+.opening-stage img {
+  position: absolute;
+  object-fit: contain;
+}
+.opening-water {
+  position: absolute;
+  inset: 64% 4% 14%;
+  border-radius: 50%;
+  background: #8bdcf349;
+  box-shadow: 0 0 0 10px #9cdff51c;
+  animation: opening-water 2400ms both;
+}
+.opening-ice {
+  bottom: 27%;
+  z-index: 2;
+  transform-origin: 50% 100%;
+}
+.opening-ice-left {
+  width: 64%;
+  left: -7%;
+  animation: opening-left 2400ms both;
+}
+.opening-ice-right {
+  width: 52%;
+  left: 46%;
+  animation: opening-right 2400ms both;
+}
+.opening-boat {
+  width: 40%;
+  left: 30%;
+  bottom: 22%;
+  transform-origin: 50% 45%;
+  animation: opening-sail 2400ms both;
+}
+.opening-splash {
+  width: 31%;
+  left: 34.5%;
+  bottom: 22%;
+  z-index: 4;
+  animation: opening-splash 2400ms both;
+}
+.opening-chip {
+  width: 6%;
+  left: 45%;
+  top: 36%;
+  z-index: 4;
+  animation: opening-chip 2400ms both;
+}
+.opening-chip-two {
+  left: 54%;
+  top: 30%;
+  width: 4%;
+  animation-name: opening-chip-two;
+}
+.opening-caption {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: clamp(16px, 3.5vw, 22px);
+  color: var(--foreground);
+  font-weight: 750;
+  animation: opening-caption 2400ms both;
+}
+.opening-skip {
+  position: absolute;
+  right: max(24px, env(safe-area-inset-right));
+  bottom: max(24px, env(safe-area-inset-bottom));
+  pointer-events: auto;
+  min-height: 44px;
+  padding: 10px 18px;
+  border-radius: 12px;
+  background: var(--card);
+  color: var(--foreground);
+  border: 1px solid var(--border);
+  font-size: 13px;
+  cursor: pointer;
+}
+/* The collision pauses for a beat, then accelerates through the lens. The
+   oversized final frame is transient: it clears straight into the homepage. */
+@keyframes opening-sail {
+  0%,
+  25% {
+    transform: translateY(-80%) scale(0.18);
+    z-index: 1;
+  }
+  35% {
+    transform: translateY(-40%) scale(0.5);
+    z-index: 1;
+  }
+  42%,
+  46% {
+    transform: translateY(-24%) scale(0.72);
+    z-index: 3;
+    animation-timing-function: cubic-bezier(0.55, 0, 1, 0.45);
+  }
+  65% {
+    transform: translateY(-14%) scale(1.6);
+    z-index: 3;
+    animation-timing-function: cubic-bezier(0.55, 0, 1, 0.45);
+  }
+  77% {
+    transform: translateY(-10%) scale(3.6);
+    z-index: 3;
+    animation-timing-function: cubic-bezier(0.55, 0, 1, 0.45);
+  }
+  88%,
+  100% {
+    transform: translateY(-10%) scale(10);
+    z-index: 3;
+  }
+}
+@keyframes opening-impact {
+  0%,
+  33%,
+  44%,
+  100% {
+    transform: translate(0, 0);
+  }
+  35% {
+    transform: translate(-4px, 2px);
+  }
+  37% {
+    transform: translate(5px, -3px);
+  }
+  40% {
+    transform: translate(-2px, 1px);
+  }
+}
+@keyframes opening-left {
+  0%,
+  33% {
+    transform: translate(0, 0) rotate(0) scale(1);
+    opacity: 1;
+  }
+  38% {
+    transform: translate(-4%, 1%) rotate(-4deg) scale(1);
+  }
+  55% {
+    transform: translate(-45%, 9%) rotate(-20deg) scale(1.15);
+    opacity: 1;
+  }
+  72%,
+  100% {
+    transform: translate(-125%, 35%) rotate(-38deg) scale(1.65);
+    opacity: 0;
+  }
+}
+@keyframes opening-right {
+  0%,
+  33% {
+    transform: translate(0, 0) rotate(0) scale(1);
+    opacity: 1;
+  }
+  38% {
+    transform: translate(5%, 1%) rotate(4deg) scale(1);
+  }
+  55% {
+    transform: translate(50%, 9%) rotate(21deg) scale(1.15);
+    opacity: 1;
+  }
+  72%,
+  100% {
+    transform: translate(140%, 35%) rotate(40deg) scale(1.65);
+    opacity: 0;
+  }
+}
+@keyframes opening-water {
+  0%,
+  33% {
+    transform: scale(0.65);
+    opacity: 0.45;
+  }
+  48% {
+    transform: scale(1.1);
+    opacity: 1;
+  }
+  77%,
+  100% {
+    transform: scale(3);
+    opacity: 0;
+  }
+}
+@keyframes opening-splash {
+  0%,
+  35% {
+    opacity: 0;
+    transform: translateY(-45%) scale(0.25);
+  }
+  43% {
+    opacity: 1;
+    transform: translateY(-12%) scale(0.85);
+  }
+  62%,
+  100% {
+    opacity: 0;
+    transform: translateY(90%) scale(4);
+  }
+}
+@keyframes opening-chip {
+  0%,
+  35% {
+    opacity: 0;
+    transform: translate(0, 0) scale(0.4);
+  }
+  41% {
+    opacity: 1;
+  }
+  62%,
+  100% {
+    opacity: 0;
+    transform: translate(-650%, -240%) scale(4) rotate(-110deg);
+  }
+}
+@keyframes opening-chip-two {
+  0%,
+  35% {
+    opacity: 0;
+    transform: translate(0, 0) scale(0.4);
+  }
+  41% {
+    opacity: 1;
+  }
+  62%,
+  100% {
+    opacity: 0;
+    transform: translate(800%, -180%) scale(5) rotate(130deg);
+  }
+}
+@keyframes opening-caption {
+  0%,
+  25% {
+    opacity: 1;
+  }
+  35%,
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes opening-exit {
+  0%,
+  86% {
+    opacity: 1;
+  }
+  94%,
+  100% {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .station-opening {
+    display: none;
+  }
+}

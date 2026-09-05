@@ -29,6 +29,7 @@ import { useAuthStore } from '@/stores/auth-store'
 import '@/styles/iceberg.css'
 
 import { StationHome } from './components/station-home'
+import { StationOpening } from './components/station-opening'
 import { useHomePageContent } from './hooks'
 
 export function Home() {
@@ -124,6 +125,7 @@ export function Home() {
 
   return (
     <div className='station-site'>
+      <StationOpening />
       <a href='#station-main' className='station-skip'>
         {t('Skip to content')}
       </a>

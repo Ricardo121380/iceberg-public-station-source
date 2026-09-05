@@ -60,3 +60,33 @@ User explicitly rejected the enlarged logo composition. Removed `StationArt` and
 - Existing Turnstile fails on localhost and correctly keeps registration disabled with retry. Live verification still requires the trusted deployment domain; no production change was made.
 
 Revision 3 final review: **ship**. Independent reviewer opened all eight final captures and inspected source; no material presentation issues in scope. Functional browser verification: public address copied successfully; key link reached `/sign-in?redirect=%2Fkeys`. Reduced-preference behavior is verified on the new launchpad, not inferred from v2. No live OAuth success is asserted.
+
+# First-visit opening — local preview
+
+User requested a simple shrimp-boat collision using the existing icon. Five transparent PNG crops retain the original pixels; the reproducible masks are in `extract-opening-assets.py`. A 2.4-second CSS sequence sails the boat in, recoils on impact, separates the ice, throws two chips and a splash, then fades into the unchanged homepage.
+
+- Mounted only on the default homepage; no auth, registration, navigation or backend logic changed.
+- One playback per browser storage profile, recorded under `iceberg-opening-v1-seen`. Pointer/keyboard input dismisses without preventing the original event. A visible skip button is provided.
+- Reduced-motion preference, unavailable storage, failed artwork, and artwork taking more than 1.5 seconds all skip the opening.
+- Eight component behavior tests passed. Typecheck and production build passed; scoped lint has no errors and four `prefer-add-event-listener` warnings on private preload Image handlers.
+- Desktop and 390px mobile keyframes visually inspected. Browser-frame GIF and screenshots are in workspace `.impeccable/opening-review/`.
+- Live local-browser DOM observation measured a 2404 ms playback; reload did not play again, and reduced-motion produced no opening or seen flag.
+- Clicking the real key-creation link during playback dismissed the opening and reached `/sign-in?redirect=%2Fkeys` in the same action.
+- This addition has not been deployed; production remains the approved revision 3 release.
+
+## Opening revision 2 — depth and iceberg scale
+
+User requested motion from inside the scene toward the viewer and a larger iceberg. The boat now stays centered, starts behind the joined ice at 0.18 scale, breaks through the opening, and grows to 1.28 scale in the foreground. The ice layers are 64% and 52% of the stage width (formerly 37% and 31%); the base boat is 40% (formerly 51%). The original side-view artwork is preserved; the depth comes from occlusion, scale, and vertical perspective rather than a newly drawn front view.
+
+- Only animation CSS changed in this revision. Duration, first-visit storage, skip handling, and operating flows remain unchanged.
+- Production build passed. Desktop and 390px mobile start/impact/exit frames inspected together; mountain peaks remain clearly taller than the boat.
+- Ego screenshot calls repeatedly timed out, so the final visual capture used an isolated Playwright browser. The browser and temporary recording hooks were closed after capture.
+- Final animation preview: workspace `output/playwright/opening-v2/虾船破冰-由内向外.gif`. Local preview only.
+
+## Opening revision 3 — break through the lens
+
+User requested an abrupt close-up after breaking the iceberg. The impact now adds a brief, small stage shake, sends the ice and chips outward, and holds the emerging boat for one beat before accelerating from 0.72 to 10 times its base size. The final boat extends beyond the viewport and immediately clears into the homepage; no enlarged static logo remains. The caption appears only before the impact.
+
+- CSS-only revision; the existing 2.4-second lifecycle, first-visit and reduced-motion handling, skip behavior, and application operations are unchanged.
+- Desktop and 390px mobile collision, approach, and close-up frames visually inspected. Production build and diff whitespace checks passed.
+- Current preview: workspace `output/playwright/opening-v3/虾船破冰-突脸版.gif`. Not deployed.
