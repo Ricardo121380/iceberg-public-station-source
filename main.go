@@ -327,6 +327,8 @@ func InitResources() error {
 
 	model.CheckSetup()
 
+	service.StartAbuseMaintenance()
+
 	// Initialize options, should after model.InitDB()
 	if common.IsMasterNode {
 		if err := model.MigrateRetiredFrontendOptions(); err != nil {
