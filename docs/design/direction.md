@@ -1,10 +1,11 @@
-# Iceberg waterline
-User approved the prior concrete proposal, including audience, first-phase scope, palette, imagery and CTA sequence. That pinned brief supersedes the random catalog; seed 059046f6 acknowledged. Build is code-led because no image generation capability is available. No user workflow preference is persisted. The script initially opened its comp default; it does not describe this code-led build.
+# Iceberg mascot and liquid glass — revision 2
 
-FIRST VIEWPORT: ice-white reading surface, generous dark-ocean Chinese serif headline on the left, tall real iceberg photography on the right. A single horizontal waterline anchors the figure. Two clear login/registration routes and a visible LinuxDO TL1 invitation condition. Retain configured navigation and branding.
-VISITOR PATH: understand community API access; view live model catalog; follow three steps; copy the real station URL and configure an existing client; read quota/invitation FAQ.
-SIGNATURE: the photograph arrives with a single restrained clip reveal. All text visible by default. Reduced-motion removes it entirely.
-AUTH: opt-in station variant for sign-in/sign-up only. Shared authentication screens keep their existing layout. Real OAuth/Turnstile/consent/redirect logic preserved.
-RESPONSIVE: full-width copy then compact photograph on phones; registration scrolls naturally; 320px viewport includes verification widget without horizontal overflow.
-ASSET: local optimized Unsplash iceberg photograph, source and license recorded. Existing logo retained. Public Sans and Lora plus self-hosted CJK display subset.
-QUALITY: no invented service figures, no image-text claims, no gradient text or nested panels. Deep blue section provides scroll contrast; onboarding controls are functional and accessible.
+User correction on 2026-09-05: the photographic/serif design does not match the existing icon. Reference the icon's style and add moderate Liquid Glass. This explicit visual reference supersedes the first photographic direction and the random catalog (seed 597bf079, assigned index 6 acknowledged).
+
+FIRST VIEWPORT: original transparent mascot/boat/iceberg artwork at its native 512px scale, light-blue glass lens and water ripples. Strong sans-serif headings, ice-blue emphasis, coral/rose primary action reflecting the boat, navy ink reflecting the outlines. Existing information and actions retained.
+GLASS: floating nav, secondary action/caption, connection workspace, authentication panel and utility controls. Use blur + saturation, specular inset edges and offset translucent shadows. Avoid full-page blur. Keep fields opaque and text contrast stable. Explicit reduced-transparency and unsupported-browser fallbacks.
+MOTION: one 800ms entrance on the original artwork. No perpetual decorative movement. Reduced-motion removes entrance and button transform.
+AUTH: same reference artwork and glass panel. On mobile, title and small artwork sit side-by-side above form. At 320px retain 300px inner width for Turnstile.
+SCOPE: homepage and sign-in/sign-up styling only. No OAuth, registration, billing, service configuration, or monitoring changes. Original brand artwork retained byte-for-byte. Public Sans plus self-hosted Noto Sans SC title subset. Retire photographic assets and serif subset from this revision.
+
+HOMEPAGE CAPTION: user-requested copy “轻舟已撞大冰山” beside ICEBERG. Authentication caption stays unchanged.

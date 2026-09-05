@@ -1,172 +1,153 @@
 ---
-name: Iceberg Station
-description: Ice-white reading surfaces and deep-ocean onboarding for a community AI API station
+name: 冰山公益站
+description: Original illustrated station identity with moderate Liquid Glass
 colors:
-  background: "#f7fafb"
-  foreground: "#173746"
-  primary: "#14546b"
+  primary: "#bc285d"
   primary-foreground: "#ffffff"
-  muted: "#edf3f5"
-  muted-foreground: "#536a75"
-  border: "#d6e2e7"
-  ring: "#197794"
+  station-blue: "#0877ac"
+  background: "#f5faff"
+  foreground: "#172b46"
+  muted: "#eaf3fa"
+  muted-foreground: "#506781"
+  border: "#c9dfed"
+  ring: "#007bad"
   card: "#ffffff"
-  accent: "#e5f1f5"
-  station-deep: "#113746"
-  dark-background: "#0f222c"
-  dark-foreground: "#e8f2f5"
-  dark-primary: "#9ed9e8"
-  dark-primary-foreground: "#112c39"
-  dark-muted: "#193541"
-  dark-muted-foreground: "#aec3cb"
-  dark-border: "#32505d"
-  dark-accent: "#234957"
-  dark-station-deep: "#0a1c25"
-  ocean-text: "#eef8fa"
-  ocean-muted: "#b9d0d9"
-  ocean-link: "#b2e4f0"
+  accent: "#e0f2fd"
+  accent-foreground: "#153b61"
+  station-glass: "#ffffffb8"
+  station-rim: "#ffffffed"
+  station-shadow: "#247ead1c"
+  station-glow: "#bbe6fc"
 typography:
   display:
-    fontFamily: "Lora Variable, Iceberg Display CJK, Songti SC, serif"
-    fontSize: "clamp(42px, 4.7vw, 68px)"
-    fontWeight: 500
-    lineHeight: 1.3
-    letterSpacing: "-0.025em"
-  headline:
-    fontFamily: "Lora Variable, Iceberg Display CJK, Songti SC, serif"
-    fontSize: "clamp(28px, 3vw, 40px)"
-    fontWeight: 500
-    lineHeight: 1.4
+    fontFamily: "Public Sans Variable, Iceberg Sans CJK, PingFang SC, sans-serif"
+    fontSize: "clamp(42px, 4.6vw, 66px)"
+    fontWeight: 750
+    lineHeight: 1.23
+    letterSpacing: "-0.035em"
   body:
     fontFamily: "Public Sans Variable, PingFang SC, Microsoft YaHei, sans-serif"
     fontSize: "16px"
     lineHeight: 1.95
-  button:
+  action:
+    fontFamily: "Public Sans Variable, PingFang SC, Microsoft YaHei, sans-serif"
     fontSize: "14px"
-    fontWeight: 600
-  code:
-    fontFamily: "ui-monospace, monospace"
-    fontSize: "13px"
+    fontWeight: 700
 rounded:
-  address: "6px"
-  button: "8px"
-  auth-art: "12px"
-  hero-art: "160px 160px 12px 12px"
+  field: "12px"
+  control: "14px"
+  action: "17px"
+  nav: "24px"
+  connection: "26px"
+  auth-panel: "30px"
 spacing:
   action-gap: "12px"
-  hero-gap: "72px"
-  container-gutter: "56px"
-  mobile-gutter: "20px"
+  hero-gap: "48px"
+  section: "64px"
 components:
   button-primary:
-    backgroundColor: "{colors.primary}"
     textColor: "{colors.primary-foreground}"
-    typography: "{typography.button}"
-    rounded: "{rounded.button}"
-    padding: "12px 22px"
+    typography: "{typography.action}"
+    rounded: "{rounded.action}"
+    padding: "13px 23px"
   button-secondary:
-    backgroundColor: "transparent"
+    backgroundColor: "{colors.station-glass}"
     textColor: "{colors.foreground}"
-    rounded: "{rounded.button}"
-    padding: "12px 22px"
-  button-secondary-hover:
-    backgroundColor: "{colors.accent}"
+    rounded: "{rounded.action}"
+    padding: "13px 23px"
   address-field:
-    backgroundColor: "transparent"
-    textColor: "#effaff"
-    typography: "{typography.code}"
+    backgroundColor: "{colors.card}"
+    textColor: "{colors.foreground}"
+    rounded: "{rounded.field}"
     height: "46px"
-    padding: "0 13px"
-  text-link:
-    textColor: "{colors.primary}"
-    typography: "{typography.button}"
-    padding: "10px 0"
+  navigation:
+    backgroundColor: "{colors.station-glass}"
+    rounded: "{rounded.nav}"
+    height: "64px"
+    padding: "8px 20px"
+  auth-panel:
+    backgroundColor: "{colors.station-glass}"
+    rounded: "{rounded.auth-panel}"
+    padding: "42px"
 ---
 
 # Design System: 冰山公益站
 
 ## Overview
 
-**Creative North Star: "Iceberg waterline"**
+**Creative North Star: "Original mascot, a little liquid glass"**
 
-Ice-white reading surfaces, deep-ocean sections and restrained ice-blue details make the community API service calm and approachable. Chinese serif headings provide character; sans-serif instructions and real connection controls keep the service legible. The iceberg photograph is landscape branding, not proof of service performance.
+The original station icon sets the visual language: a friendly mascot, faceted blue icebergs, navy outlines and a coral/rose boat. Ice-blue surfaces and strong sans-serif headings carry that identity into the default homepage and sign-in/sign-up shell. Moderate Liquid Glass adds light-catching edges to selected controls and panels while fields remain opaque and text stays clear.
 
-This is a code-derived record of the approved code-led implementation, dated 2026-09-05. Its authority covers the default homepage and the opt-in sign-in/sign-up shell. Product facts live in [PRODUCT.md](PRODUCT.md); surface intent lives in [direction.md](direction.md). The implementation remains authoritative when these notes drift.
+This code-derived revision 2 record supersedes the previous photographic/serif system. Product constraints live in [PRODUCT.md](PRODUCT.md); the approved surface direction lives in [direction.md](direction.md). The scoped implementation remains authoritative when documentation drifts.
 
 **Key Characteristics:**
 
-- Generous reading space, serif display headings and a single photographic silhouette.
-- Flat, divided information groups with a deep-ocean onboarding section.
-- Useful controls with visible focus and restrained state transitions.
-
-Source: `web/src/styles/iceberg.css`, `web/src/features/home/components/station-home.tsx`, `station-connection.tsx`, and `web/src/features/auth/station-auth-layout.tsx`. [design.json](design.json) holds extension metadata and isolated component previews. It is stored here to respect this project's documentation boundary; it is not the skill's default `.impeccable/design.json` auto-discovery path.
+- Original 512px mascot artwork, blue emphasis and coral/rose actions.
+- Readable sans-serif hierarchy with open spacing and selected translucent surfaces.
+- Finite entrance motion, clear focus and explicit accessibility fallbacks.
 
 ## Colors
 
-The frontmatter records the actual scoped CSS values. `primary` is deep teal-blue for actions; `station-deep` supplies the large ocean section. `background` is ice white, `foreground` dark blue-green, `muted-foreground` the supporting copy color, and `border` the quiet divider. White `card` surfaces support the inherited authentication fields. `accent` is the secondary hover fill. There is no separate decorative accent family.
+Primary coral/rose comes from the boat and identifies the main action; station blue emphasizes headings, links and step numbers. Navy foreground, ice-white background and pale blue muted surfaces provide the reading base. The homepage primary action uses a coral-to-rose gradient (`linear-gradient(170deg, #d93d61, #b72060)`), while shared auth controls use the semantic primary token.
 
-`.station-site` overrides existing semantic CSS variables. `secondary` equals `muted`; `card-foreground`, `accent-foreground` and `secondary-foreground` equal `foreground`. `.dark .station-site` supplies the documented dark values; dark `card` and `secondary` equal `dark-muted`, and dark `ring` equals `dark-primary`. These are scoped overrides, not a replacement for the application theme.
-
-The ocean section uses fixed light text (`ocean-text`, `ocean-muted`, `ocean-link`) in both themes and a local ice-blue focus ring. Photo treatments also retain fixed colors. Preserve these intentional local assignments instead of assuming all text follows the global theme.
+Dark mode supplies a navy background (`#101e34`), pale foreground (`#edf5ff`), rose primary (`#ff9fbb`), ice-blue station accent (`#85d6ff`) and dark glass (`#203955cc`). Complete light/dark mappings come from the scoped CSS and are recorded in the sidecar. Glass rim, glow and shadow tokens provide material cues rather than additional content colors.
 
 ## Typography
 
-Display: `Lora Variable, Iceberg Display CJK, Songti SC, serif`, weight 500. Body: `Public Sans Variable, PingFang SC, Microsoft YaHei, sans-serif`. API addresses use `ui-monospace, monospace`.
+Public Sans is used for Latin display and body text. Chinese display headings use the self-hosted Noto Sans SC weight-750 subset exposed as `Iceberg Sans CJK`, with `font-display: swap`; body Chinese falls back to PingFang SC / Microsoft YaHei. Preserve `web/public/iceberg/OFL-sans.txt` and asset provenance. New Chinese headings may require an expanded subset.
 
-- Hero headings: the frontmatter display size, two explicit lines, balanced wrapping; mobile `clamp(36px, 9vw, 52px)`.
-- Section display headings: `clamp(28px, 3vw, 40px)`, line-height 1.4; mobile onboarding heading 29px. FAQ and closing headings have their own 38px/30px desktop sizes.
-- Hero body: 16px/1.95, at most 34em; mobile 14px. Supporting prose is generally 13–14px with 1.9–1.95 line-height.
-- Authentication form heading: 34px/1.4, weight 500, left aligned; mobile 30px. Form inputs are 16px with a 46px minimum height.
-- Buttons: 14px, weight 600. Utility text: 11–13px. Letter spacing is reserved for the short photographic ICEBERG label.
-
-`display-cjk.woff2` is a self-hosted Noto Serif SC weight-500 **text subset**, with `font-display: swap`. New Chinese display copy may need an expanded subset; otherwise the serif fallback renders missing glyphs. Preserve the OFL file and asset provenance in `web/public/iceberg/ASSETS.md`.
+Hero headings use the display token with two explicit lines and blue emphasis on the second line. Section headings use `clamp(28px, 3vw, 38px)` at 1.4 line-height. Auth form headings are 31px/1.4 at weight 750, reducing to 28px on mobile. Supporting prose is generally 13–14px at 1.9–1.95 line-height; form inputs remain 16px with a 46px minimum height. API text uses `ui-monospace, monospace`.
 
 ## Layout
 
-The desktop homepage container is `min(1240px, calc(100% - 112px))`. The hero uses 1.16:1 columns with a 72px gap and 142px/68px block padding, increasing top padding to 160px at widths of 1600px and above. Its photo is 496px tall. The content after the hero remains in normal document flow: model link row, three onboarding steps, connection controls, FAQ, closing link and inherited footer.
+Desktop content width is `min(1220px, calc(100% - 96px))`. The hero uses 1.08:1 columns, a 48px gap and 162px/50px block padding. Models sit in a single horizontal panel; three onboarding steps precede a 1:1.15 connection grid. FAQ uses 0.8:1.2 columns. The connection anchor has a 104px scroll margin.
 
-The onboarding steps use three columns. Connection controls use a 1:1.15 grid; FAQ uses a 0.8:1.2 grid. Dividers separate groups without enclosing them in repeated cards. The connection anchor has a 70px scroll margin.
+- At 1100px and below, content gutters become 32px, hero gap 24px and connection/auth spacing tightens.
+- At 1000px and below, the homepage switches to the existing compact navigation and mobile menu.
+- At 760px and below, content gutters become 20px and hero, steps, connection and FAQ stack. Hero headings use `clamp(37px, 9vw, 52px)`; artwork is capped at 360px. The nav becomes 60px tall. Code scrolls within its own region.
+- At 380px and below, homepage gutters become 16px and auth gutters 10px; auth panel horizontal padding becomes zero. The 320px verification width therefore retains 300px for Turnstile and the form.
 
-- At 1100px and below: container side gutters become 32px, hero gap 40px and image height 440px; authentication gutters and panel padding reduce.
-- At 760px and below: container side gutters become 20px; hero, onboarding, connection and FAQ stack. Copy precedes a 290px photo. CTA buttons wrap. Section spacing tightens. Code scrolls inside its own `pre` region.
-- At 360px and below: homepage gutters become 16px and auth gutters 10px; CTA padding and font size reduce.
-
-Authentication has a 92px header, a two-column main area with a 1500px maximum width, a photo with 640px minimum height, and a form capped at 390px. The page uses `min-height`, allowing registration to scroll. At 760px and below, the header becomes 80px, the photo becomes a 174px banner, the form stacks below it, the secondary photo copy and footer disappear, and the explicit back-home text is hidden. The brand remains a home link, with language and theme controls available.
+Authentication has a 96px header, a two-column main area capped at 1200px, and a form capped at 390px. It uses minimum height so registration can scroll. On mobile the header becomes 84px; title and a 144px mascot sit side-by-side above the form (120px mascot column below 380px). Secondary illustration copy/footer and back-home text hide; the home-linked brand, language and theme controls remain.
 
 ## Elevation & Depth
 
-The station's custom surfaces are flat. Dividers, tonal sections and photography establish depth; there is no new card-shadow system. Photo captions use restrained dark gradients for contrast, and the homepage caption has `text-shadow: 0 1px 4px #123444`. The selected client tab uses an inset 2px ice-blue underline. Existing UI primitives retain their own focus rings and state styles.
+**The Limited Glass Rule.** Reserve blur for the floating navigation, secondary action, artwork caption, connection workspace, auth utility controls and auth panel. Model and step surfaces share translucent fill and inset rims without blur; text fields use opaque card backgrounds.
+
+Blur ranges from 14px on the secondary action to 24px on the auth panel. White inset rims, subtle lower edges and blue-tinted offset shadows create the material. The mascot sits over a circular lens and ripples with two small colored droplets. These accents remain subordinate to the unchanged artwork.
+
+Reduced transparency sets glass to opaque light (`#f7fbff`) or dark (`#203955`) and removes the listed backdrop filters. Browsers supporting neither standard nor WebKit backdrop filtering receive the same opaque fills. Decorative lens gradients remain; this is a glass-surface fallback, not an all-transparency removal.
 
 ## Shapes
 
-Homepage actions have 8px corners; the API address frame has 6px corners. The auth photo has 12px corners. The hero photo is the distinctive shape: `160px 160px 12px 12px`, becoming `120px 120px 12px 12px` at 1100px and `90px 90px 8px 8px` at 760px. A one-pixel waterline crosses it at 67% height. Do not turn that photograph-specific silhouette into a generic card shape.
+Rounded controls and broad panels echo the illustration's friendly character: fields 12px, auth/header controls 14px, homepage actions 17px, floating navigation/model panel 24px, connection workspace 26px and auth panel 30px. Mobile radii tighten. The illustration lens, ripples and droplets are circular or elliptical; retain these as artwork accents.
 
 ## Components
 
-**Homepage actions.** `.station-button` uses a 48px minimum height, 12px 22px padding, a 1px border and 14px icon gap. Primary hover mixes the primary color with 15% foreground; secondary hover fills with `accent`. Both move up 2px on hover. Authentication buttons remain the existing shared `Button`, with only a scoped 46px minimum-height override; they are not the homepage button class.
+**Original artwork.** `StationArt` reuses `/iceberg-station-mark-v2.png` with intrinsic dimensions of 512 × 512 and descriptive translated alt text. Lens, ripples and droplets are decorative and hidden from accessibility APIs. The image scales within available space; do not redraw or replace the source asset.
 
-**Connection controls.** `StationConnection` shares the existing accessible Tabs primitives. A read-only, selectable Base URL field pairs with a 46px copy button; copy success changes the icon and updates a reserved `role=status` region. Failure offers manual selection. Tabs are flat, with a selected underline and a 235px minimum-height panel (250px on mobile). Preserve the three client guides and horizontally scrollable, keyboard-focusable code example.
+**Actions and navigation.** Homepage actions have a 50px minimum height, weight 700, inset highlights and a 2px hover lift; press resets the lift and scales to 0.98. Secondary actions use glass. Auth buttons remain the shared components with scoped 46px minimum height and inset highlight. The floating header retains configuration-driven navigation and the existing menu behavior.
 
-**FAQ.** Native `details`/`summary` rows use bottom dividers, generous 22px vertical summary padding and a plus/minus indicator. Expanded prose remains in document flow; no additional animation or JavaScript accordion is required.
+**Connection and disclosure.** The selectable read-only address has an opaque field and a 44px copy control. Shared accessible Tabs use a muted track with an opaque selected tab; panel minimum height is 230px (265px on mobile). Preserve copy status/manual fallback and keyboard-focusable code. Native FAQ details/summary rows use bottom dividers and plus/minus indicators.
 
-**Authentication.** `StationAuthLayout` wraps sign-in and sign-up only. It reuses configured logo/name, `LanguageSwitcher`, `ThemeSwitch`, existing forms, `TermsFooter` and the real invitation/OAuth/Turnstile/consent behavior. Input error, disabled and validation styles continue to come from existing UI components and theme variables. Requirement labels are a wrapping plain-text list, not chips. Keep New API / QuantumNous attribution visible.
+**Authentication and scope.** The shell wraps sign-in/sign-up while retaining configured logo/name, existing forms, language/theme controls, invitation/OAuth/Turnstile/consent logic and New API / QuantumNous attribution. Original auth and route logic is unchanged. Custom homepages, dashboard and other routes retain their existing branches and styling; portalled controls may inherit the broader application theme.
 
-**Navigation and scope.** The homepage retains `PublicLayout` and its existing configuration-driven global header/navigation. Only the default homepage enters `.station-site`; configured URL, HTML and Markdown custom homepages retain their existing branches. Loading, other public pages, dashboard and other authentication routes keep their incumbent layout. Portalled controls may inherit the application theme outside `.station-site`; do not describe these as fully rebranded surfaces.
+**Focus and motion.** Scoped links, buttons, inputs, summaries and code receive a 2px ring with 5px offset on visible focus. Skip links appear on focus. The mascot has one 800ms entrance (`cubic-bezier(0.16, 1, 0.3, 1)`), from 12px lower / −2° / 0.8 opacity to its resting position. No perpetual animation is introduced. Reduced motion removes the entrance, transitions, smooth scrolling and button hover/press transforms.
 
-**Focus and motion.** Scoped links, buttons, inputs, summaries and code blocks receive a 2px `ring` outline with 5px offset on `:focus-visible`. Skip links become visible on focus. The hero photo alone enters through `station-water-reveal`: 1.1s `cubic-bezier(0.16, 1, 0.3, 1)`, clip inset 6% → 0, opacity 0.7 → 1. Text is visible by default. Reduced-motion removes this animation and disables scoped transitions and smooth scrolling. The static hover translation remains; the current rule removes its transition, not the transform itself.
+The v2 visual review compared the original icon with six captures and returned ship. The completed review included 320px as the narrow verification width; this document records the implementation and does not imply new browser or authentication testing.
 
 ## Do's and Don'ts
 
 ### Do:
 
-- **Do** extend station styles through the opt-in scope and existing semantic variables.
-- **Do** keep real model, quota, registration and account state authoritative in the interface.
-- **Do** preserve accessible control semantics, manual-copy fallback and normal page scrolling.
-- **Do** keep source/license records with the photograph and display font.
+- **Do** reuse the original illustration and preserve its colors, proportions and transparent silhouette.
+- **Do** extend the opt-in station scope with existing semantic tokens and maintain light/dark parity.
+- **Do** preserve authentic registration, model, quota and account state, accessible controls and normal page scrolling.
+- **Do** keep font licensing and expand the Chinese title subset when adding display copy.
 
 ### Don't:
 
-- **Don't** invent availability figures, quota promises or service proof from the landscape photograph.
-- **Don't** spread the hero silhouette, photographic gradients or nested panels into routine controls.
-- **Don't** replace shared authentication behavior or configuration-driven navigation to achieve a visual match.
-- **Don't** treat this scoped first phase as a completed application-wide redesign.
+- **Don't** restore photographic hero art or serif typography for these surfaces.
+- **Don't** apply blur to the whole page or nest glass panels throughout routine content.
+- **Don't** replace authentication or configuration-driven navigation behavior to achieve a visual match.
+- **Don't** treat this scoped homepage/auth revision as an application-wide redesign.

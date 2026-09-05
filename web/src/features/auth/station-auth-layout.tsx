@@ -22,6 +22,7 @@ import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { LanguageSwitcher } from '@/components/language-switcher'
+import { StationArt } from '@/components/station-art'
 import { ThemeSwitch } from '@/components/theme-switch'
 import { useSystemConfig } from '@/hooks/use-system-config'
 
@@ -52,7 +53,6 @@ export function StationAuthLayout(props: { children: ReactNode }) {
       </header>
       <main className='station-auth-main'>
         <aside className='station-auth-art'>
-          <img src='/iceberg/ocean.webp' width='1800' height='2699' alt='' />
           <div className='station-auth-art-copy'>
             <h1 className='station-display'>
               {t('A new connection.')}
@@ -61,6 +61,7 @@ export function StationAuthLayout(props: { children: ReactNode }) {
             </h1>
             <p>{t('A community AI API station for LinuxDO.')}</p>
           </div>
+          <StationArt />
           <div className='station-auth-art-footer'>
             <span>ICEBERG</span>
             <span>{t('A little space for curiosity.')}</span>

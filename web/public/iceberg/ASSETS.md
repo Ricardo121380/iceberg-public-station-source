@@ -1,5 +1,5 @@
-# Iceberg assets
+# Iceberg assets — revision 2
 
-- `ocean.webp`: source https://unsplash.com/photos/E2nrh-aTkC8, downloaded 2026-09-05 from https://images.unsplash.com/photo-1542622695-f2416d567d6a as a 1800px WebP. Unsplash license: https://unsplash.com/license . Used as landscape branding, not service evidence.
-- `display-cjk.woff2`: Noto Serif SC, weight 500, a Google Fonts text subset covering the station display headings. Font licensed under SIL Open Font License 1.1; see `OFL.txt`. Latin display uses the project's existing Lora Variable dependency.
-- Existing station logo and favicon retained.
+- Primary illustration: existing `../iceberg-station-mark-v2.png` from commit `6dcdb86`, unchanged. The user designated the original icon as the visual reference. No generated or externally sourced replacement illustration.
+- `display-sans-cjk.woff2`: Noto Sans SC weight 750, Google Fonts text subset for current Chinese display headings. SIL OFL 1.1 in `OFL-sans.txt`. Expand the subset for new Chinese headings. Latin display and body use the existing Public Sans dependency.
+- Photography and the previous serif subset retired in this revision; previous version remains in Git.

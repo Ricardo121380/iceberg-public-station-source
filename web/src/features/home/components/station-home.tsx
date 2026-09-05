@@ -20,6 +20,7 @@ import { Link } from '@tanstack/react-router'
 import { ArrowDown, ArrowRight, ArrowUpRight, Check } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
+import { StationArt } from '@/components/station-art'
 import { useStatus } from '@/hooks/use-status'
 
 import { StationConnection } from './station-connection'
@@ -77,18 +78,11 @@ export function StationHome(props: { isAuthenticated: boolean }) {
           </a>
         </div>
         <figure className='station-hero-art'>
-          <img
-            src='/iceberg/ocean.webp'
-            width='1800'
-            height='2699'
-            fetchPriority='high'
-            alt={t('A blue iceberg reflected in quiet water')}
-          />
+          <StationArt />
           <figcaption>
             <span>ICEBERG</span>
-            <span>{t('A little space for curiosity.')}</span>
+            <span>{t('A little boat meets a big iceberg.')}</span>
           </figcaption>
-          <div className='station-waterline' aria-hidden='true' />
         </figure>
       </section>
 

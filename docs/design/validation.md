@@ -30,3 +30,19 @@ Turnstile returns a connection failure on localhost. Registration correctly rema
 Screenshots: project workspace `.impeccable/review/{desktop,mobile,login-desktop,login-mobile,register-desktop,register-mobile,register-320,dark-english}.png`.
 
 Independent read-only finish review: **ship**. All eight screenshot captures reviewed; no material visual, UX or functional regression found within source/screenshot scope. The reviewer did not independently rerun tests or perform browser interaction. Successful Turnstile/OAuth registration remains unverified locally.
+
+# Revision 2 — logo-led Liquid Glass
+
+The user asked to match the original illustrated icon. Replaced photo/serif design with the original unchanged mascot, sans-serif titles, icy blues, rose actions and restrained glass surfaces. Added shared `StationArt`; all existing authentication and connection logic retained.
+
+- 20 tests across the same four suites: PASS.
+- Typecheck, scoped lint, production build: PASS.
+- Source detector: `[]` (the tool's default comp gate does not apply to this code-led reference-driven revision).
+- CodeGraph sync and `StationArt` query: PASS.
+- Production build inspected at 1440px / 390px, sign-up at 320px, plus dark homepage. No document overflow.
+- Independent review compared the original icon and all six captures: **ship**, no material design/UX findings within supplied scope.
+- Glass uses CSS blur/saturation, specular inset edges and soft offset shadows, not physical optical refraction. Reduced-transparency and unsupported-blur fallbacks preserve readable opaque surfaces. Reduced-motion disables entrance and action movement.
+- Header switches to the existing compact navigation at 1000px so longer language labels fit intermediate widths.
+- The prior third-party photo and serif font subset are removed. Original station logo is unchanged; new Noto Sans SC title subset has its OFL record.
+- Screenshots: workspace `.impeccable/review-v2/`.
+- Still local preview only; production Turnstile/OAuth end-to-end acceptance is not claimed.
