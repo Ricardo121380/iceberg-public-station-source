@@ -53,8 +53,9 @@ async function finishLoading() {
   })
 }
 
-describe('First visit opening', () => {
-  test('plays once after artwork loads and removes itself after the sequence', async () => {
+describe('Homepage opening', () => {
+  test('plays on every homepage mount even with a legacy seen marker', async () => {
+    localStorage.setItem('iceberg-opening-v1-seen', '1')
     const view = render(<StationOpening />)
     expect(screen.queryByTestId('station-opening')).not.toBeInTheDocument()
     await finishLoading()
@@ -70,7 +71,9 @@ describe('First visit opening', () => {
     view.unmount()
     render(<StationOpening />)
     await finishLoading()
-    expect(screen.queryByTestId('station-opening')).not.toBeInTheDocument()
+    expect(
+      screen.getByRole('button', { name: 'Skip opening animation' })
+    ).toBeVisible()
   })
 
   test('clicking a real page action dismisses the intro without preventing the action', async () => {
@@ -107,14 +110,18 @@ describe('First visit opening', () => {
     expect(screen.queryByTestId('station-opening')).not.toBeInTheDocument()
   })
 
-  test('reduced-motion visitors never load or see the animation', () => {
+  test('plays the full opening even when reduced motion is requested', async () => {
     const original = window.matchMedia
     vi.spyOn(window, 'matchMedia').mockImplementation((query) => ({
       ...original(query),
       matches: true,
     }))
     render(<StationOpening />)
-    expect(images).toHaveLength(0)
+    await finishLoading()
+    expect(
+      screen.getByRole('button', { name: 'Skip opening animation' })
+    ).toBeVisible()
+    act(() => vi.advanceTimersByTime(3400))
     expect(screen.queryByTestId('station-opening')).not.toBeInTheDocument()
   })
 
@@ -133,12 +140,14 @@ describe('First visit opening', () => {
     expect(screen.queryByTestId('station-opening')).not.toBeInTheDocument()
   })
 
-  test('storage restrictions do not break the homepage', () => {
+  test('storage restrictions do not prevent playback', async () => {
     vi.spyOn(localStorage, 'getItem').mockImplementation(() => {
       throw new Error('blocked')
     })
     render(<StationOpening />)
-    expect(images).toHaveLength(0)
-    expect(screen.queryByTestId('station-opening')).not.toBeInTheDocument()
+    await finishLoading()
+    expect(
+      screen.getByRole('button', { name: 'Skip opening animation' })
+    ).toBeVisible()
   })
 })

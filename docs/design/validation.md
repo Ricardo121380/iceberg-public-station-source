@@ -107,3 +107,9 @@ The original 348px-wide boat and smaller ice PNGs became visibly soft when scale
 - Desktop and 390px mobile impact/approach/close-up frames inspected, including the full-size final boat edge. The 3.4-second CSS timeline and all operation/input behavior are unchanged.
 - Eight existing opening behavior tests and typecheck pass; production build passes. Browser confirms all SVG images decode successfully.
 - Comparison and animation evidence: workspace `output/playwright/opening-clean/`. Release target public-station-v1.0.0.15.
+
+## Opening replay policy — local change
+
+User requested playback on every homepage visit instead of only the first visit. Removed the opening's localStorage seen-marker reads and writes. Each homepage mount can play again; old markers and restricted storage no longer suppress playback. Early interaction, failed/slow artwork, immediate skip, and the 3400 ms timeline remain unchanged. In a subsequent explicit user correction, the opening no longer reads prefers-reduced-motion or hides itself through that media query; it plays the same full sequence regardless of the system motion preference. This exception applies only to this opening, not other interface motion.
+
+The updated replay, restricted-storage, and full-playback-under-reduced-motion tests failed against their previous implementations, then all eight opening behavior tests passed after the changes. Typecheck passed; scoped lint has no errors and the same four Image-handler style warnings. This change is local and has not been published or deployed.

@@ -21,7 +21,6 @@ import { useTranslation } from 'react-i18next'
 
 import '@/styles/station-opening.css'
 
-const seenKey = 'iceberg-opening-v1-seen'
 const parts = ['boat', 'ice-left', 'ice-right', 'splash', 'chip'] as const
 
 export function StationOpening() {
@@ -29,14 +28,6 @@ export function StationOpening() {
   const [playing, setPlaying] = useState(false)
 
   useEffect(() => {
-    const motion = window.matchMedia('(prefers-reduced-motion: reduce)')
-    try {
-      if (motion.matches || localStorage.getItem(seenKey)) return
-    } catch {
-      // An optional introduction must not interfere with restricted browsers.
-      return
-    }
-
     let cancelled = false
     let finishTimer: ReturnType<typeof setTimeout> | undefined
     const images: HTMLImageElement[] = []
@@ -44,11 +35,6 @@ export function StationOpening() {
       cancelled = true
       setPlaying(false)
       clearTimeout(finishTimer)
-      try {
-        localStorage.setItem(seenKey, '1')
-      } catch {
-        /* Storage may become unavailable. */
-      }
     }
     const loadTimer = setTimeout(() => {
       cancelled = true
@@ -70,16 +56,10 @@ export function StationOpening() {
       once: true,
     })
     window.addEventListener('keydown', dismiss, { capture: true, once: true })
-    motion.addEventListener('change', dismiss)
     Promise.all(ready)
       .then(() => {
-        if (cancelled || motion.matches) return
+        if (cancelled) return
         clearTimeout(loadTimer)
-        try {
-          localStorage.setItem(seenKey, '1')
-        } catch {
-          return
-        }
         setPlaying(true)
         finishTimer = setTimeout(dismiss, 3400)
       })
@@ -97,7 +77,6 @@ export function StationOpening() {
       })
       window.removeEventListener('pointerdown', dismiss, true)
       window.removeEventListener('keydown', dismiss, true)
-      motion.removeEventListener('change', dismiss)
     }
   }, [])
 

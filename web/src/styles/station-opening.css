@@ -277,8 +277,3 @@ For commercial licensing, please contact support@quantumnous.com
     visibility: hidden;
   }
 }
-@media (prefers-reduced-motion: reduce) {
-  .station-opening {
-    display: none;
-  }
-}
