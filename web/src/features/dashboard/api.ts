@@ -21,6 +21,7 @@ import { api } from '@/lib/api'
 import type {
   FlowQuotaDataItem,
   QuotaDataItem,
+  UsageQualityBucket,
   UptimeGroupResult,
 } from './types'
 
@@ -90,4 +91,25 @@ export async function getUptimeStatus() {
     '/api/uptime/status'
   )
   return res.data
+}
+
+export async function getUsageQuality(
+  params: { start_timestamp: number; end_timestamp: number; username?: string },
+  isAdmin: boolean,
+  signal?: AbortSignal
+) {
+  const res = await api.get<{
+    success: boolean
+    data: UsageQualityBucket[]
+    message?: string
+  }>(isAdmin ? '/api/data/quality' : '/api/data/quality/self', {
+    params,
+    signal,
+  })
+  if (!res.data.success) {
+    throw new Error(
+      res.data.message || 'Failed to load response and cache statistics'
+    )
+  }
+  return res.data.data
 }

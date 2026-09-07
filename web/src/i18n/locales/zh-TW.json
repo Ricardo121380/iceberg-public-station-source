@@ -5729,6 +5729,16 @@
     "One address. A new connection.": "One address. A new connection.",
     "Find the model that fits your idea.": "Find the model that fits your idea.",
     "Your key stays in your own hands.": "Your key stays in your own hands.",
-    "Skip opening animation": "略過開場"
+    "Skip opening animation": "略過開場",
+    "Cache hit rate": "Cache hit rate",
+    "Time to first response for valid streaming requests, weighted by request count.": "Time to first response for valid streaming requests, weighted by request count.",
+    "Cached input tokens divided by total input tokens. Cache writes are not hits.": "Cached input tokens divided by total input tokens. Cache writes are not hits.",
+    "Response and cache statistics": "Response and cache statistics",
+    "Statistics model": "Statistics model",
+    "Failed to load response and cache statistics": "Failed to load response and cache statistics",
+    "Valid samples: {{count}}": "Valid samples: {{count}}",
+    "{{metric}} trend": "{{metric}} trend",
+    "Based on retained consumption logs in the selected period (up to 30 days). Missing fields are excluded; coverage may differ from usage totals.": "Based on retained consumption logs in the selected period (up to 30 days). Missing fields are excluded; coverage may differ from usage totals.",
+    "All models": "All models"
   }
 }

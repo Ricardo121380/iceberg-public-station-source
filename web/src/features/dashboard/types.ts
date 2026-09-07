@@ -272,3 +272,13 @@ export interface FAQItem {
   question: string
   answer: string
 }
+
+export interface UsageQualityBucket {
+  model_name: string
+  created_at: number
+  ttft_sum_ms: number
+  ttft_count: number
+  cache_read_tokens: number
+  input_tokens: number
+  cache_count: number
+}

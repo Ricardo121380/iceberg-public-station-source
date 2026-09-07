@@ -5729,6 +5729,16 @@
     "One address. A new connection.": "你的 AI 接入舱",
     "Find the model that fits your idea.": "为你的想法，选一个合适的模型",
     "Your key stays in your own hands.": "密钥由你创建，也只属于你",
-    "Skip opening animation": "跳过开场"
+    "Skip opening animation": "跳过开场",
+    "Cache hit rate": "缓存命中率",
+    "Time to first response for valid streaming requests, weighted by request count.": "有效流式请求的首响应时间，按请求数加权。",
+    "Cached input tokens divided by total input tokens. Cache writes are not hits.": "缓存命中输入 Token ÷ 总输入 Token；缓存写入不计入命中。",
+    "Response and cache statistics": "响应与缓存统计",
+    "Statistics model": "统计模型",
+    "Failed to load response and cache statistics": "响应与缓存统计加载失败",
+    "Valid samples: {{count}}": "有效样本：{{count}} 次",
+    "{{metric}} trend": "{{metric}}趋势",
+    "Based on retained consumption logs in the selected period (up to 30 days). Missing fields are excluded; coverage may differ from usage totals.": "基于所选时段内仍保留的消费日志（最长 30 天）。缺失字段不计入，覆盖范围可能与用量汇总不同。",
+    "All models": "全部模型"
   }
 }

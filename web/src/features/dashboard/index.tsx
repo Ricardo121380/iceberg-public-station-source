@@ -101,6 +101,12 @@ const LazyPerformanceOverview = lazy(() =>
   }))
 )
 
+const LazyUsageQualityPanel = lazy(() =>
+  import('./components/models/usage-quality-panel').then((m) => ({
+    default: m.UsageQualityPanel,
+  }))
+)
+
 const LazyUserCharts = lazy(() =>
   import('./components/users/user-charts').then((m) => ({
     default: m.UserCharts,
@@ -355,6 +361,9 @@ export function Dashboard() {
                   />
                 </Suspense>
               </FadeIn>
+              <Suspense fallback={<PerformanceOverviewFallback />}>
+                <LazyUsageQualityPanel filters={modelFilters} />
+              </Suspense>
               {isAdmin && (
                 <FadeIn delay={0.05}>
                   <Suspense fallback={<PerformanceOverviewFallback />}>
