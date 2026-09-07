@@ -59,3 +59,27 @@ GitHub's SSH host keys from the GitHub metadata endpoint, and uses an SSH remote
 without embedding credentials in Git configuration. The Oracle host later
 receives a separate read-only GHCR credential in its protected configuration
 directory, never in this repository or image layer.
+
+## Local execution alternative (2026-09-07)
+
+The owner has paused GitHub Actions workflows to avoid reliance on hosted CI
+quota. Existing workflow files and history remain available for rollback.
+`scripts/release/verify-local.sh` runs the complete frontend and Go checks locally.
+It does not replace required real-database compatibility tests, secret scans,
+image runtime checks, vulnerability scans or production acceptance.
+
+Releases may now use an offline, content-addressed ARM64 image built from an
+exact committed source archive on a Linux ARM64 host. This is an authorised
+alternative to the GHCR-only deployment path above. Preserve the same source
+commit across the private and public annotated release tags. Record the image
+content ID, source commit, scanner version/results, SBOM and recoverable image
+archive; do not deploy a mutable image tag. Run production Compose with
+`--pull never --no-deps`, back up the previous image configuration first and
+restore it if startup/health checks fail. Verify the authenticated user-facing
+path and that database/cache containers were not replaced.
+
+The legacy GHCR forced-command deployer accepts only GHCR references and must
+not be used for an offline image configuration. Follow the workspace operations
+scripts for local-image deployment and rollback. No registry credential changes
+are needed for offline deployment. GitHub retains source, tags and review history;
+a future automated CI host requires its own explicit setup and verification.
