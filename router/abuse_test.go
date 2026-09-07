@@ -1,6 +1,7 @@
 package router
 
 import (
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -82,4 +83,44 @@ func TestAbuseSuspensionBlocksEveryTokenAndPlayground(t *testing.T) {
 	require.NoError(t, env.database.Migrator().DropTable(&model.AbuseState{}))
 	resp = performRegistrationInviteRequest(t, r, "POST", "/pg/chat/completions", env.commonToken, `{"model":"test"}`)
 	assert.Equal(t, 503, resp.Code)
+}
+
+func TestAbuseReviewRequiresRootAndNeverChangesAccountAccess(t *testing.T) {
+	require.NoError(t, appI18n.Init())
+	env := setupRegistrationInviteRouterTest(t)
+	require.NoError(t, model.MigrateAbuse(env.database))
+	registerAbuseRoutes(env.router.Group("/api"))
+	event := model.AbuseEvent{UserID: 1, RequestID: "review-request", CreatedAt: time.Now().Unix(), Action: "recorded"}
+	require.NoError(t, env.database.Create(&event).Error)
+	path := fmt.Sprintf("/api/abuse/events/%d", event.ID)
+	for _, token := range []string{env.commonToken, env.adminToken} {
+		for _, endpoint := range []string{"/excerpt", "/review"} {
+			res := performRegistrationInviteRequest(t, env.router, "POST", path+endpoint, token, `{"decision":"confirmed","note":"test","version":0}`)
+			assert.Equal(t, 403, res.Code)
+		}
+		res := performRegistrationInviteRequest(t, env.router, "GET", path+"/history", token, "")
+		assert.Equal(t, 403, res.Code)
+	}
+	res := performRegistrationInviteRequest(t, env.router, "POST", path+"/excerpt", env.rootToken, "")
+	assert.Equal(t, 200, res.Code)
+	assert.Contains(t, res.Body.String(), "not_collected")
+	assert.Contains(t, res.Header().Get("Cache-Control"), "no-store")
+	res = performRegistrationInviteRequest(t, env.router, "POST", path+"/review", env.rootToken, `{"decision":"confirmed","note":"reviewed category evidence","version":0}`)
+	assert.Equal(t, 200, res.Code, res.Body.String())
+	res = performRegistrationInviteRequest(t, env.router, "POST", path+"/review", env.rootToken, `{"decision":"confirmed","note":"same submission","version":0}`)
+	assert.Equal(t, 409, res.Code)
+	res = performRegistrationInviteRequest(t, env.router, "GET", path+"/history", env.rootToken, "")
+	assert.Equal(t, 200, res.Code)
+	assert.Contains(t, res.Body.String(), "excerpt_access")
+	assert.Contains(t, res.Body.String(), "reviewed category evidence")
+	require.NoError(t, env.database.First(&event, event.ID).Error)
+	assert.Equal(t, "confirmed", event.ReviewStatus)
+	assert.Equal(t, "recorded", event.Action)
+	assert.False(t, event.Actionable)
+	assert.False(t, event.Notify)
+	res = performRegistrationInviteRequest(t, env.router, "POST", path+"/review", env.rootToken, `{"decision":"confirmed","note":" ","version":1}`)
+	assert.Equal(t, 400, res.Code)
+	require.NoError(t, env.database.Migrator().DropTable(&model.AbuseReviewAudit{}))
+	res = performRegistrationInviteRequest(t, env.router, "POST", path+"/excerpt", env.rootToken, "")
+	assert.Equal(t, 503, res.Code)
 }

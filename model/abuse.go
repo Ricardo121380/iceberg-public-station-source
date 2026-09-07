@@ -34,34 +34,41 @@ type AbuseState struct {
 }
 
 type AbuseEvent struct {
-	ID           int64  `json:"id" gorm:"primaryKey"`
-	UserID       int    `json:"user_id" gorm:"uniqueIndex:idx_abuse_request,priority:1;index:idx_abuse_window,priority:1"`
-	RequestID    string `json:"request_id" gorm:"size:64;uniqueIndex:idx_abuse_request,priority:2"`
-	TokenID      int    `json:"token_id"`
-	ChannelID    int    `json:"channel_id"`
-	Model        string `json:"model" gorm:"size:255"`
-	Protocol     string `json:"protocol" gorm:"size:32"`
-	RuleID       string `json:"rule_id" gorm:"size:80"`
-	RuleVersion  string `json:"rule_version" gorm:"size:32"`
-	Category     string `json:"category" gorm:"size:32"`
-	Signal       string `json:"signal" gorm:"size:100"`
-	Summary      string `json:"summary" gorm:"type:text"`
-	Attempts     string `json:"attempts" gorm:"type:text"`
-	Actionable   bool   `json:"actionable"`
-	Generation   int64  `json:"generation" gorm:"index:idx_abuse_window,priority:2"`
-	Round        int64  `json:"round" gorm:"index:idx_abuse_window,priority:3"`
-	CreatedAt    int64  `json:"created_at" gorm:"index:idx_abuse_window,priority:4;index:idx_abuse_created"`
-	Action       string `json:"action" gorm:"size:32"`
-	Count10m     int    `json:"count_10m" gorm:"column:count10m"`
-	Count24h     int    `json:"count_24h" gorm:"column:count24h"`
-	BlockedUntil int64  `json:"blocked_until"`
-	OperatorID   int    `json:"operator_id"`
-	Notify       bool   `json:"-" gorm:"index"`
-	NotifiedAt   int64  `json:"-"`
+	EvidenceStatus    string         `json:"evidence_status" gorm:"size:32"`
+	EvidenceExpiresAt int64          `json:"evidence_expires_at"`
+	Evidence          *AbuseEvidence `json:"-" gorm:"-"`
+	ReviewStatus      string         `json:"review_status" gorm:"size:32"`
+	ReviewVersion     int64          `json:"review_version"`
+	ReviewedBy        int            `json:"reviewed_by"`
+	ReviewedAt        int64          `json:"reviewed_at"`
+	ID                int64          `json:"id" gorm:"primaryKey"`
+	UserID            int            `json:"user_id" gorm:"uniqueIndex:idx_abuse_request,priority:1;index:idx_abuse_window,priority:1"`
+	RequestID         string         `json:"request_id" gorm:"size:64;uniqueIndex:idx_abuse_request,priority:2"`
+	TokenID           int            `json:"token_id"`
+	ChannelID         int            `json:"channel_id"`
+	Model             string         `json:"model" gorm:"size:255"`
+	Protocol          string         `json:"protocol" gorm:"size:32"`
+	RuleID            string         `json:"rule_id" gorm:"size:80"`
+	RuleVersion       string         `json:"rule_version" gorm:"size:32"`
+	Category          string         `json:"category" gorm:"size:32"`
+	Signal            string         `json:"signal" gorm:"size:100"`
+	Summary           string         `json:"summary" gorm:"type:text"`
+	Attempts          string         `json:"attempts" gorm:"type:text"`
+	Actionable        bool           `json:"actionable"`
+	Generation        int64          `json:"generation" gorm:"index:idx_abuse_window,priority:2"`
+	Round             int64          `json:"round" gorm:"index:idx_abuse_window,priority:3"`
+	CreatedAt         int64          `json:"created_at" gorm:"index:idx_abuse_window,priority:4;index:idx_abuse_created"`
+	Action            string         `json:"action" gorm:"size:32"`
+	Count10m          int            `json:"count_10m" gorm:"column:count10m"`
+	Count24h          int            `json:"count_24h" gorm:"column:count24h"`
+	BlockedUntil      int64          `json:"blocked_until"`
+	OperatorID        int            `json:"operator_id"`
+	Notify            bool           `json:"-" gorm:"index"`
+	NotifiedAt        int64          `json:"-"`
 }
 
 func MigrateAbuse(db *gorm.DB) error {
-	if err := db.AutoMigrate(&AbusePolicy{}, &AbuseState{}, &AbuseEvent{}); err != nil {
+	if err := db.AutoMigrate(&AbusePolicy{}, &AbuseState{}, &AbuseEvent{}, &AbuseEvidence{}, &AbuseReviewAudit{}); err != nil {
 		return err
 	}
 	return db.Clauses(clause.OnConflict{DoNothing: true}).Create(&AbusePolicy{ID: 1, Mode: "observe", Limit10m: 3, Limit24h: 8, FreezeMinutes: 60, EnabledRules: "[]", Generation: 1, Revision: 1}).Error
@@ -206,6 +213,12 @@ func RecordAbuseEvent(e *AbuseEvent) error {
 		if err = tx.Create(e).Error; err != nil {
 			return err
 		}
+		if e.Evidence != nil {
+			e.Evidence.EventID = e.ID
+			if err = tx.Create(e.Evidence).Error; err != nil {
+				return err
+			}
+		}
 		if !e.Actionable {
 			return nil
 		}
@@ -276,7 +289,15 @@ func CleanupAbuseEvents(now int64) error {
 		if len(ids) == 0 {
 			return nil
 		}
-		if err := DB.Where("id IN ?", ids).Delete(&AbuseEvent{}).Error; err != nil {
+		if err := DB.Transaction(func(tx *gorm.DB) error {
+			if err := tx.Where("event_id IN ?", ids).Delete(&AbuseEvidence{}).Error; err != nil {
+				return err
+			}
+			if err := tx.Where("event_id IN ?", ids).Delete(&AbuseReviewAudit{}).Error; err != nil {
+				return err
+			}
+			return tx.Where("id IN ?", ids).Delete(&AbuseEvent{}).Error
+		}); err != nil {
 			return err
 		}
 	}

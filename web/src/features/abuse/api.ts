@@ -25,6 +25,7 @@ export type SafetyRule = {
   evidence: string
 }
 export type AbuseSettings = {
+  evidence_capture_ready?: boolean
   mode: 'off' | 'observe' | 'enforce'
   limit_10m: number
   limit_24h: number
@@ -34,6 +35,12 @@ export type AbuseSettings = {
 }
 export type AbuseEvent = {
   id: number
+  evidence_status?: string
+  evidence_expires_at?: number
+  review_status?: ReviewDecision | ''
+  review_version?: number
+  reviewed_at?: number
+  reviewed_by?: number
   user_id: number
   token_id: number
   channel_id: number
@@ -100,3 +107,48 @@ export async function unfreezeUser(id: number, reason: string) {
   const response = await api.post(`/api/abuse/users/${id}/unfreeze`, { reason })
   if (!response.data.success) throw new Error(response.data.message)
 }
+
+export type ReviewDecision =
+  | 'confirmed'
+  | 'suspected_false_positive'
+  | 'insufficient_evidence'
+export type SafetyExcerpt = {
+  status: string
+  expires_at: number
+  excerpt: {
+    text: string
+    source: string
+    truncated: boolean
+    omitted_parts: boolean
+  }
+}
+export type ReviewAudit = {
+  id: number
+  operator_id: number
+  kind: string
+  decision: ReviewDecision | ''
+  note: string
+  version: number
+  created_at: number
+}
+export async function readExcerpt(id: number): Promise<SafetyExcerpt> {
+  const response = await api.post<{
+    success: boolean
+    data: SafetyExcerpt
+    message?: string
+  }>(`/api/abuse/events/${id}/excerpt`)
+  if (!response.data.success) throw new Error(response.data.message)
+  return response.data.data
+}
+export async function reviewEvent(
+  id: number,
+  values: { decision: ReviewDecision; note: string; version: number }
+): Promise<void> {
+  const response = await api.post(`/api/abuse/events/${id}/review`, values)
+  if (!response.data.success) throw new Error(response.data.message)
+}
+export const getReviewHistory = (id: number, page: number) =>
+  read<Page<ReviewAudit>>(`/api/abuse/events/${id}/history`, {
+    p: page,
+    page_size: 20,
+  })

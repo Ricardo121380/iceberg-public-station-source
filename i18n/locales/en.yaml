@@ -295,3 +295,9 @@ abuse.invalid_pagination: "Invalid pagination"
 abuse.invalid_filter: "Invalid filter"
 abuse.reason_required: "A reason of 1–300 characters is required"
 abuse.release_failed: "Unable to release suspension; refresh and retry"
+
+abuse.event_missing: "Safety event not found"
+
+abuse.review_conflict: "This event was reviewed by another request. Refresh before submitting."
+
+abuse.review_invalid: "Choose a review decision and enter a note of 1 to 300 characters."

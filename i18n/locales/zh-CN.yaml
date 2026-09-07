@@ -296,3 +296,9 @@ abuse.invalid_pagination: "分页参数无效"
 abuse.invalid_filter: "筛选条件无效"
 abuse.reason_required: "请填写 1 至 300 字的解冻原因"
 abuse.release_failed: "解冻失败，请刷新账号状态后重试"
+
+abuse.event_missing: "安全事件不存在"
+
+abuse.review_conflict: "审核记录已更新，请刷新后重新提交。"
+
+abuse.review_invalid: "请选择审核结论，并填写 1 至 300 字的备注。"

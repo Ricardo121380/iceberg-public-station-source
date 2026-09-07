@@ -34,7 +34,7 @@ func GetAbuseSettings(c *gin.Context) {
 		abuseDatabaseError(c)
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"success": true, "data": gin.H{"mode": p.Mode, "limit_10m": p.Limit10m, "limit_24h": p.Limit24h, "freeze_minutes": p.FreezeMinutes, "enabled_rules": enabled, "rules": service.SafetyRules(), "generation": p.Generation}})
+	c.JSON(http.StatusOK, gin.H{"success": true, "data": gin.H{"mode": p.Mode, "limit_10m": p.Limit10m, "limit_24h": p.Limit24h, "freeze_minutes": p.FreezeMinutes, "enabled_rules": enabled, "rules": service.SafetyRules(), "generation": p.Generation, "evidence_capture_ready": abuseCaptureReady()}})
 }
 
 func UpdateAbuseSettings(c *gin.Context) {
@@ -113,7 +113,7 @@ func GetAbuseEvents(c *gin.Context) {
 			}
 		}
 	}
-	for _, field := range []string{"category", "rule_id", "action"} {
+	for _, field := range []string{"category", "rule_id", "action", "review_status"} {
 		if value := c.Query(field); value != "" {
 			if len(value) > 80 {
 				c.JSON(400, gin.H{"success": false, "message": i18n.T(c, "abuse.invalid_filter")})

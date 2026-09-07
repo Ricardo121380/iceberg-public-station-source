@@ -238,6 +238,11 @@ func finishSafetyObservation(c *gin.Context, o *safetyObservation) {
 		return
 	}
 	e := model.AbuseEvent{UserID: c.GetInt("id"), TokenID: c.GetInt("token_id"), RequestID: requestID, ChannelID: selected.ChannelID, Model: c.GetString("original_model"), Protocol: selected.Protocol, RuleID: selected.RuleID, RuleVersion: selected.Version, Category: selected.Category, Signal: selected.Signal, Summary: summary, Attempts: string(attempts), Actionable: selected.Actionable, Generation: o.policy.Generation, Round: o.round, CreatedAt: time.Now().Unix()}
+	if o.policy.Mode != "off" {
+		captureAbuseEvidence(c, &e)
+	} else {
+		e.EvidenceStatus = "capture_off"
+	}
 	// A database failure may be transient or an uncertain commit. Retrying the
 	// immutable event is safe because user/request identity is unique.
 	for attempt := 0; attempt < 2; attempt++ {
@@ -256,7 +261,10 @@ func StartAbuseMaintenance() {
 			if err := model.CleanupAbuseEvents(time.Now().Unix()); err != nil {
 				common.SysError("abuse_control: cleanup_failed")
 			}
-			time.Sleep(24 * time.Hour)
+			if err := model.CleanupAbuseEvidence(time.Now().Unix()); err != nil {
+				common.SysError("abuse_control: cleanup_failed")
+			}
+			time.Sleep(time.Hour)
 		}
 	}()
 }

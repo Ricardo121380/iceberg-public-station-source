@@ -37,6 +37,7 @@ import {
   type AbuseSettings,
   type EventFilters,
 } from './api'
+import { SafetyReviewDialog } from './review-dialog'
 
 const settingsSchema = z.object({
   mode: z.enum(['off', 'observe', 'enforce']),
@@ -356,9 +357,16 @@ function SafetyConsole() {
         aria-label={t('Safety events')}
       >
         <h2 className='text-lg font-semibold'>{t('Safety events')}</h2>
+        {settings.data?.evidence_capture_ready === false && (
+          <p role='status' className='text-muted-foreground text-sm'>
+            {t(
+              'Excerpt encryption is not configured. Events will be recorded without input excerpts.'
+            )}
+          </p>
+        )}
         <p className='text-muted-foreground text-sm'>
           {t(
-            'Evidence is retained for thirty days. Summaries do not include prompts or API keys.'
+            'Event metadata is retained for thirty days. Redacted input excerpts are encrypted for seven days and require an audited Root view.'
           )}
         </p>
         <form
@@ -461,6 +469,7 @@ function SafetyConsole() {
                   <dd>{t(event.summary)}</dd>
                 </div>
               </dl>
+              <SafetyReviewDialog event={event} />
             </details>
           ))}
         </div>
