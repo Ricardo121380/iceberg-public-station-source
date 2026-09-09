@@ -18,6 +18,8 @@ For commercial licensing, please contact support@quantumnous.com
 */
 import {
   Activity,
+  BellRing,
+  ShieldAlert,
   Box,
   CreditCard,
   FileText,
@@ -161,6 +163,18 @@ export function useSidebarData(): SidebarData {
             title: t('Task Plugins'),
             url: '/task-plugins',
             icon: PlugZap,
+            requiredRole: ROLE.SUPER_ADMIN,
+          },
+          {
+            title: t('Anomaly alerts'),
+            url: '/anomalies',
+            icon: BellRing,
+            requiredRole: ROLE.ADMIN,
+          },
+          {
+            title: t('Violation safety'),
+            url: '/safety',
+            icon: ShieldAlert,
             requiredRole: ROLE.SUPER_ADMIN,
           },
           {

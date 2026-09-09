@@ -19,6 +19,7 @@ func SetApiRouter(router *gin.Engine) {
 	apiRouter.Use(middleware.BodyStorageCleanup()) // 清理请求体存储
 	apiRouter.Use(middleware.GlobalAPIRateLimit())
 	registerAbuseRoutes(apiRouter)
+	registerAnomalyRoutes(apiRouter)
 	anonymousRequestBodyLimit := middleware.AnonymousRequestBodyLimit()
 	{
 		apiRouter.GET("/setup", controller.GetSetup)
@@ -418,4 +419,18 @@ func registerAbuseRoutes(apiRouter *gin.RouterGroup) {
 	abuseRouter.GET("/users", controller.GetAbuseUsers)
 	abuseRouter.POST("/users/:id/unfreeze", middleware.SessionCookieOriginGuard(), middleware.UserCriticalRateLimit("abuse-unfreeze"), controller.UnfreezeAbuseUser)
 	apiRouter.GET("/user/self/abuse", middleware.UserAuth(), middleware.DisableCache(), controller.GetSelfAbuse)
+}
+
+func registerAnomalyRoutes(apiRouter *gin.RouterGroup) {
+	bot := apiRouter.Group("/internal/anomaly-bot", controller.AnomalyBotAuth, middleware.DisableCache())
+	bot.GET("/events", controller.GetAnomalyEvents)
+	bot.GET("/settings", controller.GetAnomalySettings)
+	bot.POST("/action", controller.ApplyAnomalyBotAction)
+
+	group := apiRouter.Group("/anomalies", middleware.AdminAuth(), middleware.DisableCache())
+	group.GET("/events", controller.GetAnomalyEvents)
+	group.GET("/audit", controller.GetAnomalyAudit)
+	group.GET("/settings", controller.GetAnomalySettings)
+	group.POST("/events/:id/acknowledge", middleware.SessionCookieOriginGuard(), middleware.UserCriticalRateLimit("anomaly-acknowledge"), controller.AcknowledgeAnomaly)
+	group.PUT("/settings", middleware.RootAuth(), middleware.SessionCookieOriginGuard(), middleware.UserCriticalRateLimit("anomaly-settings"), controller.UpdateAnomalySettings)
 }

@@ -18,24 +18,15 @@ For commercial licensing, please contact support@quantumnous.com
 */
 import { createFileRoute, redirect } from '@tanstack/react-router'
 
-import { SecuritySettings } from '@/features/system-settings/security'
-import {
-  SECURITY_DEFAULT_SECTION,
-  SECURITY_SECTION_IDS,
-} from '@/features/system-settings/security/section-registry.tsx'
+import { AnomalyConsole } from '@/features/anomalies'
+import { ROLE } from '@/lib/roles'
+import { useAuthStore } from '@/stores/auth-store'
 
-export const Route = createFileRoute(
-  '/_authenticated/system-settings/security/$section'
-)({
-  beforeLoad: ({ params }) => {
-    if (params.section === 'abuse') throw redirect({ to: '/safety' })
-    const validSections = SECURITY_SECTION_IDS as unknown as string[]
-    if (!validSections.includes(params.section)) {
-      throw redirect({
-        to: '/system-settings/security/$section',
-        params: { section: SECURITY_DEFAULT_SECTION },
-      })
+export const Route = createFileRoute('/_authenticated/anomalies/')({
+  beforeLoad: () => {
+    if ((useAuthStore.getState().auth.user?.role ?? 0) < ROLE.ADMIN) {
+      throw redirect({ to: '/403' })
     }
   },
-  component: SecuritySettings,
+  component: AnomalyConsole,
 })

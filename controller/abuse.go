@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"context"
 	"errors"
 	"gorm.io/gorm"
 	"net/http"
@@ -178,5 +179,16 @@ func GetSelfAbuse(c *gin.Context) {
 		return
 	}
 	blocked := state.BlockedUntil > time.Now().Unix()
+	ctx, cancel := context.WithTimeout(c.Request.Context(), time.Second)
+	defer cancel()
+	until, err := service.AnomalySuspendedUntil(ctx, c.GetInt("id"))
+	if err != nil {
+		abuseDatabaseError(c)
+		return
+	}
+	if until > state.BlockedUntil {
+		state.BlockedUntil = until
+	}
+	blocked = blocked || until > time.Now().Unix()
 	c.JSON(200, gin.H{"success": true, "data": gin.H{"suspended": blocked, "blocked_until": state.BlockedUntil}})
 }

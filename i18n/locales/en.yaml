@@ -301,3 +301,12 @@ abuse.event_missing: "Safety event not found"
 abuse.review_conflict: "This event was reviewed by another request. Refresh before submitting."
 
 abuse.review_invalid: "Choose a review decision and enter a note of 1 to 300 characters."
+
+anomaly.unavailable: "Anomaly storage unavailable. Check Redis and retry."
+anomaly.conflict: "The record changed. Refresh before saving."
+anomaly.invalid_settings: "Invalid anomaly settings"
+anomaly.invalid_user: "Invalid user ID"
+anomaly.invalid_page: "Invalid page"
+anomaly.invalid_category: "Invalid category"
+anomaly.invalid_state: "Invalid state"
+anomaly.invalid_acknowledgement: "Invalid anomaly acknowledgement"

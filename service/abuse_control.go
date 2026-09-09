@@ -63,6 +63,16 @@ func BeginSafetyObservation(c *gin.Context) (func(), error) {
 	if _, exists := c.Get(safetyContextKey); exists {
 		return func() {}, nil
 	}
+	ctx, cancel := context.WithTimeout(c.Request.Context(), time.Second)
+	until, pauseErr := AnomalySuspendedUntil(ctx, c.GetInt("id"))
+	cancel()
+	if pauseErr != nil {
+		return nil, pauseErr
+	}
+	if until > time.Now().Unix() {
+		c.AbortWithStatusJSON(403, gin.H{"error": gin.H{"code": "account_temporarily_suspended", "message": i18n.T(c, "abuse.suspended"), "blocked_until": until}})
+		return func() {}, nil
+	}
 	p, err := model.GetAbusePolicy()
 	if err != nil {
 		return nil, err

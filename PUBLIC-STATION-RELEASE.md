@@ -83,3 +83,7 @@ not be used for an offline image configuration. Follow the workspace operations
 scripts for local-image deployment and rollback. No registry credential changes
 are needed for offline deployment. GitHub retains source, tags and review history;
 a future automated CI host requires its own explicit setup and verification.
+
+## v1.0.0.19 offline release
+
+The ARM64 binary is cross-compiled with Go 1.26.6 and embedded production web assets. The offline image preserves the exact v1.0.0.18 distroless runtime and healthcheck layers and replaces only /data/new-api. Its immutable local image ID is used in images.env; the private/public annotated source tags identify this source snapshot. No database schema changes are introduced. Telegram operations use a dedicated deployment secret, explicit private-chat actor binding and manual confirmation; no real credentials are shipped in source.

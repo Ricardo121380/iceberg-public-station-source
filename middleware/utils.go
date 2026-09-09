@@ -8,10 +8,12 @@ import (
 	"github.com/QuantumNous/new-api/logger"
 	pluginruntime "github.com/QuantumNous/new-api/pkg/jsplugin"
 	"github.com/QuantumNous/new-api/relaykit/types"
+	"github.com/QuantumNous/new-api/service"
 	"github.com/gin-gonic/gin"
 )
 
 func abortWithOpenAiMessage(c *gin.Context, statusCode int, message string, code ...types.ErrorCode) {
+	c.Set("anomaly_kind", service.ClassifyAnomaly(statusCode, message, false))
 	codeStr := ""
 	if len(code) > 0 {
 		codeStr = string(code[0])

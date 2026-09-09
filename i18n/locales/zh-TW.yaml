@@ -302,3 +302,12 @@ abuse.event_missing: "安全事件不存在"
 abuse.review_conflict: "審核記錄已更新，請重新整理後提交。"
 
 abuse.review_invalid: "請選擇審核結論，並填寫 1 至 300 字的備註。"
+
+anomaly.unavailable: "异常存储不可用，请检查 Redis 后重试。"
+anomaly.conflict: "记录已更新，请刷新后重试。"
+anomaly.invalid_settings: "异常提醒设置无效"
+anomaly.invalid_user: "用户 ID 无效"
+anomaly.invalid_page: "页码无效"
+anomaly.invalid_category: "失败类型无效"
+anomaly.invalid_state: "处理状态无效"
+anomaly.invalid_acknowledgement: "异常确认参数无效"
