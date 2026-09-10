@@ -61,6 +61,14 @@ export function LinuxDOInviteLogin({
     !blocked && siteKey && inviteCode.trim() && turnstileToken
   )
 
+  // The disabled register button explains what is still missing.
+  let missingRequirement = ''
+  if (!inviteCode.trim()) {
+    missingRequirement = t('Enter your invitation code to continue.')
+  } else if (siteKey && !turnstileToken) {
+    missingRequirement = t('Complete the security check above to continue.')
+  }
+
   const resetWidget = () => {
     setTurnstileToken('')
     setWidgetFailed(false)
@@ -167,9 +175,18 @@ export function LinuxDOInviteLogin({
           autoComplete='off'
           spellCheck={false}
           disabled={blocked}
-          aria-describedby='linuxdo-invite-description'
+          placeholder={t('Paste the invitation code here')}
+          aria-describedby='linuxdo-invite-description linuxdo-invite-guidance'
           aria-invalid={Boolean(message)}
         />
+        <p
+          id='linuxdo-invite-guidance'
+          className='text-muted-foreground text-xs'
+        >
+          {t(
+            'Invitation-only station — ask a friend who is already aboard for a code.'
+          )}
+        </p>
         <p id='linuxdo-invite-description' className='sr-only'>
           {t(
             'Existing users can sign in directly. An invitation code is only required for first-time registration.'
@@ -232,6 +249,11 @@ export function LinuxDOInviteLogin({
         disabled={!canRegister}
         onClick={() => void handleRegistration()}
         className='h-11 w-full justify-center gap-2 rounded-lg'
+        aria-describedby={
+          !canRegister && missingRequirement
+            ? 'linuxdo-register-requirement'
+            : undefined
+        }
       >
         {isSubmitting || loading ? (
           <Loader2 className='h-4 w-4 animate-spin' />
@@ -240,6 +262,14 @@ export function LinuxDOInviteLogin({
         )}
         {t('Register with LinuxDO')}
       </Button>
+      {!canRegister && !blocked && missingRequirement && (
+        <p
+          id='linuxdo-register-requirement'
+          className='text-muted-foreground text-center text-xs'
+        >
+          {missingRequirement}
+        </p>
+      )}
     </div>
   )
 }

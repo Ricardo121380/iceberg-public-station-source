@@ -17,7 +17,18 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 For commercial licensing, please contact support@quantumnous.com
 */
 import { useEffect, useRef } from 'react'
+import { useTranslation } from 'react-i18next'
 
+import { useTheme } from '@/context/theme-provider'
+import { normalizeInterfaceLanguage } from '@/i18n/languages'
+
+/** Map the app's camelCase language codes onto Turnstile's BCP-47 locales. */
+function toTurnstileLanguage(language: string): string {
+  const normalized = normalizeInterfaceLanguage(language)
+  if (normalized === 'zhCN') return 'zh-CN'
+  if (normalized === 'zhTW') return 'zh-TW'
+  return normalized
+}
 declare global {
   interface Window {
     turnstile?: {
@@ -94,6 +105,9 @@ export function Turnstile({
   const onVerifyRef = useRef(onVerify)
   const onExpireRef = useRef(onExpire)
   const onErrorRef = useRef(onError)
+  const { resolvedTheme } = useTheme()
+  const { i18n } = useTranslation()
+  const language = toTurnstileLanguage(i18n.language)
 
   useEffect(() => {
     onVerifyRef.current = onVerify
@@ -117,6 +131,8 @@ export function Turnstile({
       try {
         widgetIdRef.current = window.turnstile.render(ref.current, {
           sitekey: siteKey,
+          theme: resolvedTheme,
+          language,
           ...(action ? { action } : {}),
           callback: (token: string) => onVerifyRef.current(token),
           'error-callback': reportError,
@@ -136,7 +152,7 @@ export function Turnstile({
         widgetIdRef.current = null
       }
     }
-  }, [action, siteKey])
+  }, [action, siteKey, resolvedTheme, language])
 
   return <div ref={ref} className={className} />
 }

@@ -154,4 +154,48 @@ describe('LinuxDOInviteLogin', () => {
     resolveStart({ started: true, preserveVerification: false })
     await waitFor(() => expect(continueButton).toBeEnabled())
   })
+
+  test('guides first-time visitors with an invite placeholder and guidance', () => {
+    const onStart = vi.fn()
+    render(
+      <LinuxDOInviteLogin mode='sign-up' siteKey='site-key' onStart={onStart} />
+    )
+
+    expect(screen.getByLabelText('Invitation Code')).toHaveAttribute(
+      'placeholder',
+      'Paste the invitation code here'
+    )
+    expect(screen.getByText(/Invitation-only station/)).toBeVisible()
+  })
+
+  test('the disabled register button names the missing requirement', async () => {
+    const onStart = vi.fn()
+    render(
+      <LinuxDOInviteLogin mode='sign-up' siteKey='site-key' onStart={onStart} />
+    )
+
+    const registerButton = screen.getByRole('button', {
+      name: 'Register with LinuxDO',
+    })
+    expect(registerButton).toBeDisabled()
+    expect(
+      screen.getByText('Enter your invitation code to continue.')
+    ).toBeVisible()
+
+    fireEvent.change(screen.getByLabelText('Invitation Code'), {
+      target: { value: 'invite-code' },
+    })
+    expect(
+      screen.getByText('Complete the security check above to continue.')
+    ).toBeVisible()
+
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Complete human check' })
+    )
+    await waitFor(() => expect(registerButton).toBeEnabled())
+    expect(
+      screen.queryByText('Complete the security check above to continue.')
+    ).not.toBeInTheDocument()
+  })
 })
+
