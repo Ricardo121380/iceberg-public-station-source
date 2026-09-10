@@ -59,21 +59,15 @@ describe('Homepage opening', () => {
     const view = render(<StationOpening />)
     expect(screen.queryByTestId('station-opening')).not.toBeInTheDocument()
     await finishLoading()
-    expect(
-      screen.getByRole('button', { name: 'Skip opening animation' })
-    ).toBeVisible()
+    expect(screen.getByTestId('station-opening')).toBeVisible()
     act(() => vi.advanceTimersByTime(2400))
-    expect(
-      screen.getByRole('button', { name: 'Skip opening animation' })
-    ).toBeVisible()
+    expect(screen.getByTestId('station-opening')).toBeVisible()
     act(() => vi.advanceTimersByTime(1000))
     expect(screen.queryByTestId('station-opening')).not.toBeInTheDocument()
     view.unmount()
     render(<StationOpening />)
     await finishLoading()
-    expect(
-      screen.getByRole('button', { name: 'Skip opening animation' })
-    ).toBeVisible()
+    expect(screen.getByTestId('station-opening')).toBeVisible()
   })
 
   test('clicking a real page action dismisses the intro without preventing the action', async () => {
@@ -94,15 +88,6 @@ describe('Homepage opening', () => {
     expect(screen.queryByTestId('station-opening')).not.toBeInTheDocument()
   })
 
-  test('the skip button dismisses the opening immediately', async () => {
-    render(<StationOpening />)
-    await finishLoading()
-    fireEvent.click(
-      screen.getByRole('button', { name: 'Skip opening animation' })
-    )
-    expect(screen.queryByTestId('station-opening')).not.toBeInTheDocument()
-  })
-
   test('a keyboard action dismisses the opening without cancelling the event', async () => {
     render(<StationOpening />)
     await finishLoading()
@@ -110,18 +95,17 @@ describe('Homepage opening', () => {
     expect(screen.queryByTestId('station-opening')).not.toBeInTheDocument()
   })
 
-  test('plays the full opening even when reduced motion is requested', async () => {
+  test('never starts the opening when reduced motion is requested', async () => {
     const original = window.matchMedia
     vi.spyOn(window, 'matchMedia').mockImplementation((query) => ({
       ...original(query),
       matches: true,
     }))
     render(<StationOpening />)
+    // The reduced-motion path returns before preloading any artwork.
+    expect(images).toHaveLength(0)
     await finishLoading()
-    expect(
-      screen.getByRole('button', { name: 'Skip opening animation' })
-    ).toBeVisible()
-    act(() => vi.advanceTimersByTime(3400))
+    act(() => vi.advanceTimersByTime(5000))
     expect(screen.queryByTestId('station-opening')).not.toBeInTheDocument()
   })
 
@@ -146,8 +130,6 @@ describe('Homepage opening', () => {
     })
     render(<StationOpening />)
     await finishLoading()
-    expect(
-      screen.getByRole('button', { name: 'Skip opening animation' })
-    ).toBeVisible()
+    expect(screen.getByTestId('station-opening')).toBeVisible()
   })
 })

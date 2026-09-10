@@ -95,10 +95,6 @@ export function StationLaunchpad(props: { isAuthenticated: boolean }) {
           <ArrowRight size={16} aria-hidden='true' />
         </Link>
       </div>
-      <a href='#connect' className='launchpad-guide'>
-        {t('See how to connect')}
-        <ArrowRight size={15} aria-hidden='true' />
-      </a>
     </aside>
   )
 }
