@@ -22,7 +22,7 @@ import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
-const FEEDBACK_URL = 'https://github.com/QuantumNous/new-api/issues'
+import { StationErrorShell } from './components/station-error-shell'
 
 type GeneralErrorProps = React.HTMLAttributes<HTMLDivElement> & {
   minimal?: boolean
@@ -49,51 +49,42 @@ export function GeneralError({
   const isRateLimited = status === 429
   const title = isRateLimited
     ? t('Too many requests')
-    : `${t('Oops! Something went wrong')} ${`:')`}`
+    : t('Oops! Something went wrong')
   const description = isRateLimited
     ? t('Please wait a moment before trying again.')
     : t('Please try again later.')
 
-  return (
-    <div className={cn('h-svh w-full', className)}>
-      <div className='m-auto flex h-full w-full flex-col items-center justify-center gap-2'>
-        {!minimal && (
-          <h1 className='text-[7rem] leading-tight font-bold'>
-            {status ?? 500}
-          </h1>
-        )}
-        <span className='font-medium'>{title}</span>
-        <p className='text-muted-foreground text-center'>
-          {t('We apologize for the inconvenience.')} <br /> {description}
-        </p>
-        {!minimal && (
-          <p className='text-muted-foreground text-center text-sm'>
-            {t('If this keeps happening, please report it on GitHub Issues.')}
+  if (minimal) {
+    return (
+      <div className={cn('h-svh w-full', className)}>
+        <div className='m-auto flex h-full w-full flex-col items-center justify-center gap-2'>
+          <span className='font-medium'>{title}</span>
+          <p className='text-muted-foreground text-center'>
+            {t('We apologize for the inconvenience.')} <br /> {description}
           </p>
-        )}
-        {!minimal && (
-          <div className='mt-6 flex flex-wrap justify-center gap-4'>
-            <Button variant='outline' onClick={() => history.go(-1)}>
-              {t('Go Back')}
-            </Button>
-            <Button
-              variant='outline'
-              render={
-                <a
-                  href={FEEDBACK_URL}
-                  target='_blank'
-                  rel='noopener noreferrer'
-                />
-              }
-            >
-              {t('Report an issue')}
-            </Button>
-            <Button onClick={() => navigate({ to: '/' })}>
-              {t('Back to Home')}
-            </Button>
-          </div>
-        )}
+        </div>
       </div>
-    </div>
+    )
+  }
+
+  return (
+    <StationErrorShell
+      code={String(status ?? 500)}
+      title={
+        isRateLimited ? title : t('The station hit rough water.')
+      }
+      description={
+        isRateLimited
+          ? description
+          : t(
+              'Please try again in a moment. If it keeps happening, let the station keeper know.'
+            )
+      }
+    >
+      <Button variant='outline' onClick={() => history.go(-1)}>
+        {t('Go Back')}
+      </Button>
+      <Button onClick={() => navigate({ to: '/' })}>{t('Back to Home')}</Button>
+    </StationErrorShell>
   )
 }

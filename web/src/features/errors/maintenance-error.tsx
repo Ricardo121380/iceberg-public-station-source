@@ -16,27 +16,25 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
+import { useNavigate } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 
 import { Button } from '@/components/ui/button'
 
+import { StationErrorShell } from './components/station-error-shell'
+
 export function MaintenanceError() {
   const { t } = useTranslation()
+  const navigate = useNavigate()
   return (
-    <div className='h-svh'>
-      <div className='m-auto flex h-full w-full flex-col items-center justify-center gap-2'>
-        <h1 className='text-[7rem] leading-tight font-bold'>503</h1>
-        <span className='font-medium'>
-          {t('Website is under maintenance!')}
-        </span>
-        <p className='text-muted-foreground text-center'>
-          {t('The site is not available at the moment.')} <br />
-          {t("We'll be back online shortly.")}
-        </p>
-        <div className='mt-6 flex gap-4'>
-          <Button variant='outline'>{t('Learn more')}</Button>
-        </div>
-      </div>
-    </div>
+    <StationErrorShell
+      code='503'
+      title={t('The station is in the dock.')}
+      description={t(
+        'Maintenance is underway. We will be back on the water shortly.'
+      )}
+    >
+      <Button onClick={() => navigate({ to: '/' })}>{t('Back to Home')}</Button>
+    </StationErrorShell>
   )
 }
