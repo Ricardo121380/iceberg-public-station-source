@@ -28,6 +28,7 @@ import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
 import { useEffect } from 'react'
 
 import { NavigationProgress } from '@/components/navigation-progress'
+import { RouteDocumentMeta } from '@/components/route-document-meta'
 import { Toaster } from '@/components/ui/sonner'
 import { ThemeCustomizationProvider } from '@/context/theme-customization-provider'
 import { saveAffiliateCode } from '@/features/auth/lib/storage'
@@ -94,6 +95,7 @@ function RootComponent() {
 
   return (
     <ThemeCustomizationProvider>
+      <RouteDocumentMeta />
       <NavigationProgress />
       <Outlet />
       <Toaster closeButton duration={5000} position='top-center' richColors />

@@ -113,12 +113,13 @@ const rootElement = document.querySelector<HTMLElement>('#root')
 if (!rootElement) {
   throw new Error('Root element not found')
 }
-// Set document.title and favicon from cached status, then refresh from network
+// Set favicon from cached status, then refresh from network.
+// document.title is owned by RouteDocumentMeta (per-route titles); the
+// bootstrap only refreshes the meta tag so it cannot clobber route titles.
 ;(function initSystemBranding() {
   try {
     if (typeof window === 'undefined' || typeof document === 'undefined') return
     const apply = (name: string) => {
-      document.title = name
       const metaTitle = document.querySelector(
         'meta[name="title"]'
       ) as HTMLMetaElement | null
