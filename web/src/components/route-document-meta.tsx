@@ -43,16 +43,16 @@ const ROUTE_TITLE_KEYS: Record<string, string> = {
 export function RouteDocumentMeta() {
   const { i18n, t } = useTranslation()
   const { systemName, loading } = useSystemConfig()
-  const pathname = useRouterState({ select: (state) => state.location.pathname })
+  const pathname = useRouterState({
+    select: (state) => state.location.pathname,
+  })
 
   useEffect(() => {
     // While the station config is still loading, the static index.html title
     // holds; writing now would flash the upstream default name.
     if (loading) return
     const titleKey = ROUTE_TITLE_KEYS[pathname]
-    document.title = titleKey
-      ? `${t(titleKey)} · ${systemName}`
-      : systemName
+    document.title = titleKey ? `${t(titleKey)} · ${systemName}` : systemName
   }, [pathname, systemName, loading, t])
 
   useEffect(() => {

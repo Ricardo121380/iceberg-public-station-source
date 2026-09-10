@@ -16,7 +16,6 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
-
 /*
  * Station scope — extends the iceberg brand tokens to the upstream-styled
  * public pages (pricing, rankings, legal, about) that render through
@@ -167,7 +166,7 @@ For commercial licensing, please contact support@quantumnous.com
   }
 }
 @supports not
-  ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   .station-scope {
     --station-glass: #f7fbff;
   }

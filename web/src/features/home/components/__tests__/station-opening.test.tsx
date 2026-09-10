@@ -95,17 +95,16 @@ describe('Homepage opening', () => {
     expect(screen.queryByTestId('station-opening')).not.toBeInTheDocument()
   })
 
-  test('never starts the opening when reduced motion is requested', async () => {
+  test('plays the complete opening regardless of reduced motion preference', async () => {
     const original = window.matchMedia
     vi.spyOn(window, 'matchMedia').mockImplementation((query) => ({
       ...original(query),
       matches: true,
     }))
     render(<StationOpening />)
-    // The reduced-motion path returns before preloading any artwork.
-    expect(images).toHaveLength(0)
     await finishLoading()
-    act(() => vi.advanceTimersByTime(5000))
+    expect(screen.getByTestId('station-opening')).toBeVisible()
+    act(() => vi.advanceTimersByTime(3400))
     expect(screen.queryByTestId('station-opening')).not.toBeInTheDocument()
   })
 

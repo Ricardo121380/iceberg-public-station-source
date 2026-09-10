@@ -31,9 +31,7 @@ export function UnauthorisedError() {
     <StationErrorShell
       code='401'
       title={t('Sign in to sail further.')}
-      description={t(
-        'This part of the station needs a signed-in account.'
-      )}
+      description={t('This part of the station needs a signed-in account.')}
     >
       <Button variant='outline' onClick={() => history.go(-1)}>
         {t('Go Back')}

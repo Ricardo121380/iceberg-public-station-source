@@ -28,11 +28,6 @@ export function StationOpening() {
   const [playing, setPlaying] = useState(false)
 
   useEffect(() => {
-    // Visitors asking for reduced motion never get the full-screen animation;
-    // the homepage content is already visible underneath.
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      return
-    }
     let cancelled = false
     let finishTimer: ReturnType<typeof setTimeout> | undefined
     const images: HTMLImageElement[] = []

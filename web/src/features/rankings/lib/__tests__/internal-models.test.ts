@@ -18,11 +18,8 @@ For commercial licensing, please contact support@quantumnous.com
 */
 import { describe, expect, it } from 'vitest'
 
-import {
-  dropInternalModels,
-  isInternalModelName,
-} from '../internal-models'
 import type { RankingsSnapshot } from '../../types'
+import { dropInternalModels, isInternalModelName } from '../internal-models'
 
 function makeSnapshot(): RankingsSnapshot {
   return {
@@ -132,17 +129,17 @@ describe('dropInternalModels', () => {
     // Fields other than the rank are preserved.
     expect(result.models[1].total_tokens).toBe(5000)
 
-    expect(
-      result.top_movers.map((row) => row.model_name)
-    ).toEqual(['gpt-6-astra'])
+    expect(result.top_movers.map((row) => row.model_name)).toEqual([
+      'gpt-6-astra',
+    ])
     expect(result.top_droppers).toHaveLength(1)
 
-    expect(
-      result.models_history.points.map((point) => point.model)
-    ).toEqual(['gpt-6-astra'])
-    expect(
-      result.models_history.models.map((entry) => entry.name)
-    ).toEqual(['gpt-6-astra'])
+    expect(result.models_history.points.map((point) => point.model)).toEqual([
+      'gpt-6-astra',
+    ])
+    expect(result.models_history.models.map((entry) => entry.name)).toEqual([
+      'gpt-6-astra',
+    ])
     expect(result.models_history.buckets).toBe(1)
   })
 })

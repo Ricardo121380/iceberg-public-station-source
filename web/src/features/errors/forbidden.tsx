@@ -31,9 +31,7 @@ export function ForbiddenError() {
     <StationErrorShell
       code='403'
       title={t('This water is off-limits.')}
-      description={t(
-        'Your current account does not have access to this page.'
-      )}
+      description={t('Your current account does not have access to this page.')}
     >
       <Button variant='outline' onClick={() => history.go(-1)}>
         {t('Go Back')}

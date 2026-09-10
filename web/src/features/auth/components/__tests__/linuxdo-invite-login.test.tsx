@@ -198,4 +198,3 @@ describe('LinuxDOInviteLogin', () => {
     ).not.toBeInTheDocument()
   })
 })
-

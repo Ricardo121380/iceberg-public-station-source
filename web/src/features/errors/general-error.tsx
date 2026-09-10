@@ -70,9 +70,7 @@ export function GeneralError({
   return (
     <StationErrorShell
       code={String(status ?? 500)}
-      title={
-        isRateLimited ? title : t('The station hit rough water.')
-      }
+      title={isRateLimited ? title : t('The station hit rough water.')}
       description={
         isRateLimited
           ? description
