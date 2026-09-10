@@ -18,13 +18,18 @@ For commercial licensing, please contact support@quantumnous.com
 */
 import { useQuery } from '@tanstack/react-query'
 
-import { getRankings } from '../api'
+import { getRankings, type RankingsResponse } from '../api'
+import { dropInternalModels } from '../lib/internal-models'
 import type { RankingPeriod } from '../types'
 
 export function useRankings(period: RankingPeriod) {
   return useQuery({
     queryKey: ['rankings', period],
     queryFn: () => getRankings(period),
+    select: (response): RankingsResponse => ({
+      ...response,
+      data: dropInternalModels(response.data),
+    }),
     staleTime: 5 * 60 * 1000,
   })
 }
