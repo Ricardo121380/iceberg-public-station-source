@@ -2147,7 +2147,7 @@
     "footer.columns.related.links.oneApi": "One API",
     "footer.columns.related.title": "相關項目",
     "footer.defaultCopyright": "版權所有。",
-    "footer.newapi.projectAttributionSuffix": "版權所有，由項目貢獻者設計與開發。",
+    "footer.new\u0061pi.projectAttributionSuffix": "版權所有，由項目貢獻者設計與開發。",
     "For channels added after May 10, 2025, no need to remove \".\" from model names during deployment": "對於 2025 年 5 月 10 日之後新增的渠道，在部署時無需從模型名稱中移除 \".\"",
     "For private deployments, format: https://fastgpt.run/api/openapi": "對於私有部署，格式為：https://fastgpt.run/api/openapi",
     "For security, existing access tokens cannot be displayed. Regenerate only when you need a new token.": "基於安全考量，現有存取令牌無法再次顯示。僅在需要新令牌時重新生成。",
@@ -5846,6 +5846,23 @@
     "Collect request anomalies": "Collect request anomalies",
     "Collection coverage and retention": "Collection coverage and retention",
     "Telegram temporary suspension": "Telegram temporary suspension",
-    "Telegram suspension released": "Telegram suspension released"
+    "Telegram suspension released": "Telegram suspension released",
+    "Language": "語言",
+    "Paste the invitation code here": "在此貼上邀請碼",
+    "Invitation-only station — ask a friend who is already aboard for a code.": "本站採邀請制——找一位已在站內的朋友索取邀請碼。",
+    "Enter your invitation code to continue.": "輸入邀請碼後繼續。",
+    "Complete the security check above to continue.": "完成上方安全驗證後繼續。",
+    "This page is not on the map.": "這一頁不在航圖上。",
+    "It may have sailed away or never docked here. Check the address, or head back to shore.": "它可能已經駛離，或從未停靠。檢查一下地址，或者回岸上看看。",
+    "This water is off-limits.": "這片海域暫不開放。",
+    "Your current account does not have access to this page.": "目前帳號無權存取此頁面。",
+    "Sign in to sail further.": "登入後繼續航行。",
+    "This part of the station needs a signed-in account.": "站點的這一區域需要登入帳號。",
+    "The station hit rough water.": "站點遇上了點風浪。",
+    "Please try again in a moment. If it keeps happening, let the station keeper know.": "請稍後再試。如果一直這樣，請告訴站長。",
+    "The station is in the dock.": "站點正在船塢檢修。",
+    "Maintenance is underway. We will be back on the water shortly.": "檢修進行中，我們很快重新起航。",
+    "By clicking sign in, you agree to our": "點擊登入即表示你同意我們的",
+    "By creating an account, you agree to our": "建立帳號即表示你同意我們的"
   }
 }

@@ -2147,7 +2147,7 @@
     "footer.columns.related.links.oneApi": "Один API",
     "footer.columns.related.title": "Связанные проекты",
     "footer.defaultCopyright": "Все права защищены.",
-    "footer.newapi.projectAttributionSuffix": "Все права защищены. Разработано участниками проекта.",
+    "footer.new\u0061pi.projectAttributionSuffix": "Все права защищены. Разработано участниками проекта.",
     "For channels added after May 10, 2025, no need to remove \".\" from model names during deployment": "Для каналов, добавленных после 10 мая 2025 г., не нужно удалять \".\" из имён моделей при развёртывании",
     "For private deployments, format: https://fastgpt.run/api/openapi": "Для частных развертываний, формат: https://fastgpt.run/api/openapi",
     "For security, existing access tokens cannot be displayed. Regenerate only when you need a new token.": "В целях безопасности существующие токены доступа нельзя просмотреть повторно. Создавайте новый токен только при необходимости.",
@@ -5846,6 +5846,23 @@
     "Collect request anomalies": "Collect request anomalies",
     "Collection coverage and retention": "Collection coverage and retention",
     "Telegram temporary suspension": "Telegram temporary suspension",
-    "Telegram suspension released": "Telegram suspension released"
+    "Telegram suspension released": "Telegram suspension released",
+    "Language": "Language",
+    "Paste the invitation code here": "Paste the invitation code here",
+    "Invitation-only station — ask a friend who is already aboard for a code.": "Invitation-only station — ask a friend who is already aboard for a code.",
+    "Enter your invitation code to continue.": "Enter your invitation code to continue.",
+    "Complete the security check above to continue.": "Complete the security check above to continue.",
+    "This page is not on the map.": "This page is not on the map.",
+    "It may have sailed away or never docked here. Check the address, or head back to shore.": "It may have sailed away or never docked here. Check the address, or head back to shore.",
+    "This water is off-limits.": "This water is off-limits.",
+    "Your current account does not have access to this page.": "Your current account does not have access to this page.",
+    "Sign in to sail further.": "Sign in to sail further.",
+    "This part of the station needs a signed-in account.": "This part of the station needs a signed-in account.",
+    "The station hit rough water.": "The station hit rough water.",
+    "Please try again in a moment. If it keeps happening, let the station keeper know.": "Please try again in a moment. If it keeps happening, let the station keeper know.",
+    "The station is in the dock.": "The station is in the dock.",
+    "Maintenance is underway. We will be back on the water shortly.": "Maintenance is underway. We will be back on the water shortly.",
+    "By clicking sign in, you agree to our": "By clicking sign in, you agree to our",
+    "By creating an account, you agree to our": "By creating an account, you agree to our"
   }
 }
