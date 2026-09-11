@@ -138,7 +138,10 @@ export function ThemeCustomizationProvider(props: {
   useEffect(() => {
     applyAttribute(
       'data-theme-preset',
-      preset === DEFAULT_THEME_CUSTOMIZATION.preset ? null : preset
+      // 'default' is the upstream no-preset state; the configured default
+      // preset (iceberg on the station build) is a real preset and must keep
+      // its attribute so its token block activates.
+      preset === 'default' ? null : preset
     )
   }, [preset])
 

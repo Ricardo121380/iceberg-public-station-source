@@ -77,6 +77,12 @@ export const THEME_PRESETS = [
     name: 'Lavender Dream',
     swatches: ['oklch(0.5709 0.1808 306.89)', 'oklch(0.811 0.0589 201.14)'],
   },
+  {
+    // 冰山公益站 station palette: ice-white surface + boat pink action.
+    value: 'iceberg',
+    name: 'Iceberg',
+    swatches: ['#f5faff', '#bc285d'],
+  },
 ] as const
 
 export type ThemePreset = (typeof THEME_PRESETS)[number]['value']
@@ -116,7 +122,9 @@ export type ThemeCustomization = {
 }
 
 export const DEFAULT_THEME_CUSTOMIZATION: ThemeCustomization = {
-  preset: 'default',
+  // 冰山公益站: the station's own preset is the console default; users can
+  // still switch away in the theme drawer (cookie-persisted).
+  preset: 'iceberg',
   font: 'default',
   radius: 'default',
   scale: 'default',

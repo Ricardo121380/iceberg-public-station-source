@@ -291,6 +291,101 @@ For commercial licensing, please contact support@quantumnous.com
   --sidebar-ring: oklch(0.6359 0.1699 307.95);
 }
 
+/* ── Iceberg (冰山公益站) ─────────────────────────────────────────────── */
+/* The station's own palette: ice-white workbench over deep-ocean ink, with
+ * the boat pink reserved for actions and the ice-sea ramp for data. Unlike
+ * the accent-only presets, this one also owns the surfaces — the console's
+ * stock gray/charcoal becomes ice-white/deep-cabin-navy. */
+[data-theme-preset='iceberg'] {
+  --background: #f5faff;
+  --foreground: #172b46;
+  --card: #ffffff;
+  --card-foreground: #172b46;
+  --popover: #ffffff;
+  --popover-foreground: #172b46;
+  --primary: #bc285d;
+  --primary-foreground: #ffffff;
+  --secondary: #eaf3fa;
+  --secondary-foreground: #172b46;
+  --muted: #eaf3fa;
+  --muted-foreground: #506781;
+  --accent: #e0f2fd;
+  --accent-foreground: #153b61;
+  --destructive: #d64545;
+  --destructive-foreground: #ffffff;
+  --success: #1f9d6b;
+  --success-foreground: #ffffff;
+  --warning: #c47f17;
+  --warning-foreground: #ffffff;
+  --info: #0877ac;
+  --info-foreground: #ffffff;
+  --neutral: #506781;
+  --neutral-foreground: #ffffff;
+  --border: #c9dfed;
+  --input: #c9dfed;
+  --ring: #007bad;
+  --chart-1: #0877ac;
+  --chart-2: #3d9dc7;
+  --chart-3: #79c3e2;
+  --chart-4: #0e5c85;
+  --chart-5: #bc285d;
+  --sidebar: #edf6fc;
+  --sidebar-foreground: #172b46;
+  --sidebar-primary: #bc285d;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #dcedf8;
+  --sidebar-accent-foreground: #153b61;
+  --sidebar-border: #c9dfed;
+  --sidebar-ring: #007bad;
+  --skeleton-base: #e3f0f9;
+  --skeleton-highlight: #f2f9fe;
+  --radius: 0.75rem;
+}
+.dark [data-theme-preset='iceberg'] {
+  --background: #0c1929;
+  --foreground: #e8f2fc;
+  --card: #12253c;
+  --card-foreground: #e8f2fc;
+  --popover: #12253c;
+  --popover-foreground: #e8f2fc;
+  --primary: #ff9fbb;
+  --primary-foreground: #42122d;
+  --secondary: #1b314b;
+  --secondary-foreground: #e8f6ff;
+  --muted: #16283f;
+  --muted-foreground: #a4c0d8;
+  --accent: #24455f;
+  --accent-foreground: #e8f6ff;
+  --destructive: #ef7b74;
+  --destructive-foreground: #2b0a08;
+  --success: #3fb57f;
+  --success-foreground: #06261a;
+  --warning: #e0a63f;
+  --warning-foreground: #2b1c05;
+  --info: #85d6ff;
+  --info-foreground: #0b2333;
+  --neutral: #a4c0d8;
+  --neutral-foreground: #0c1929;
+  --border: #264563;
+  --input: #264563;
+  --ring: #87dbff;
+  --chart-1: #85d6ff;
+  --chart-2: #4a9bc4;
+  --chart-3: #2e6f99;
+  --chart-4: #6fb3d9;
+  --chart-5: #ff9fbb;
+  --sidebar: #0a1524;
+  --sidebar-foreground: #c9dcef;
+  --sidebar-primary: #ff9fbb;
+  --sidebar-primary-foreground: #42122d;
+  --sidebar-accent: #1c3452;
+  --sidebar-accent-foreground: #e8f6ff;
+  --sidebar-border: #223f5c;
+  --sidebar-ring: #87dbff;
+  --skeleton-base: #1b3350;
+  --skeleton-highlight: #264563;
+}
+
 /* ── Simple Large-font ────────────────────────────────────────────────── */
 [data-theme-preset='simple-large'] {
   --background: oklch(0.99 0 0);
@@ -426,10 +521,12 @@ For commercial licensing, please contact support@quantumnous.com
  *   - `anthropic`: warm cream surfaces are a brand choice, NOT a primary-mix
  *     derivation (the Anthropic system deliberately uses warm neutrals for
  *     cards/borders rather than tinting them with the clay accent).
- *   - `simple-large`: keeps intentionally neutral, high-contrast surfaces. */
+ *   - `simple-large`: keeps intentionally neutral, high-contrast surfaces.
+ *   - `iceberg`: station surfaces are bespoke ice-white / deep-cabin navy;
+ *     tinting them with the boat pink would wash the workbench warm. */
 [data-theme-preset]:not([data-theme-preset='default']):not(
   [data-theme-preset='anthropic']
-):not([data-theme-preset='simple-large']) {
+):not([data-theme-preset='simple-large']):not([data-theme-preset='iceberg']) {
   --card: color-mix(in oklch, var(--primary) 3%, var(--background));
   --popover: color-mix(in oklch, var(--primary) 5%, var(--background));
   --muted: color-mix(in oklch, var(--primary) 7%, var(--background));
@@ -454,7 +551,7 @@ For commercial licensing, please contact support@quantumnous.com
 .dark
   [data-theme-preset]:not([data-theme-preset='default']):not(
     [data-theme-preset='anthropic']
-  ):not([data-theme-preset='simple-large']) {
+  ):not([data-theme-preset='simple-large']):not([data-theme-preset='iceberg']) {
   --card: color-mix(in oklch, var(--primary) 8%, var(--background));
   --popover: color-mix(in oklch, var(--primary) 12%, var(--background));
   --muted: color-mix(in oklch, var(--primary) 12%, var(--background));
