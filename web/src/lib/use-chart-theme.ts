@@ -19,6 +19,12 @@ For commercial licensing, please contact support@quantumnous.com
 import { useEffect, useRef, useState } from 'react'
 
 import { useTheme } from '@/context/theme-provider'
+import { useThemeCustomization } from '@/context/theme-customization-provider'
+
+import {
+  registerIcebergChartThemes,
+  resolveChartThemeName,
+} from '@/lib/iceberg-chart-theme'
 
 /**
  * Lazy-load VChart's `ThemeManager` and switch its theme to follow the
@@ -31,6 +37,7 @@ let themeManagerPromise: Promise<
 
 export function useChartTheme() {
   const { resolvedTheme } = useTheme()
+  const { customization } = useThemeCustomization()
   const [themeReady, setThemeReady] = useState(false)
   const themeRef = useRef<
     (typeof import('@visactor/vchart'))['ThemeManager'] | null
@@ -48,14 +55,17 @@ export function useChartTheme() {
       const ThemeManager = await themeManagerPromise
       if (cancelled) return
       themeRef.current = ThemeManager
-      ThemeManager.setCurrentTheme(resolvedTheme === 'dark' ? 'dark' : 'light')
+      registerIcebergChartThemes(ThemeManager)
+      ThemeManager.setCurrentTheme(
+        resolveChartThemeName(customization.preset, resolvedTheme)
+      )
       setThemeReady(true)
     }
     updateTheme()
     return () => {
       cancelled = true
     }
-  }, [resolvedTheme])
+  }, [customization.preset, resolvedTheme])
 
   return { resolvedTheme, themeReady }
 }

@@ -25,6 +25,7 @@ import type {
   ProcessedUserChartData,
 } from '@/features/dashboard/types'
 import { getCurrencyDisplay } from '@/lib/currency'
+import { icebergSeriesRamp } from '@/lib/iceberg-chart-theme'
 import { formatChartTime, type TimeGranularity } from '@/lib/time'
 
 type TFunction = (key: string) => string
@@ -40,6 +41,21 @@ type TooltipLineItem = {
 }
 
 export function getDashboardChartColors(domainLength: number): string[] {
+  // Under the iceberg preset the analytics palette comes from the station's
+  // ice-sea ramp; everything else keeps the upstream VChart default scheme.
+  // The attribute lives on <body>, so a preset switch applies without a
+  // signature change for any of the analytics builders.
+  const preset =
+    typeof document === 'undefined'
+      ? ''
+      : (document.body.getAttribute('data-theme-preset') ?? '')
+  if (preset === 'iceberg' && domainLength > 0) {
+    const resolvedTheme = document.documentElement.classList.contains('dark')
+      ? ('dark' as const)
+      : ('light' as const)
+    return icebergSeriesRamp(resolvedTheme, domainLength)
+  }
+
   const scheme =
     vchartDefaultDataScheme.find(
       (item) => !item.maxDomainLength || domainLength <= item.maxDomainLength

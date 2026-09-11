@@ -90,3 +90,35 @@ body[data-theme-preset='iceberg'] {
     -webkit-backdrop-filter: none;
   }
 }
+
+/* Empty states get the little boat back — an "empty cabin" moment rather than
+ * a bare text stub. Pure CSS on the shared Empty component, so tables, mobile
+ * card lists, and page-level empty views all pick it up. */
+[data-theme-preset='iceberg'] [data-slot='empty-header']::before {
+  content: '';
+  width: 64px;
+  height: 64px;
+  margin-bottom: 2px;
+  background: url("data:image/svg+xml,<svg%20xmlns=%22http://www.w3.org/2000/svg%22%20width=%22348%22%20height=%22236%22%20viewBox=%220%200%20348%20236%22>%0A%20%20<defs>%0A%20%20%20%20<linearGradient%20id=%22shrimp%22%20gradientUnits=%22userSpaceOnUse%22%20x1=%2225%22%20y1=%220%22%20x2=%2285%22%20y2=%22180%22><stop%20stop-color=%22%23ff956b%22/><stop%20offset=%221%22%20stop-color=%22%23f72a79%22/></linearGradient>%0A%20%20%20%20<linearGradient%20id=%22hull%22%20x1=%220.9%22%20y1=%220%22%20x2=%220.2%22%20y2=%221%22><stop%20stop-color=%22%23ff966b%22/><stop%20offset=%220.55%22%20stop-color=%22%23ff467e%22/><stop%20offset=%221%22%20stop-color=%22%23ec197c%22/></linearGradient>%0A%20%20%20%20<clipPath%20id=%22hull-clip%22><path%20d=%22M19%20177%20Q167%20132%20339%20126%20Q305%20196%20226%20225%20Q203%20235%20174%20231%20Q83%20223%2019%20177Z%22/></clipPath>%0A%20%20</defs>%0A%20%20<path%20d=%22M18%208%20L131%201%20Q147%201%20153%2014%20Q165%2037%20147%2065%20Q127%2092%2084%20101%20L86%20172%20Q51%20178%2024%20155%20Q4%20137%204%20101%20Q5%2074%2024%2052%20Q48%2030%2076%2029%20L143%2026%20Q139%2016%20128%2017%20L18%2020%20L129%2012%20L143%2018%20Q140%207%20130%207Z%22%20fill=%22%23fff%22/>%0A%20%20<g%20stroke=%22%23171a21%22%20stroke-width=%222.8%22%20stroke-linecap=%22round%22%20stroke-linejoin=%22round%22>%0A%20%20%20%20<path%20d=%22M18%208%20L131%201%20Q147%201%20153%2014%20Q165%2037%20147%2065%20Q127%2092%2084%20101%20L82%2029%20Q109%2024%20143%2026%20Q139%2016%20128%2017%20L18%2020%20L129%2012%20Q139%2011%20143%2018%20Q140%207%20130%207Z%22%20fill=%22url(%23shrimp)%22/>%0A%20%20%20%20<path%20d=%22M76%2029%20Q48%2030%2029%2046%20L77%2093Z%22%20fill=%22url(%23shrimp)%22/>%0A%20%20%20%20<path%20d=%22M24%2052%20Q5%2074%204%20101%20L70%20101Z%22%20fill=%22url(%23shrimp)%22/>%0A%20%20%20%20<path%20d=%22M4%20109%20Q7%20137%2024%20155%20L70%20109Z%22%20fill=%22url(%23shrimp)%22/>%0A%20%20%20%20<path%20d=%22M77%20116%20L31%20161%20Q51%20174%2079%20175Z%22%20fill=%22url(%23shrimp)%22/>%0A%20%20%20%20<path%20d=%22M85%20116%20L86%20172%20Q110%20166%20123%20148%20L110%20126Z%22%20fill=%22url(%23shrimp)%22/>%0A%20%20%20%20<path%20d=%22M133%20127%20Q124%20105%20136%2094%20Q149%2080%20164%2089%20Q177%2096%20178%20112%20L171%20116%20Q169%20102%20160%2097%20Q151%2091%20142%20101%20Q135%20109%20141%20121Z%22%20fill=%22%23fff%22/>%0A%20%20%20%20<path%20d=%22M141%20124%20L148%20107%20L154%20105%20L161%20119%22%20fill=%22none%22%20stroke=%22%23329fcd%22%20stroke-width=%225%22/>%0A%20%20%20%20<path%20d=%22M106%20134%20L119%20127%20L128%20140%20L114%20147Z%22%20fill=%22%23fff%22/>%0A%20%20%20%20<path%20d=%22M86%20116%20Q96%20124%20111%20115%20L121%20107%20Q130%20103%20134%20111%20Q138%20120%20130%20123%20L122%20124%20Q105%20143%2088%20132Z%22%20fill=%22url(%23shrimp)%22/>%0A%20%20%20%20<path%20d=%22M112%20147%20Q129%20124%20165%20113%20L204%20102%20Q215%2099%20226%20108%20L243%20122Z%22%20fill=%22%23fff%22/>%0A%20%20%20%20<path%20d=%22M130%20139%20Q165%20122%20208%20110%20L228%20122Z%22%20fill=%22%23606672%22%20stroke=%22none%22/>%0A%20%20%20%20<path%20d=%22M19%20177%20Q167%20132%20339%20126%20Q305%20196%20226%20225%20Q203%20235%20174%20231%20Q83%20223%2019%20177Z%22%20fill=%22url(%23hull)%22/>%0A%20%20%20%20<path%20d=%22M77%20218%20Q185%20215%20283%20185%20L285%20226%20L156%20247Z%22%20fill=%22%23cf1678%22%20stroke=%22none%22%20clip-path=%22url(%23hull-clip)%22/>%0A%20%20%20%20<path%20d=%22M19%20177%20Q167%20132%20339%20126%20Q305%20196%20226%20225%20Q203%20235%20174%20231%20Q83%20223%2019%20177Z%22%20fill=%22none%22/>%0A%20%20%20%20<path%20d=%22M17%20169%20Q172%20119%20332%20115%20Q347%20114%20343%20126%20L340%20132%20Q172%20139%2025%20187Z%22%20fill=%22%23fff%22/>%0A%20%20%20%20<path%20d=%22M23%20177%20Q180%20129%20339%20125%22%20fill=%22none%22/>%0A%20%20</g>%0A%20%20<ellipse%20cx=%22114%22%20cy=%2255%22%20rx=%2223%22%20ry=%2225%22%20fill=%22%23fff%22/>%0A%20%20<ellipse%20cx=%22115%22%20cy=%2255%22%20rx=%2218.4%22%20ry=%2220.6%22%20fill=%22%2307090b%22/>%0A%20%20<circle%20cx=%22121%22%20cy=%2247%22%20r=%225.8%22%20fill=%22%23fff%22/>%0A%20%20<path%20d=%22M18%208%20L130%204%20Q144%203%20150%2018%20M18%2020%20L130%2015%20Q138%2015%20143%2023%22%20fill=%22none%22%20stroke=%22%23fff7ee%22%20stroke-width=%222.2%22%20stroke-linecap=%22round%22/>%0A</svg>%0A") center / contain no-repeat;
+  animation: iceberg-cabin-bob 5.2s ease-in-out infinite;
+  filter: drop-shadow(0 10px 16px #247ead26);
+}
+@keyframes iceberg-cabin-bob {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-1deg);
+  }
+  50% {
+    transform: translateY(-6px) rotate(1.2deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-theme-preset='iceberg'] [data-slot='empty-header']::before {
+    animation: none;
+  }
+}
+
+/* When the boat is on duty, the stock empty-state icon steps aside. */
+[data-theme-preset='iceberg'] [data-slot='empty-icon'] {
+  display: none;
+}

@@ -481,7 +481,7 @@ export function RechargeFormCard({
         <Alert>
           <AlertDescription>
             {t(
-              'Online topup is not enabled. Please use redemption code or contact administrator.'
+              'Online topup is not enabled on this station. Watch station announcements for quota allocation, or redeem a code.'
             )}
           </AlertDescription>
         </Alert>

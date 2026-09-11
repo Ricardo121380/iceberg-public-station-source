@@ -3271,6 +3271,7 @@
     "Online": "Online",
     "Online payment is not enabled. Please contact the administrator.": "Online payment is not enabled. Please contact the administrator.",
     "Online topup is not enabled. Please use redemption code or contact administrator.": "Online topup is not enabled. Please use redemption code or contact administrator.",
+    "Online topup is not enabled on this station. Watch station announcements for quota allocation, or redeem a code.": "Online topup is not enabled on this station. Watch station announcements for quota allocation, or redeem a code.",
     "Only allow specific email domains": "Only allow specific email domains",
     "Only available for admins. When enabled, you will receive a summary notification via your selected method when the scheduled model check detects upstream model changes or check failures.": "Only available for admins. When enabled, you will receive a summary notification via your selected method when the scheduled model check detects upstream model changes or check failures.",
     "Only configured combinations are overridden. All other calls keep the billing group base ratio.": "Only configured combinations are overridden. All other calls keep the billing group base ratio.",

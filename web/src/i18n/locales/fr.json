@@ -3271,6 +3271,7 @@
     "Online": "En ligne",
     "Online payment is not enabled. Please contact the administrator.": "Le paiement en ligne n'est pas activé. Veuillez contacter l'administrateur.",
     "Online topup is not enabled. Please use redemption code or contact administrator.": "La recharge en ligne n'est pas activée. Veuillez utiliser un code d'échange ou contacter l'administrateur.",
+    "Online topup is not enabled on this station. Watch station announcements for quota allocation, or redeem a code.": "Online topup is not enabled on this station. Watch station announcements for quota allocation, or redeem a code.",
     "Only allow specific email domains": "Autoriser uniquement des domaines d'e-mail spécifiques",
     "Only available for admins. When enabled, you will receive a summary notification via your selected method when the scheduled model check detects upstream model changes or check failures.": "Uniquement disponible pour les administrateurs. Lorsque cette option est activée, vous recevrez une notification récapitulative via votre méthode sélectionnée lorsque la vérification planifiée des modèles détecte des changements de modèles en amont ou des échecs de vérification.",
     "Only configured combinations are overridden. All other calls keep the billing group base ratio.": "Seules les combinaisons configurées sont remplacées. Tous les autres appels gardent le taux de base du groupe de facturation.",

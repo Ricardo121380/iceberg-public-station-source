@@ -26,6 +26,11 @@ import { IconBadge } from '@/components/ui/icon-badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useTheme } from '@/context/theme-provider'
+import { useThemeCustomization } from '@/context/theme-customization-provider'
+import {
+  registerIcebergChartThemes,
+  resolveChartThemeName,
+} from '@/lib/iceberg-chart-theme'
 import { getUserQuotaDataByUsers } from '@/features/dashboard/api'
 import {
   TIME_GRANULARITY_OPTIONS,
@@ -74,6 +79,7 @@ interface UserChartsProps {
 export function UserCharts(props: UserChartsProps) {
   const { t } = useTranslation()
   const { resolvedTheme } = useTheme()
+  const { customization } = useThemeCustomization()
   const [themeReady, setThemeReady] = useState(false)
   const themeManagerRef = useRef<
     (typeof import('@visactor/vchart'))['ThemeManager'] | null
@@ -130,11 +136,14 @@ export function UserCharts(props: UserChartsProps) {
       }
       const ThemeManager = await themeManagerPromise
       themeManagerRef.current = ThemeManager
-      ThemeManager.setCurrentTheme(resolvedTheme === 'dark' ? 'dark' : 'light')
+      registerIcebergChartThemes(ThemeManager)
+      ThemeManager.setCurrentTheme(
+        resolveChartThemeName(customization.preset, resolvedTheme)
+      )
       setThemeReady(true)
     }
     updateTheme()
-  }, [resolvedTheme])
+  }, [customization.preset, resolvedTheme])
 
   const { data: userData, isLoading } = useQuery({
     queryKey: ['dashboard', 'user-quota', timeRange],
@@ -247,7 +256,7 @@ export function UserCharts(props: UserChartsProps) {
                       key={`user-${chart.value}-${topUserLimit}-${resolvedTheme}`}
                       spec={{
                         ...spec,
-                        theme: resolvedTheme === 'dark' ? 'dark' : 'light',
+                        theme: resolveChartThemeName(customization.preset, resolvedTheme),
                         background: 'transparent',
                       }}
                       option={VCHART_OPTION}

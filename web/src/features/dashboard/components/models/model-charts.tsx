@@ -25,6 +25,10 @@ import { IconBadge } from '@/components/ui/icon-badge'
 import { useThemeCustomization } from '@/context/theme-customization-provider'
 import { useTheme } from '@/context/theme-provider'
 import {
+  registerIcebergChartThemes,
+  resolveChartThemeName,
+} from '@/lib/iceberg-chart-theme'
+import {
   DEFAULT_TIME_GRANULARITY,
   MODEL_ANALYTICS_CHART_OPTIONS,
 } from '@/features/dashboard/constants'
@@ -89,12 +93,15 @@ export function ModelCharts(props: ModelChartsProps) {
 
       const ThemeManager = await themeManagerPromise
       themeManagerRef.current = ThemeManager
-      ThemeManager.setCurrentTheme(resolvedTheme === 'dark' ? 'dark' : 'light')
+      registerIcebergChartThemes(ThemeManager)
+      ThemeManager.setCurrentTheme(
+        resolveChartThemeName(customization.preset, resolvedTheme)
+      )
       setThemeReady(true)
     }
 
     updateTheme()
-  }, [resolvedTheme])
+  }, [customization.preset, resolvedTheme])
 
   const chartData = useMemo(
     () =>
@@ -157,7 +164,7 @@ export function ModelCharts(props: ModelChartsProps) {
             key={chartKey}
             spec={{
               ...spec,
-              theme: resolvedTheme === 'dark' ? 'dark' : 'light',
+              theme: resolveChartThemeName(customization.preset, resolvedTheme),
               background: 'transparent',
             }}
             option={VCHART_OPTION}
