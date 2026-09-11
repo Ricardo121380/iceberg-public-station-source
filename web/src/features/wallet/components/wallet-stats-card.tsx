@@ -21,6 +21,7 @@ import { useTranslation } from 'react-i18next'
 
 import { IconBadge, type IconBadgeTone } from '@/components/ui/icon-badge'
 import { Skeleton } from '@/components/ui/skeleton'
+import { CountUpNumber } from '@/components/count-up-number'
 import { formatQuota } from '@/lib/format'
 
 import type { UserWalletData } from '../types'
@@ -49,6 +50,7 @@ export function WalletStatsCard(props: WalletStatsCardProps) {
   const stats: {
     label: string
     value: string
+    countUp: { value: number; format: (value: number) => string }
     description: string
     icon: typeof WalletCards
     tone: IconBadgeTone
@@ -56,6 +58,7 @@ export function WalletStatsCard(props: WalletStatsCardProps) {
     {
       label: t('Current Balance'),
       value: formatQuota(props.user?.quota ?? 0),
+      countUp: { value: props.user?.quota ?? 0, format: formatQuota },
       description: t('Remaining quota'),
       icon: WalletCards,
       tone: 'success',
@@ -63,6 +66,7 @@ export function WalletStatsCard(props: WalletStatsCardProps) {
     {
       label: t('Total Usage'),
       value: formatQuota(props.user?.used_quota ?? 0),
+      countUp: { value: props.user?.used_quota ?? 0, format: formatQuota },
       description: t('Total consumed quota'),
       icon: BarChart3,
       tone: 'info',
@@ -70,6 +74,10 @@ export function WalletStatsCard(props: WalletStatsCardProps) {
     {
       label: t('API Requests'),
       value: (props.user?.request_count ?? 0).toLocaleString(),
+      countUp: {
+        value: props.user?.request_count ?? 0,
+        format: (n) => Math.round(n).toLocaleString(),
+      },
       description: t('Total requests made'),
       icon: Activity,
       tone: 'chart-4',
@@ -90,7 +98,10 @@ export function WalletStatsCard(props: WalletStatsCardProps) {
           </div>
 
           <div className='text-foreground mt-1.5 font-mono text-sm font-bold tracking-tight break-all tabular-nums sm:mt-2.5 sm:text-2xl'>
-            {item.value}
+            <CountUpNumber
+              value={item.countUp.value}
+              format={item.countUp.format}
+            />
           </div>
           <div className='text-muted-foreground/60 mt-1 hidden text-xs md:block'>
             {item.description}

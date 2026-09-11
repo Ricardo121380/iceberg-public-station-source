@@ -22,6 +22,7 @@ import { ArrowRight, Flame, ShieldCheck, TrendingDown } from 'lucide-react'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { CountUpNumber } from '@/components/count-up-number'
 import { StaggerContainer, StaggerItem } from '@/components/page-transition'
 import { Button } from '@/components/ui/button'
 import { getUserQuotaDates } from '@/features/dashboard/api'
@@ -234,6 +235,15 @@ export function SummaryCards() {
   }).map((config, index) => {
     const tones = ['accent-1', 'accent-2', 'accent-3'] as const
 
+    const countUpTargets: Record<
+      string,
+      { value: number; format: (value: number) => string }
+    > = {
+      todayUsage: { value: recentUsage, format: formatQuota },
+      usage: { value: usedQuota, format: formatQuota },
+      requests: { value: requestCount, format: formatNumber },
+    }
+
     return {
       key: config.key,
       title: config.title,
@@ -241,6 +251,7 @@ export function SummaryCards() {
       desc: config.description,
       icon: config.icon,
       tone: tones[index] ?? 'accent-3',
+      countUp: countUpTargets[config.key],
       sparkline:
         config.key === 'todayUsage'
           ? sparklineData.usage
@@ -275,6 +286,7 @@ export function SummaryCards() {
                   description={it.desc}
                   icon={it.icon}
                   tone={it.tone}
+                  countUp={it.countUp}
                   sparkline={it.sparkline}
                   sparklineVariant={it.sparklineVariant}
                   loading={loading}
@@ -303,7 +315,7 @@ export function SummaryCards() {
             </div>
 
             <div className='font-mono text-xl font-semibold tracking-tight sm:text-2xl'>
-              {formatQuota(remainQuota)}
+              <CountUpNumber value={remainQuota} format={formatQuota} />
             </div>
 
             <div className='grid grid-cols-2 gap-2'>
@@ -313,7 +325,7 @@ export function SummaryCards() {
                   <span className='truncate'>{t('Last 24h usage')}</span>
                 </div>
                 <div className='text-foreground mt-1.5 truncate text-xs font-semibold tabular-nums'>
-                  {formatQuota(recentUsage)}
+                  <CountUpNumber value={recentUsage} format={formatQuota} />
                 </div>
               </div>
               <div className='bg-background/60 rounded-lg px-2.5 py-2'>

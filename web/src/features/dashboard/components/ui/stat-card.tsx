@@ -19,6 +19,7 @@ For commercial licensing, please contact support@quantumnous.com
 import type { LucideIcon } from 'lucide-react'
 import { useId, type ReactNode } from 'react'
 
+import { CountUpNumber } from '@/components/count-up-number'
 import { IconBadge, type IconBadgeTone } from '@/components/ui/icon-badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/lib/utils'
@@ -43,6 +44,8 @@ interface StatCardProps {
   value: string | number
   description: string
   icon: LucideIcon
+  /** When set, the value line counts up from zero with an ease-out tween. */
+  countUp?: { value: number; format?: (value: number) => string }
   sparkline?: number[]
   sparklineVariant?: StatCardSparklineVariant
   details?: StatCardDetail[]
@@ -274,7 +277,14 @@ export function StatCard(props: StatCardProps) {
     valueContent = (
       <div className='flex flex-col gap-1'>
         <div className='text-foreground font-mono text-base font-semibold tracking-tight break-all tabular-nums sm:text-2xl'>
-          {props.value}
+          {props.countUp ? (
+            <CountUpNumber
+              value={props.countUp.value}
+              format={props.countUp.format}
+            />
+          ) : (
+            props.value
+          )}
         </div>
         <p
           className={cn(
