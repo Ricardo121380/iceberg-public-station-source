@@ -18,9 +18,8 @@ For commercial licensing, please contact support@quantumnous.com
 */
 import { useEffect, useRef, useState } from 'react'
 
-import { useTheme } from '@/context/theme-provider'
 import { useThemeCustomization } from '@/context/theme-customization-provider'
-
+import { useTheme } from '@/context/theme-provider'
 import {
   registerIcebergChartThemes,
   resolveChartThemeName,

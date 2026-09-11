@@ -25,10 +25,6 @@ import { IconBadge } from '@/components/ui/icon-badge'
 import { useThemeCustomization } from '@/context/theme-customization-provider'
 import { useTheme } from '@/context/theme-provider'
 import {
-  registerIcebergChartThemes,
-  resolveChartThemeName,
-} from '@/lib/iceberg-chart-theme'
-import {
   DEFAULT_TIME_GRANULARITY,
   MODEL_ANALYTICS_CHART_OPTIONS,
 } from '@/features/dashboard/constants'
@@ -37,6 +33,10 @@ import type {
   ModelAnalyticsChartTab,
   QuotaDataItem,
 } from '@/features/dashboard/types'
+import {
+  registerIcebergChartThemes,
+  resolveChartThemeName,
+} from '@/lib/iceberg-chart-theme'
 import { useThemeRadiusPx } from '@/lib/theme-radius'
 import type { TimeGranularity } from '@/lib/time'
 import { VCHART_OPTION } from '@/lib/vchart'

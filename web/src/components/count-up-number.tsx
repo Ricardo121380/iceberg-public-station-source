@@ -21,7 +21,7 @@ import { useEffect, useRef, useState } from 'react'
 
 /**
  * Renders a number with an exponential ease-out count-up: from zero on first
- * mount, and from the previously settled value on later changes. Honors
+ * mount, and from the currently visible value on later changes. Honors
  * `prefers-reduced-motion` by rendering the final value immediately. The
  * caller owns formatting, so currency/quota strings stay exact.
  */
@@ -33,18 +33,16 @@ export function CountUpNumber(props: {
 }) {
   const shouldReduce = useReducedMotion()
   const format = props.format ?? ((n: number) => String(Math.round(n)))
-  const [display, setDisplay] = useState(() =>
-    shouldReduce ? props.value : 0
-  )
-  const settledRef = useRef(shouldReduce ? props.value : 0)
+  const [display, setDisplay] = useState(() => (shouldReduce ? props.value : 0))
+  const currentRef = useRef(shouldReduce ? props.value : 0)
 
   useEffect(() => {
     if (shouldReduce) {
-      settledRef.current = props.value
+      currentRef.current = props.value
       setDisplay(props.value)
       return
     }
-    const from = settledRef.current
+    const from = currentRef.current
     const to = props.value
     if (from === to) return
     const duration = props.durationMs ?? 800
@@ -55,11 +53,12 @@ export function CountUpNumber(props: {
     const tick = () => {
       const t = Math.min((Date.now() - start) / duration, 1)
       const eased = t >= 1 ? 1 : 1 - Math.pow(2, -10 * t)
-      setDisplay(from + (to - from) * eased)
+      currentRef.current = from + (to - from) * eased
+      setDisplay(currentRef.current)
       if (t < 1) {
         raf = requestAnimationFrame(tick)
       } else {
-        settledRef.current = to
+        currentRef.current = to
       }
     }
     raf = requestAnimationFrame(tick)

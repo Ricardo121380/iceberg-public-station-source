@@ -63,4 +63,17 @@ describe('CountUpNumber', () => {
     })
     expect(screen.getByText('150')).toBeInTheDocument()
   })
+  test('continues from the visible value when an update interrupts the animation', () => {
+    vi.useFakeTimers()
+    const view = render(<CountUpNumber value={100} />)
+    act(() => vi.advanceTimersByTime(240))
+    const before = Number(screen.getByText(/^\d+$/).textContent)
+    view.rerender(<CountUpNumber value={200} />)
+    act(() => vi.advanceTimersByTime(16))
+    expect(
+      Number(screen.getByText(/^\d+$/).textContent)
+    ).toBeGreaterThanOrEqual(before)
+    act(() => vi.advanceTimersByTime(1000))
+    expect(screen.getByText('200')).toBeInTheDocument()
+  })
 })

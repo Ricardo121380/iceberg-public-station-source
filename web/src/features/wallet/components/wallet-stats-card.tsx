@@ -19,9 +19,9 @@ For commercial licensing, please contact support@quantumnous.com
 import { Activity, BarChart3, WalletCards } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
+import { CountUpNumber } from '@/components/count-up-number'
 import { IconBadge, type IconBadgeTone } from '@/components/ui/icon-badge'
 import { Skeleton } from '@/components/ui/skeleton'
-import { CountUpNumber } from '@/components/count-up-number'
 import { formatQuota } from '@/lib/format'
 
 import type { UserWalletData } from '../types'

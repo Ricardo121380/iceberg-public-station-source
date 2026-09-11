@@ -16,6 +16,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
+import type { ITheme } from '@visactor/vchart'
 
 /**
  * Iceberg VChart themes. Charts are the console's visual center of gravity;
@@ -29,7 +30,6 @@ For commercial licensing, please contact support@quantumnous.com
 export const ICEBERG_CHART_THEME_LIGHT = 'iceberg-light'
 export const ICEBERG_CHART_THEME_DARK = 'iceberg-dark'
 
-import type { ITheme } from '@visactor/vchart'
 
 type ThemeManagerLike = {
   themeExist: (name: string) => boolean
@@ -106,13 +106,19 @@ export function registerIcebergChartThemes(
     ...baseLight,
     background: 'transparent',
     colorScheme: { default: LIGHT_SERIES },
-    component: { ...baseLight.component, ...LIGHT_COMPONENT } as ITheme['component'],
+    component: {
+      ...baseLight.component,
+      ...LIGHT_COMPONENT,
+    } as ITheme['component'],
   })
   ThemeManager.registerTheme(ICEBERG_CHART_THEME_DARK, {
     ...baseDark,
     background: 'transparent',
     colorScheme: { default: DARK_SERIES },
-    component: { ...baseDark.component, ...DARK_COMPONENT } as ITheme['component'],
+    component: {
+      ...baseDark.component,
+      ...DARK_COMPONENT,
+    } as ITheme['component'],
   })
 }
 

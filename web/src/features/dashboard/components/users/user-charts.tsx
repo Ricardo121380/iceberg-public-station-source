@@ -25,12 +25,8 @@ import { useTranslation } from 'react-i18next'
 import { IconBadge } from '@/components/ui/icon-badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { useTheme } from '@/context/theme-provider'
 import { useThemeCustomization } from '@/context/theme-customization-provider'
-import {
-  registerIcebergChartThemes,
-  resolveChartThemeName,
-} from '@/lib/iceberg-chart-theme'
+import { useTheme } from '@/context/theme-provider'
 import { getUserQuotaDataByUsers } from '@/features/dashboard/api'
 import {
   TIME_GRANULARITY_OPTIONS,
@@ -45,6 +41,10 @@ import type {
   ProcessedUserChartData,
   UserChartsFilters,
 } from '@/features/dashboard/types'
+import {
+  registerIcebergChartThemes,
+  resolveChartThemeName,
+} from '@/lib/iceberg-chart-theme'
 import { getRollingDateRange, type TimeGranularity } from '@/lib/time'
 import { VCHART_OPTION } from '@/lib/vchart'
 
@@ -256,7 +256,10 @@ export function UserCharts(props: UserChartsProps) {
                       key={`user-${chart.value}-${topUserLimit}-${resolvedTheme}`}
                       spec={{
                         ...spec,
-                        theme: resolveChartThemeName(customization.preset, resolvedTheme),
+                        theme: resolveChartThemeName(
+                          customization.preset,
+                          resolvedTheme
+                        ),
                         background: 'transparent',
                       }}
                       option={VCHART_OPTION}
