@@ -105,7 +105,7 @@ func TestAnomalyBotPauseBlocksAllTokensButAllowsDashboard(t *testing.T) {
 	SetTaskPluginProtocolRouter(server)
 	for _, key := range []string{"anomalytesttokenone", "anomalytesttokentwo"} {
 		require.NoError(t, env.database.Create(&model.Token{UserId: user.Id, Key: key, Status: 1, ExpiredTime: -1, UnlimitedQuota: true}).Error)
-		req := httptest.NewRequest("POST", "/v1/responses", strings.NewReader(`{"model":"test"}`))
+		req := httptest.NewRequest("POST", "/v1/responses", strings.NewReader(`{"model":"test","stream":true}`))
 		req.Header.Set("Authorization", "Bearer sk-"+key)
 		req.Header.Set("Content-Type", "application/json")
 		res := httptest.NewRecorder()

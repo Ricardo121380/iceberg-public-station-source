@@ -65,7 +65,7 @@ func TestAbuseSuspensionBlocksEveryTokenAndPlayground(t *testing.T) {
 	SetRelayRouter(r)
 	SetTaskPluginProtocolRouter(r)
 	for _, key := range []string{"abusetokenone", "abusetokentwo"} {
-		req := httptest.NewRequest("POST", "/v1/responses", strings.NewReader(`{"model":"test"}`))
+		req := httptest.NewRequest("POST", "/v1/responses", strings.NewReader(`{"model":"test","stream":true}`))
 		req.Header.Set("Authorization", "Bearer sk-"+key)
 		req.Header.Set("Content-Type", "application/json")
 		recorder := httptest.NewRecorder()
