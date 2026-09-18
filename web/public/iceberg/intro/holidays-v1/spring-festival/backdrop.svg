@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="620" height="496" viewBox="0 0 620 496">
+  <!-- 左上灯笼 -->
+  <g stroke-linecap="round" stroke-linejoin="round">
+    <path d="M96 0 L96 28" fill="none" stroke="#7f1d1d" stroke-width="3"/>
+    <rect x="85" y="26" width="22" height="9" rx="3.5" fill="#f6c453" stroke="#171a21" stroke-width="2.2"/>
+    <ellipse cx="96" cy="60" rx="27" ry="30" fill="#e23b3b" stroke="#171a21" stroke-width="2.8"/>
+    <path d="M72 48 Q96 58 120 48 M72 72 Q96 62 120 72" fill="none" stroke="#a12020" stroke-width="2"/>
+    <path d="M96 30 Q88 60 96 90 M96 30 Q104 60 96 90" fill="none" stroke="#a12020" stroke-width="1.6"/>
+    <rect x="85" y="86" width="22" height="8" rx="3.5" fill="#f6c453" stroke="#171a21" stroke-width="2.2"/>
+    <path d="M91 94 L91 112 M96 95 L96 116 M101 94 L101 112" fill="none" stroke="#e23b3b" stroke-width="2.4"/>
+  </g>
+  <!-- 右上灯笼（略小） -->
+  <g stroke-linecap="round" stroke-linejoin="round">
+    <path d="M524 0 L524 20" fill="none" stroke="#7f1d1d" stroke-width="2.6"/>
+    <rect x="515" y="19" width="18" height="8" rx="3" fill="#f6c453" stroke="#171a21" stroke-width="2"/>
+    <ellipse cx="524" cy="47" rx="22" ry="24" fill="#e23b3b" stroke="#171a21" stroke-width="2.6"/>
+    <path d="M504 38 Q524 46 544 38 M504 56 Q524 48 544 56" fill="none" stroke="#a12020" stroke-width="1.8"/>
+    <rect x="515" y="68" width="18" height="7" rx="3" fill="#f6c453" stroke="#171a21" stroke-width="2"/>
+    <path d="M520 75 L520 90 M524 76 L524 93 M528 75 L528 90" fill="none" stroke="#e23b3b" stroke-width="2.2"/>
+  </g>
+  <!-- 祥云（左右缘 + 底部两角，避开中心与文案） -->
+  <g fill="#f6c453" fill-opacity="0.14" stroke="#e9b13c" stroke-width="2.6" stroke-linejoin="round">
+    <path d="M14 182 Q12 166 28 164 Q31 150 47 152 Q62 154 62 168 Q76 166 78 178 Q80 190 66 191 L24 193 Q14 192 14 182Z"/>
+    <path d="M606 182 Q608 166 592 164 Q589 150 573 152 Q558 154 558 168 Q544 166 542 178 Q540 190 554 191 L596 193 Q606 192 606 182Z"/>
+    <path d="M20 452 Q18 440 30 438 Q33 428 45 429 Q57 430 57 441 Q68 439 70 448 Q72 457 61 458 L28 460 Q20 459 20 452Z"/>
+    <path d="M600 452 Q602 440 590 438 Q587 428 575 429 Q563 430 563 441 Q552 439 550 448 Q548 457 559 458 L592 460 Q600 459 600 452Z"/>
+  </g>
+  <!-- 金色碎星光 -->
+  <path d="M170 60 L173 67 L180 69 L173 71 L170 78 L167 71 L160 69 L167 67Z" fill="#f6c453"/>
+  <path d="M452 96 L454 101 L459 103 L454 105 L452 110 L450 105 L445 103 L450 101Z" fill="#f6c453"/>
+</svg>

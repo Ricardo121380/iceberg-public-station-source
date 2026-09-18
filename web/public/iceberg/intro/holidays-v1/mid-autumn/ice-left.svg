@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="207" height="145" viewBox="0 0 207 145">
+ <defs><clipPath id="ice"><path d="M1 145 L5 129 L43 103 L62 67 L88 60 L116 28 L166 1 L180 26 L185 41 L205 55 L201 87 L197 102 L207 121 L207 145Z"/></clipPath></defs>
+ <g clip-path="url(#ice)">
+ <path fill="#a8dbf4" d="M0 0H207V145H0Z"/>
+ <path fill="#fff" d="M166 1 L153 70 L121 85 L102 145 L85 145 L103 91 L88 60 L116 28Z"/>
+ <path fill="#def3fc" d="M116 28 L131 28 L103 91 L88 60Z"/>
+ <path fill="#69bee7" d="M166 1 L180 26 L173 60 L153 70Z"/>
+ <path fill="#299ad1" d="M180 26 L185 41 L205 55 L190 94 L174 107 L173 60Z"/>
+ <path fill="#e6f7ff" d="M62 67 L88 60 L77 98 L57 134 L43 103Z"/>
+ <path fill="#48aee0" d="M43 103 L57 134 L43 145 L24 145 L23 122Z"/>
+ <path fill="#f4fcff" d="M5 129 L23 122 L24 145 L1 145Z"/>
+ <path fill="#58b8e7" d="M77 98 L103 91 L85 145 L55 145Z"/>
+ <path fill="#d2effd" d="M153 70 L174 107 L157 145 L137 112 L102 145 L121 85Z"/>
+ <path fill="#61b8e2" d="M174 107 L190 94 L197 102 L207 121 L207 145 L157 145Z"/>
+ <path fill="#edfaff" d="M185 41 L205 55 L194 63Z"/>
+ </g>
+ <path d="M1 145 L5 129 L43 103 L62 67 L88 60 L116 28 L166 1 L180 26 L185 41 L205 55 L201 87 L197 102 L207 121 L207 145 M166 1 L153 70 L174 107 L157 145" fill="none" stroke="#203344" stroke-width="2.6" stroke-linejoin="round"/>
+</svg>

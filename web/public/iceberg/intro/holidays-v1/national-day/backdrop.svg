@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="620" height="496" viewBox="0 0 620 496">
+  <defs>
+    <g id="burst">
+      <g fill="none" stroke="#ef4444" stroke-width="4" stroke-linecap="round">
+        <path d="M0 -20 L0 -55"/>
+        <path d="M14 -14 L39 -39"/>
+        <path d="M20 0 L55 0"/>
+        <path d="M14 14 L39 39"/>
+        <path d="M0 20 L0 55"/>
+        <path d="M-14 14 L-39 39"/>
+        <path d="M-20 0 L-55 0"/>
+        <path d="M-14 -14 L-39 -39"/>
+      </g>
+      <g fill="none" stroke="#fbbf24" stroke-width="4" stroke-linecap="round">
+        <path d="M13 -5 L37 -15"/>
+        <path d="M5 -13 L15 -37"/>
+        <path d="M-5 -13 L-15 -37"/>
+        <path d="M-13 -5 L-37 -15"/>
+        <path d="M-13 5 L-37 15"/>
+        <path d="M-5 13 L-15 37"/>
+        <path d="M5 13 L15 37"/>
+        <path d="M13 5 L37 15"/>
+      </g>
+      <g fill="#fbbf24">
+        <circle cx="72" cy="0" r="3.6"/>
+        <circle cx="51" cy="51" r="3.6"/>
+        <circle cx="0" cy="72" r="3.6"/>
+        <circle cx="-51" cy="51" r="3.6"/>
+      </g>
+      <g fill="#ef4444">
+        <circle cx="-72" cy="0" r="3.6"/>
+        <circle cx="-51" cy="-51" r="3.6"/>
+        <circle cx="0" cy="-72" r="3.6"/>
+        <circle cx="51" cy="-51" r="3.6"/>
+      </g>
+    </g>
+  </defs>
+  <!-- 顶部彩旗 -->
+  <path d="M0 18 Q310 58 620 14" fill="none" stroke="#b91c1c" stroke-width="2.6" opacity="0.85"/>
+  <g stroke="#171a21" stroke-width="1.6" stroke-linejoin="round">
+    <path d="M55 25 L69 25 L62 41Z" fill="#ef4444"/>
+    <path d="M117 30 L131 31 L124 47Z" fill="#fbbf24"/>
+    <path d="M179 34 L193 34.5 L186 50.5Z" fill="#ef4444"/>
+    <path d="M241 36 L255 36.5 L248 52.5Z" fill="#fbbf24"/>
+    <path d="M303 37 L317 37 L310 53Z" fill="#ef4444"/>
+    <path d="M365 35.5 L379 35 L372 51Z" fill="#fbbf24"/>
+    <path d="M427 32.5 L441 31.5 L434 47.5Z" fill="#ef4444"/>
+    <path d="M489 28 L503 27 L496 43Z" fill="#fbbf24"/>
+    <path d="M551 22 L565 21 L558 37Z" fill="#ef4444"/>
+  </g>
+  <!-- 烟花 -->
+  <use href="#burst" transform="translate(96 44) scale(0.5)"/>
+  <use href="#burst" transform="translate(548 42) scale(0.42)"/>
+  <use href="#burst" transform="translate(452 24) scale(0.3)"/>
+  <!-- 烟花中心金色星形 -->
+  <g fill="#ffd23f">
+    <path d="M0 -5 L1.2 -1.6 L4.8 -1.5 L1.9 0.6 L2.9 4 L0 2 L-2.9 4 L-1.9 0.6 L-4.8 -1.5 L-1.2 -1.6Z" transform="translate(96 44)"/>
+    <path d="M0 -4 L0.9 -1.3 L3.8 -1.2 L1.5 0.5 L2.4 3.2 L0 1.6 L-2.4 3.2 L-1.5 0.5 L-3.8 -1.2 L-0.9 -1.3Z" transform="translate(548 42)"/>
+    <path d="M0 -3 L0.7 -1 L2.9 -0.9 L1.1 0.4 L1.8 2.4 L0 1.2 L-1.8 2.4 L-1.1 0.4 L-2.9 -0.9 L-0.7 -1Z" transform="translate(452 24)"/>
+  </g>
+</svg>

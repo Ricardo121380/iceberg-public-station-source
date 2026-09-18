@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="620" height="496" viewBox="0 0 620 496">
+  <defs>
+    <radialGradient id="moon" gradientUnits="userSpaceOnUse" cx="508" cy="78" r="80">
+      <stop stop-color="#ffe6a3"/>
+      <stop offset="0.72" stop-color="#f9c74f"/>
+      <stop offset="1" stop-color="#f0a92e"/>
+    </radialGradient>
+  </defs>
+  <!-- 暖金月亮（右上，峰后升起） -->
+  <circle cx="520" cy="82" r="96" fill="none" stroke="#f9c74f" stroke-width="3" opacity="0.28"/>
+  <circle cx="520" cy="82" r="72" fill="url(#moon)"/>
+  <circle cx="497" cy="62" r="8" fill="#e89a1f" opacity="0.35"/>
+  <circle cx="544" cy="98" r="5.6" fill="#e89a1f" opacity="0.3"/>
+  <circle cx="512" cy="108" r="4.2" fill="#e89a1f" opacity="0.3"/>
+  <!-- 桂花枝（左上） -->
+  <g fill="none" stroke="#4d7c4f" stroke-linecap="round">
+    <path d="M0 30 Q46 38 92 70" stroke-width="4"/>
+    <path d="M38 40 Q50 56 46 76" stroke-width="3"/>
+    <path d="M66 50 Q82 60 88 78" stroke-width="3"/>
+  </g>
+  <ellipse cx="28" cy="44" rx="10" ry="5" transform="rotate(28 28 44)" fill="#5e8f5a"/>
+  <ellipse cx="56" cy="70" rx="10" ry="5" transform="rotate(-18 56 70)" fill="#5e8f5a"/>
+  <ellipse cx="88" cy="80" rx="9" ry="4.6" transform="rotate(20 88 80)" fill="#5e8f5a"/>
+  <g fill="#f6b93b">
+    <circle cx="44" cy="32" r="3.2"/><circle cx="50" cy="36" r="2.6"/><circle cx="45" cy="40" r="2.6"/>
+    <circle cx="72" cy="46" r="3.2"/><circle cx="78" cy="50" r="2.6"/><circle cx="73" cy="54" r="2.6"/>
+    <circle cx="96" cy="66" r="3.2"/><circle cx="102" cy="70" r="2.6"/><circle cx="97" cy="74" r="2.6"/>
+    <circle cx="18" cy="36" r="2.8"/><circle cx="23" cy="40" r="2.2"/>
+  </g>
+  <!-- 星光 -->
+  <path d="M140 24 L143 32 L151 35 L143 38 L140 46 L137 38 L129 35 L137 32Z" fill="#f6c453"/>
+  <path d="M402 20 L404 25 L409 27 L404 29 L402 34 L400 29 L395 27 L400 25Z" fill="#f6c453"/>
+  <path d="M575 196 L577 202 L583 204 L577 206 L575 212 L573 206 L567 204 L573 202Z" fill="#f6c453"/>
+  <!-- 底部两角祥云（避开中央文案） -->
+  <g fill="#f6c453" fill-opacity="0.14" stroke="#e9b13c" stroke-width="2.6" stroke-linejoin="round">
+    <path d="M14 458 Q12 444 26 442 Q28 430 42 431 Q55 432 56 444 Q68 442 70 452 Q72 462 60 463 L22 465 Q13 464 14 458Z"/>
+    <path d="M606 458 Q608 444 594 442 Q592 430 578 431 Q565 432 564 444 Q552 442 550 452 Q548 462 560 463 L598 465 Q607 464 606 458Z"/>
+  </g>
+</svg>

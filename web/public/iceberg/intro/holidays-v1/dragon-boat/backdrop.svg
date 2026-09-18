@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="620" height="496" viewBox="0 0 620 496">
+  <!-- 顶部中央龙舟鳞纹 -->
+  <g fill="none" stroke="#2fa98c" stroke-width="2.6" stroke-linecap="round" opacity="0.75">
+    <path d="M236 30 A14 14 0 0 0 264 30"/>
+    <path d="M264 30 A14 14 0 0 0 292 30"/>
+    <path d="M292 30 A14 14 0 0 0 320 30"/>
+    <path d="M320 30 A14 14 0 0 0 348 30"/>
+    <path d="M348 30 A14 14 0 0 0 376 30"/>
+    <path d="M250 42 A14 14 0 0 0 278 42" opacity="0.55"/>
+    <path d="M306 42 A14 14 0 0 0 334 42" opacity="0.55"/>
+    <path d="M362 42 A14 14 0 0 0 390 42" opacity="0.55"/>
+  </g>
+  <!-- 左上艾草 -->
+  <g stroke-linecap="round" stroke-linejoin="round">
+    <path d="M56 72 Q50 42 62 12" fill="none" stroke="#2f7a4d" stroke-width="3.4"/>
+    <path d="M56 56 Q38 52 30 38 Q48 38 56 56Z" fill="#3fae7c" stroke="#1f6a4a" stroke-width="2"/>
+    <path d="M54 40 Q38 32 34 16 Q50 20 54 40Z" fill="#3fae7c" stroke="#1f6a4a" stroke-width="2"/>
+    <path d="M58 52 Q74 46 80 30 Q64 32 58 52Z" fill="#57c793" stroke="#1f6a4a" stroke-width="2"/>
+    <path d="M60 32 Q72 24 74 10 Q62 14 60 32Z" fill="#57c793" stroke="#1f6a4a" stroke-width="2"/>
+  </g>
+  <!-- 右上艾草（镜像） -->
+  <g stroke-linecap="round" stroke-linejoin="round">
+    <path d="M564 72 Q570 42 558 12" fill="none" stroke="#2f7a4d" stroke-width="3.4"/>
+    <path d="M564 56 Q582 52 590 38 Q572 38 564 56Z" fill="#3fae7c" stroke="#1f6a4a" stroke-width="2"/>
+    <path d="M566 40 Q582 32 586 16 Q570 20 566 40Z" fill="#3fae7c" stroke="#1f6a4a" stroke-width="2"/>
+    <path d="M562 52 Q546 46 540 30 Q556 32 562 52Z" fill="#57c793" stroke="#1f6a4a" stroke-width="2"/>
+    <path d="M560 32 Q548 24 546 10 Q558 14 560 32Z" fill="#57c793" stroke="#1f6a4a" stroke-width="2"/>
+  </g>
+  <!-- 底部两角水纹（避开中央文案） -->
+  <g fill="none" stroke="#2fa98c" stroke-linecap="round">
+    <path d="M10 468 Q40 452 78 460 Q104 465 118 458" stroke-width="3.4" opacity="0.8"/>
+    <path d="M4 484 Q44 466 96 476" stroke-width="3" opacity="0.55"/>
+    <path d="M610 468 Q580 452 542 460 Q516 465 502 458" stroke-width="3.4" opacity="0.8"/>
+    <path d="M616 484 Q576 466 524 476" stroke-width="3" opacity="0.55"/>
+  </g>
+  <!-- 两侧水气星光 -->
+  <path d="M40 150 L42 155 L47 157 L42 159 L40 164 L38 159 L33 157 L38 155Z" fill="#57c793"/>
+  <path d="M582 158 L584 163 L589 165 L584 167 L582 172 L580 167 L575 165 L580 163Z" fill="#57c793"/>
+</svg>

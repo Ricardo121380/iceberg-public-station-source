@@ -24,12 +24,14 @@ import { StationOpening } from '../station-opening'
 const images: Array<{
   onload: (() => void) | null
   onerror: (() => void) | null
+  src: string
 }> = []
 
 beforeEach(() => {
   localStorage.clear()
   images.length = 0
   vi.useFakeTimers()
+  vi.setSystemTime(new Date('2026-07-01T04:00:00Z'))
   vi.stubGlobal(
     'Image',
     class {
@@ -130,5 +132,37 @@ describe('Homepage opening', () => {
     render(<StationOpening />)
     await finishLoading()
     expect(screen.getByTestId('station-opening')).toBeVisible()
+  })
+  test('loads the seasonal layers during the Mid-Autumn window', async () => {
+    vi.setSystemTime(new Date('2026-09-18T04:00:00Z'))
+    render(<StationOpening />)
+    await finishLoading()
+    expect(screen.getByTestId('station-opening')).toHaveAttribute(
+      'data-holiday',
+      'mid-autumn'
+    )
+    expect(
+      images.every((image) => image.src.includes('/holidays-v1/mid-autumn/'))
+    ).toBe(true)
+  })
+
+  test('falls back to ordinary artwork when a holiday image fails', async () => {
+    vi.setSystemTime(new Date('2026-09-18T04:00:00Z'))
+    render(<StationOpening />)
+    await act(async () => {
+      images[0].onerror?.()
+    })
+    await finishLoading()
+    expect(screen.getByTestId('station-opening')).not.toHaveAttribute(
+      'data-holiday'
+    )
+    expect(images.some((image) => image.src.includes('/vector-v1/'))).toBe(true)
+  })
+
+  test('New Year displays the upcoming year during its December window', async () => {
+    vi.setSystemTime(new Date('2026-12-27T04:00:00Z'))
+    render(<StationOpening />)
+    await finishLoading()
+    expect(screen.getByText('2027')).toBeInTheDocument()
   })
 })

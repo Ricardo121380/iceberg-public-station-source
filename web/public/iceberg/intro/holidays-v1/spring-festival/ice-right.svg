@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="198" height="204" viewBox="0 0 198 204">
+ <defs><clipPath id="ice"><path d="M1 204 L2 141 L27 117 L27 83 L38 65 L42 39 L64 26 L82 1 L122 31 L132 60 L151 66 L168 112 L185 127 L187 161 L196 176 L198 204Z"/></clipPath></defs>
+ <g clip-path="url(#ice)">
+ <path fill="#87ccee" d="M0 0H198V204H0Z"/>
+ <path fill="#effaff" d="M82 1 L122 31 L105 54 L102 88 L77 122 L59 167 L48 204 L56 111 L67 88 L64 26Z"/>
+ <path fill="#fff" d="M82 1 L67 88 L56 111 L61 46Z"/>
+ <path fill="#b3e1f5" d="M83 3 L94 46 L105 54 L122 31Z"/>
+ <path fill="#38a8df" d="M64 26 L59 61 L39 89 L27 117 L27 83 L38 65 L42 39Z"/>
+ <path fill="#d9f2fd" d="M42 39 L43 65 L59 61 L64 26Z"/>
+ <path fill="#60bce9" d="M1 204 L2 141 L27 117 L39 89 L46 132 L24 156 L31 189 L22 204Z"/>
+ <path fill="#dff5ff" d="M2 141 L24 156 L27 117Z"/>
+ <path fill="#fff" d="M77 122 L102 88 L124 110 L142 170 L117 150 L99 182Z"/>
+ <path fill="#c3e9f9" d="M124 110 L119 77 L132 60 L141 84 L151 66 L168 112 L157 154 L142 170Z"/>
+ <path fill="#f4fcff" d="M132 60 L151 66 L143 94Z"/>
+ <path fill="#4eb3e4" d="M61 204 L77 122 L99 182 L117 150 L129 204Z"/>
+ <path fill="#2b9dd5" d="M129 204 L142 170 L157 154 L171 204Z"/>
+ <path fill="#b9e5f9" d="M168 112 L185 127 L187 161 L178 181 L174 149 L157 154Z"/>
+ <path fill="#6bbfe7" d="M178 181 L187 161 L196 176 L198 204 L171 204Z"/>
+ </g>
+ <path d="M1 204 L2 141 L27 117 L27 83 L38 65 L42 39 L64 26 L82 1 L122 31 L132 60 L151 66 L168 112 L185 127 L187 161 L196 176 L198 204 M82 1 L67 88 L56 111 L48 204" fill="none" stroke="#203344" stroke-width="2.6" stroke-linejoin="round"/>
+</svg>
