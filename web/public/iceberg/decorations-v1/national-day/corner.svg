@@ -1,1 +1,68 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="180" height="90" viewBox="0 0 180 90"><path d="M18 14 L18 54" stroke="#5c1a1a" stroke-width="3" stroke-linecap="round"/><path d="M22 16 Q52 6 82 18 L74 36 Q50 26 24 34Z" fill="#f0524a" stroke="#5c1a1a" stroke-width="2" stroke-linejoin="round"/><path d="M22 16 Q52 6 82 18 L78 26 Q50 15 24 25Z" fill="#ff8a7a"/><path d="M38 19 L39.6 23 L43.6 23.4 L40.4 25.8 L41.4 29.8 L38 27.4 L34.6 29.8 L35.6 25.8 L32.4 23.4 L36.4 23Z" fill="#ffd23f"/><path d="M100 66 Q132 76 164 64" fill="none" stroke="#d62f2f" stroke-width="2.4" stroke-linecap="round"/><g transform="translate(96 30) scale(0.72)"><path d="M10 34 Q12 14 34 9 Q56 5 62 21 Q65 32 51 38 Q32 45 16 41 Q9 39 10 34Z" fill="#f72a79" stroke="#8a1240" stroke-width="2.6"/><path d="M24 13 L27 40 M40 9 L41 41 M54 14 L50 37" fill="none" stroke="#8a1240" stroke-width="1.6" opacity="0.45"/><circle cx="21" cy="20" r="6" fill="#fff" stroke="#8a1240" stroke-width="2"/><circle cx="23" cy="20.5" r="2.8" fill="#231320"/><path d="M14 13 Q6 5 0 3 M16 11 Q13 1 7 -3" fill="none" stroke="#8a1240" stroke-width="2.2"/></g><path d="M150 14 L152 19 L157 20.4 L152.4 22.4 L151 27.4 L149 22.4 L144 20.4 L149.4 19Z" fill="#ffd23f"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="180" height="92" viewBox="0 0 180 92"><g transform="translate(74 14) scale(0.3)">
+  <defs>
+    <linearGradient id="b-shrimp" gradientUnits="userSpaceOnUse" x1="25" y1="0" x2="85" y2="180"><stop stop-color="#ff956b"/><stop offset="1" stop-color="#f72a79"/></linearGradient>
+    <linearGradient id="b-red-hull" gradientUnits="userSpaceOnUse" x1="180" y1="140" x2="180" y2="224"><stop stop-color="#e8453c"/><stop offset="1" stop-color="#a11313"/></linearGradient>
+  </defs>
+  <!-- 虾(先画,立于前甲板舱口后;下半身由前舷船体遮挡) -->
+  <g transform="translate(228 40) scale(0.66)">
+    <g stroke="#171a21" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M18 8 L131 1 Q147 1 153 14 Q165 37 147 65 Q127 92 84 101 L82 29 Q109 24 143 26 Q139 16 128 17 L18 20 L129 12 Q139 11 143 18 Q140 7 130 7Z" fill="url(#b-shrimp)"/>
+      <path d="M76 29 Q48 30 29 46 L77 93Z" fill="url(#b-shrimp)"/>
+      <path d="M24 52 Q5 74 4 101 L70 101Z" fill="url(#b-shrimp)"/>
+      <path d="M4 109 Q7 137 24 155 L70 109Z" fill="url(#b-shrimp)"/>
+      <path d="M77 116 L31 161 Q51 174 79 175Z" fill="url(#b-shrimp)"/>
+      <path d="M85 116 L86 172 Q110 166 123 148 L110 126Z" fill="url(#b-shrimp)"/>
+      <path d="M86 116 Q96 124 111 115 L121 107 Q130 103 134 111 Q138 120 130 123 L122 124 Q105 143 88 132Z" fill="url(#b-shrimp)"/>
+    </g>
+    <ellipse cx="114" cy="55" rx="23" ry="25" fill="#fff"/>
+    <ellipse cx="115" cy="55" rx="18.4" ry="20.6" fill="#07090b"/>
+    <circle cx="121" cy="47" r="5.8" fill="#fff"/>
+    <path d="M18 8 L130 4 Q144 3 150 18 M18 20 L130 15 Q138 15 143 23" fill="none" stroke="#fff7ee" stroke-width="2.2" stroke-linecap="round"/>
+  </g>
+  <!-- 仪仗巡游艇船体(压于虾下半身之前) -->
+  <path d="M24 158 L318 140 Q336 142 340 152 Q322 176 280 194 Q200 224 120 218 Q52 210 24 178 Z" fill="url(#b-red-hull)" stroke="#171a21" stroke-width="2.8" stroke-linejoin="round"/>
+  <!-- 舷侧白金双线 -->
+  <path d="M30 160 Q182 147 322 142" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+  <path d="M32 168 Q184 155 316 150" fill="none" stroke="#ffd23f" stroke-width="4" stroke-linecap="round"/>
+  <!-- 金色破冰艏板 -->
+  <path d="M318 141 L342 151 L320 166 Z" fill="#ffd23f" stroke="#171a21" stroke-width="2.4" stroke-linejoin="round"/>
+  <!-- 船身金星徽 -->
+  <path d="M0 -10 L2.36 -3.24 L9.51 -3.09 L3.82 1.24 L5.88 8.09 L0 4 L-5.88 8.09 L-3.82 1.24 L-9.51 -3.09 L-2.36 -3.24 Z" transform="translate(140 192)" fill="#ffd23f" stroke="#7a4a12" stroke-width="1.8" stroke-linejoin="round"/>
+  <!-- 白色舰桥(金底座/金腰线) -->
+  <rect x="106" y="144" width="118" height="9" rx="3" fill="#ffd23f" stroke="#171a21" stroke-width="2.2"/>
+  <path d="M108 148 L108 104 Q108 92 122 92 L208 92 Q222 92 222 104 L222 145 Z" fill="#fff" stroke="#171a21" stroke-width="2.8" stroke-linejoin="round"/>
+  <path d="M110 110 L220 107" fill="none" stroke="#ffd23f" stroke-width="4" stroke-linecap="round"/>
+  <g fill="#20334a">
+    <rect x="122" y="116" width="20" height="16" rx="4"/>
+    <rect x="152" y="115" width="20" height="16" rx="4"/>
+    <rect x="182" y="114" width="20" height="16" rx="4"/>
+  </g>
+  <!-- 仪仗白帽(金带金星,随虾同步下移) -->
+  <g stroke-linecap="round" stroke-linejoin="round">
+    <path d="M254 48 Q286 28 318 46 L314 54 Q286 40 258 56 Z" fill="#fff" stroke="#171a21" stroke-width="2.4"/>
+    <path d="M262 48 Q286 38 310 46" fill="none" stroke="#ffd23f" stroke-width="2.4"/>
+    <path d="M0 -2.2 L0.52 -0.71 L2.09 -0.68 L0.84 0.27 L1.29 1.78 L0 0.88 L-1.29 1.78 L-0.84 0.27 L-2.09 -0.68 L-0.52 -0.71 Z" transform="translate(286 41)" fill="#ffd23f" stroke="#7a4a12" stroke-width="1"/>
+  </g>
+  <!-- 前甲板金栏杆(在虾身前) -->
+  <g fill="none" stroke="#ffd23f" stroke-width="2.4" stroke-linecap="round">
+    <path d="M238 145 L238 133 M264 143 L264 131 M290 141 L290 129"/>
+    <path d="M232 133 Q272 128 312 126"/>
+  </g>
+  <!-- 桅杆与五星红旗 -->
+  <path d="M165 92 L165 36" fill="none" stroke="#171a21" stroke-width="3.4" stroke-linecap="round"/>
+  <circle cx="165" cy="33" r="3.2" fill="#ffd23f" stroke="#171a21" stroke-width="1.6"/>
+  <path d="M165 40 Q200 32 228 42 L224 70 Q196 60 165 66 Z" fill="#e23b3b" stroke="#171a21" stroke-width="2.4" stroke-linejoin="round"/>
+  <path d="M0 -7 L1.65 -2.27 L6.66 -2.16 L2.67 0.87 L4.12 5.66 L0 2.8 L-4.12 5.66 L-2.67 0.87 L-6.66 -2.16 L-1.65 -2.27 Z" transform="translate(179 50)" fill="#ffd23f"/>
+  <g fill="#ffd23f">
+    <path d="M0 -2.6 L0.61 -0.84 L2.47 -0.8 L0.99 0.32 L1.53 2.1 L0 1.04 L-1.53 2.1 L-0.99 0.32 L-2.47 -0.8 L-0.61 -0.84 Z" transform="translate(194 44)"/>
+    <path d="M0 -2.6 L0.61 -0.84 L2.47 -0.8 L0.99 0.32 L1.53 2.1 L0 1.04 L-1.53 2.1 L-0.99 0.32 L-2.47 -0.8 L-0.61 -0.84 Z" transform="translate(201 49)"/>
+    <path d="M0 -2.6 L0.61 -0.84 L2.47 -0.8 L0.99 0.32 L1.53 2.1 L0 1.04 L-1.53 2.1 L-0.99 0.32 L-2.47 -0.8 L-0.61 -0.84 Z" transform="translate(201 59)"/>
+    <path d="M0 -2.6 L0.61 -0.84 L2.47 -0.8 L0.99 0.32 L1.53 2.1 L0 1.04 L-1.53 2.1 L-0.99 0.32 L-2.47 -0.8 L-0.61 -0.84 Z" transform="translate(194 64)"/>
+  </g>
+</g><g transform="translate(20 16) scale(0.9)"><g stroke-linecap="round" stroke-linejoin="round">
+  <path d="M0 0 L0 34" stroke="#5c1a1a" stroke-width="2.6"/>
+  <path d="M2 2 Q18 -4 34 4 L30 16 Q16 10 2 15Z" fill="#f0524a" stroke="#5c1a1a" stroke-width="2"/>
+  <path d="M2 2 Q18 -4 34 4 L32 9 Q17 3 2 8Z" fill="#ff8a7a"/>
+  <path d="M10 4.4 L11.2 7.2 L14.2 7.5 L11.9 9.4 L12.6 12.4 L10 10.7 L7.4 12.4 L8.1 9.4 L5.8 7.5 L8.8 7.2Z" fill="#ffd23f"/>
+</g></g><g transform="translate(56 60) scale(0.6)"><path d="M0 -14 L3.4 -3.6 L14 0 L3.4 3.6 L0 14 L-3.4 3.6 L-14 0 L-3.4 -3.6Z"
+  fill="#ffd23f" stroke="#5c1a1a" stroke-width="1.8" stroke-linejoin="round"/></g></svg>

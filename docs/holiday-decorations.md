@@ -9,3 +9,9 @@
 - 品牌标记轻微摆动，切后台暂停；尊重系统减少动态偏好。庆祝只播放一次。
 
 验证：518 项前端测试、TypeScript、生产构建、Go 主模块及 relaykit 测试通过；35 SVG 与设计交付逐字节一致；实测模型详情抽屉 fixed 定位与 4px 装饰边正常。未修改数据库、后端或依赖，无新增三数据库矩阵要求。
+
+## .26 造型与空状态修复
+
+采用用户确认的 OpenDesign K3 返工 run `9da4cf5a-154b-480c-8b29-df453e803676`，替换五节日 scene/corner/empty 和中秋 mark/gift，保留完整虾船几何。共 35 份装饰与批准交付逐字节一致，其中 17 份发生变化。开屏、日期与业务逻辑不变。
+
+节日下关闭 empty-header::before，防止旧船与新插画叠加；普通日恢复原船。在本地实际构建样式下运行 `EGO_TASK_SPACE=<本地验收空间ID> ego-browser nodejs < scripts/release/verify-holiday-empty.mjs`：撤销修复可复现双插画，恢复后五节日×浅深及普通日全部通过。脚本仅允许本机预览，会用测试夹具替换预览页面DOM，刷新即可恢复。

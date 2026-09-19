@@ -1,1 +1,104 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120"><g stroke="#14532d" stroke-width="2.4" stroke-linejoin="round"><path d="M86 62 L114 100 L58 100Z" fill="#3fae7c"/><path d="M86 62 L86 100 L58 100Z" fill="#57c793"/><path d="M86 62 L114 100 L86 100Z" fill="#2e8f66"/></g><path d="M68 88 L106 88.8 M75 76 L100 76.6" stroke="#f4d58d" stroke-width="2.4" stroke-linecap="round" fill="none"/><circle cx="86" cy="70" r="2.6" fill="#f4d58d"/><g transform="translate(4 20)"><path d="M10 44 Q13 18 40 12 Q68 6 76 26 Q80 40 63 48 Q40 57 20 52 Q9 49 10 44Z" fill="#f72a79" stroke="#8a1240" stroke-width="3"/><path d="M27 16 L31 51 M47 11 L48 53 M64 17 L59 48" fill="none" stroke="#8a1240" stroke-width="2" opacity="0.45"/><circle cx="24" cy="26" r="7.5" fill="#fff" stroke="#8a1240" stroke-width="2.4"/><circle cx="26.5" cy="26.5" r="3.4" fill="#231320"/><path d="M16 16 Q6 7 0 5 M18 13 Q15 1 8 -4" fill="none" stroke="#8a1240" stroke-width="2.6"/></g><path d="M18 108 Q30 102 42 108 T66 108" fill="none" stroke="#5bb3a6" stroke-width="2.2" stroke-linecap="round"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120"><g transform="translate(5 6) scale(0.315)">
+  <defs>
+    <linearGradient id="b-shrimp" gradientUnits="userSpaceOnUse" x1="25" y1="0" x2="85" y2="180"><stop stop-color="#ff956b"/><stop offset="1" stop-color="#f72a79"/></linearGradient>
+    <linearGradient id="b-dragon" gradientUnits="userSpaceOnUse" x1="60" y1="140" x2="200" y2="215"><stop stop-color="#3ec68f"/><stop offset="1" stop-color="#0e7a52"/></linearGradient>
+    <linearGradient id="b-dragon-head" gradientUnits="userSpaceOnUse" x1="288" y1="48" x2="330" y2="110"><stop stop-color="#57d6a4"/><stop offset="1" stop-color="#129160"/></linearGradient>
+  </defs>
+  <!-- 龙尾(左侧上卷火焰尾,载具部件) -->
+  <g stroke="#171a21" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M58 158 C30 152 14 136 12 108 C24 124 34 128 44 128 C32 114 28 98 34 84 C42 102 52 110 62 114 C58 100 62 88 70 82 C70 104 78 122 88 130 L84 160 Z" fill="url(#b-dragon)"/>
+    <path d="M44 128 C38 118 36 106 38 96 M62 114 C60 104 62 94 66 88" fill="none" stroke="#f4d58d" stroke-width="2"/>
+  </g>
+  <!-- 虾鼓手(先画;下半身由船身前舷遮挡) -->
+  <g transform="translate(64 20) scale(0.78)">
+    <g stroke="#171a21" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M18 8 L131 1 Q147 1 153 14 Q165 37 147 65 Q127 92 84 101 L82 29 Q109 24 143 26 Q139 16 128 17 L18 20 L129 12 Q139 11 143 18 Q140 7 130 7Z" fill="url(#b-shrimp)"/>
+      <path d="M76 29 Q48 30 29 46 L77 93Z" fill="url(#b-shrimp)"/>
+      <path d="M24 52 Q5 74 4 101 L70 101Z" fill="url(#b-shrimp)"/>
+      <path d="M4 109 Q7 137 24 155 L70 109Z" fill="url(#b-shrimp)"/>
+      <path d="M77 116 L31 161 Q51 174 79 175Z" fill="url(#b-shrimp)"/>
+      <path d="M85 116 L86 172 Q110 166 123 148 L110 126Z" fill="url(#b-shrimp)"/>
+      <path d="M86 116 Q96 124 111 115 L121 107 Q130 103 134 111 Q138 120 130 123 L122 124 Q105 143 88 132Z" fill="url(#b-shrimp)"/>
+    </g>
+    <ellipse cx="114" cy="55" rx="23" ry="25" fill="#fff"/>
+    <ellipse cx="115" cy="55" rx="18.4" ry="20.6" fill="#07090b"/>
+    <circle cx="121" cy="47" r="5.8" fill="#fff"/>
+    <path d="M18 8 L130 4 Q144 3 150 18 M18 20 L130 15 Q138 15 143 23" fill="none" stroke="#fff7ee" stroke-width="2.2" stroke-linecap="round"/>
+  </g>
+  <!-- 修长龙身船体(压于虾下半身之前,形成乘坐遮挡) -->
+  <path d="M56 150 L288 138 Q298 158 282 174 Q238 200 170 206 Q110 210 72 190 Q52 176 56 150 Z" fill="url(#b-dragon)" stroke="#171a21" stroke-width="2.8" stroke-linejoin="round"/>
+  <!-- 金舷线 -->
+  <path d="M62 155 Q170 147 284 142" fill="none" stroke="#f4d58d" stroke-width="4" stroke-linecap="round"/>
+  <!-- 龙鳞(两排扇形弧) -->
+  <g fill="none" stroke="#f4d58d" stroke-width="2" stroke-linecap="round" opacity="0.85">
+    <path d="M78 168 a12 11 0 0 1 24 0 M102 168 a12 11 0 0 1 24 0 M126 168 a12 11 0 0 1 24 0 M150 168 a12 11 0 0 1 24 0 M174 168 a12 11 0 0 1 24 0 M198 168 a12 11 0 0 1 24 0 M222 167 a12 11 0 0 1 24 0 M246 166 a12 11 0 0 1 24 0"/>
+    <path d="M90 188 a12 11 0 0 1 24 0 M114 189 a12 11 0 0 1 24 0 M138 190 a12 11 0 0 1 24 0 M162 190 a12 11 0 0 1 24 0 M186 189 a12 11 0 0 1 24 0 M210 187 a12 11 0 0 1 24 0" opacity="0.7"/>
+  </g>
+  <!-- 成排桨叶(探出船侧) -->
+  <g stroke-linecap="round" stroke-linejoin="round">
+    <g stroke="#7a4a12" stroke-width="3.4">
+      <path d="M104 150 L84 206" fill="none"/>
+      <path d="M148 149 L128 205" fill="none"/>
+      <path d="M192 147 L172 203" fill="none"/>
+      <path d="M236 145 L216 201" fill="none"/>
+    </g>
+    <g fill="#c98a3d" stroke="#171a21" stroke-width="2.2">
+      <path d="M84 206 Q72 214 72 228 Q84 224 90 210 Z"/>
+      <path d="M128 205 Q116 213 116 227 Q128 223 134 209 Z"/>
+      <path d="M172 203 Q160 211 160 225 Q172 221 178 207 Z"/>
+      <path d="M216 201 Q204 209 204 223 Q216 219 222 205 Z"/>
+    </g>
+  </g>
+  <!-- 甲板粽子(箬叶三角+捆绳) -->
+  <g stroke-linejoin="round" stroke-linecap="round">
+    <path d="M252 106 L270 138 L234 136 Z" fill="#3fae7c" stroke="#171a21" stroke-width="2.4"/>
+    <path d="M241 128 L263 129 M245 120 L259 121" fill="none" stroke="#f4d58d" stroke-width="2.2"/>
+    <circle cx="252" cy="110" r="2.6" fill="#f4d58d" stroke="#171a21" stroke-width="1.4"/>
+  </g>
+  <!-- 大鼓(最前,虾在鼓后) -->
+  <g stroke-linecap="round" stroke-linejoin="round">
+    <path d="M188 142 L182 154 M216 142 L222 154" fill="none" stroke="#171a21" stroke-width="3"/>
+    <circle cx="202" cy="118" r="24" fill="#e23b3b" stroke="#171a21" stroke-width="2.8"/>
+    <ellipse cx="202" cy="106" rx="24" ry="9" fill="#f7e3b0" stroke="#171a21" stroke-width="2.6"/>
+    <g fill="#f4d58d" stroke="#171a21" stroke-width="1.2">
+      <circle cx="184" cy="124" r="2.4"/><circle cx="192" cy="132" r="2.4"/><circle cx="202" cy="135" r="2.4"/><circle cx="212" cy="132" r="2.4"/><circle cx="220" cy="124" r="2.4"/>
+    </g>
+  </g>
+  <!-- 鼓槌(从虾钳到鼓面) -->
+  <g stroke="#8a5410" stroke-width="3.2" stroke-linecap="round" fill="none">
+    <path d="M152 108 L188 92"/>
+    <path d="M162 118 L206 90"/>
+  </g>
+  <circle cx="188" cy="92" r="3.4" fill="#f4d58d" stroke="#171a21" stroke-width="1.6"/>
+  <circle cx="206" cy="90" r="3.4" fill="#f4d58d" stroke="#171a21" stroke-width="1.6"/>
+  <!-- 龙颈鬃毛 -->
+  <g fill="#e23b3b" stroke="#171a21" stroke-width="2.4" stroke-linejoin="round">
+    <path d="M286 84 Q270 80 264 66 Q278 68 288 76Z"/>
+    <path d="M282 108 Q266 104 260 90 Q274 92 284 100Z"/>
+    <path d="M278 132 Q262 128 256 114 Q270 116 280 124Z"/>
+  </g>
+  <!-- 龙颈 -->
+  <path d="M272 142 Q284 108 288 76 L308 72 Q302 108 298 146 Z" fill="url(#b-dragon)" stroke="#171a21" stroke-width="2.8" stroke-linejoin="round"/>
+  <!-- 龙头:长吻+金角+白牙 -->
+  <g stroke-linecap="round" stroke-linejoin="round">
+    <path d="M288 76 Q286 58 300 50 Q314 44 326 52 Q340 58 345 72 L338 82 Q336 90 326 93 Q312 96 300 90 Q290 84 288 76Z" fill="url(#b-dragon-head)" stroke="#171a21" stroke-width="2.8"/>
+    <path d="M302 92 Q320 102 338 96 L344 88 Q347 99 338 106 Q322 114 305 106 Q297 100 302 92Z" fill="#129160" stroke="#171a21" stroke-width="2.6"/>
+    <path d="M328 80 L332 89 L337 79Z" fill="#fff" stroke="#171a21" stroke-width="1.8"/>
+    <path d="M316 103 L320 94 L325 102Z" fill="#fff" stroke="#171a21" stroke-width="1.8"/>
+    <path d="M298 50 Q286 32 270 26 M287 37 L277 31" fill="none" stroke="#f4d58d" stroke-width="4"/>
+    <path d="M306 47 Q300 30 290 23 M298 33 L290 28" fill="none" stroke="#f4d58d" stroke-width="3.4"/>
+    <circle cx="312" cy="63" r="5.4" fill="#fff" stroke="#171a21" stroke-width="2.2"/>
+    <circle cx="313.6" cy="63.6" r="2.4" fill="#171a21" stroke="none"/>
+    <path d="M304 54 Q312 49 320 53" fill="none" stroke="#f4d58d" stroke-width="2.8"/>
+    <circle cx="338" cy="66" r="1.8" fill="#171a21" stroke="none"/>
+    <path d="M344 74 Q326 82 310 78" fill="none" stroke="#f4d58d" stroke-width="2.4"/>
+    <path d="M342 90 Q324 98 308 92" fill="none" stroke="#f4d58d" stroke-width="2.4"/>
+  </g>
+</g><g transform="translate(60 94) scale(1.15)"><g stroke-linejoin="round" stroke-linecap="round">
+  <path d="M0 -16 L16 12 L-16 12Z" fill="#3fae7c" stroke="#171a21" stroke-width="2.2"/>
+  <path d="M-10 5 L10 5.6 M-6 -3 L6 -2.4" fill="none" stroke="#f4d58d" stroke-width="2"/>
+  <circle cx="0" cy="-12" r="2.4" fill="#f4d58d" stroke="#171a21" stroke-width="1.2"/>
+</g></g><g transform="translate(18 104) scale(0.9)"><g fill="none" stroke-linecap="round">
+  <path d="M0 8 Q12 0 24 8 T48 8" stroke="#5bb3a6" stroke-width="2.4"/>
+  <path d="M6 18 Q18 10 30 18 T54 18" stroke="#8fd0c4" stroke-width="2"/>
+</g></g></svg>

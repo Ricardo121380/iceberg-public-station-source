@@ -1,1 +1,88 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="180" height="90" viewBox="0 0 180 90"><path d="M14 30 Q22 18 34 24 Q44 12 56 20 Q66 12 74 20" fill="none" stroke="#c9891b" stroke-width="2.6" stroke-linecap="round"/><path d="M20 44 Q28 34 38 38 Q46 28 56 34" fill="none" stroke="#c9891b" stroke-width="2.2" stroke-linecap="round" opacity="0.7"/><path d="M120 8 L120 16" stroke="#5c1a1a" stroke-width="2" stroke-linecap="round"/><ellipse cx="120" cy="27" rx="13" ry="11" fill="#f0524a" stroke="#5c1a1a" stroke-width="2"/><path d="M120 16c-4.8 0-8.6 3-9.8 6.4L120 27Z" fill="#ff8a7a"/><path d="M120 38 L120 46" stroke="#d62f2f" stroke-width="2" stroke-linecap="round"/><g transform="translate(102 48) scale(0.72)"><path d="M10 34 Q12 14 34 9 Q56 5 62 21 Q65 32 51 38 Q32 45 16 41 Q9 39 10 34Z" fill="#f72a79" stroke="#8a1240" stroke-width="2.6"/><path d="M24 13 L27 40 M40 9 L41 41 M54 14 L50 37" fill="none" stroke="#8a1240" stroke-width="1.6" opacity="0.45"/><circle cx="21" cy="20" r="6" fill="#fff" stroke="#8a1240" stroke-width="2"/><circle cx="23" cy="20.5" r="2.8" fill="#231320"/><path d="M14 13 Q6 5 0 3 M16 11 Q13 1 7 -3" fill="none" stroke="#8a1240" stroke-width="2.2"/></g><path d="M20 66 L24 48 L44 66 L64 48" fill="none" stroke="#d62f2f" stroke-width="2" stroke-linejoin="round" opacity="0.8"/><circle cx="160" cy="60" r="2.2" fill="#ffd23f"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="180" height="92" viewBox="0 0 180 92"><g transform="translate(74 14) scale(0.3)">
+  <defs>
+    <linearGradient id="b-shrimp" gradientUnits="userSpaceOnUse" x1="25" y1="0" x2="85" y2="180"><stop stop-color="#ff956b"/><stop offset="1" stop-color="#f72a79"/></linearGradient>
+    <linearGradient id="b-koi" gradientUnits="userSpaceOnUse" x1="200" y1="100" x2="200" y2="214"><stop stop-color="#ff7a4d"/><stop offset="1" stop-color="#e02323"/></linearGradient>
+    <clipPath id="b-koi-body"><path d="M64 158 Q60 118 108 104 Q170 88 236 100 Q300 110 322 142 Q336 162 322 182 Q296 210 220 214 Q130 218 88 196 Q64 182 64 158 Z"/></clipPath>
+  </defs>
+  <!-- 锦鲤尾鳍(花灯纸尾,三缕,载具部件) -->
+  <g fill="#ff6a4d" stroke="#171a21" stroke-width="2.6" stroke-linejoin="round">
+    <path d="M74 132 Q36 110 10 116 Q30 134 58 148Z"/>
+    <path d="M74 178 Q38 200 12 194 Q32 176 60 162Z"/>
+    <path d="M70 156 Q40 152 22 156 Q44 164 70 162Z"/>
+  </g>
+  <g fill="none" stroke="#ffd23f" stroke-width="2" stroke-linecap="round">
+    <path d="M60 138 Q40 128 24 126 M60 172 Q42 182 26 184"/>
+  </g>
+  <!-- 锦鲤灯舟船身 -->
+  <path d="M64 158 Q60 118 108 104 Q170 88 236 100 Q300 110 322 142 Q336 162 322 182 Q296 210 220 214 Q130 218 88 196 Q64 182 64 158 Z" fill="url(#b-koi)" stroke="#171a21" stroke-width="2.8" stroke-linejoin="round"/>
+  <g clip-path="url(#b-koi-body)">
+    <path d="M96 200 Q160 214 240 206 Q290 200 314 178 L314 214 L96 214Z" fill="#fff2e2"/>
+    <ellipse cx="170" cy="118" rx="34" ry="15" fill="#fff2e2"/>
+    <ellipse cx="268" cy="126" rx="20" ry="11" fill="#fff2e2"/>
+  </g>
+  <!-- 金鳞(三排扇形弧) -->
+  <g fill="none" stroke="#ffd23f" stroke-width="2" stroke-linecap="round" opacity="0.9">
+    <path d="M112 144 a11 10 0 0 1 22 0 M134 144 a11 10 0 0 1 22 0 M156 144 a11 10 0 0 1 22 0 M178 144 a11 10 0 0 1 22 0 M200 144 a11 10 0 0 1 22 0 M222 144 a11 10 0 0 1 22 0"/>
+    <path d="M123 166 a11 10 0 0 1 22 0 M145 166 a11 10 0 0 1 22 0 M167 166 a11 10 0 0 1 22 0 M189 166 a11 10 0 0 1 22 0 M211 166 a11 10 0 0 1 22 0 M233 166 a11 10 0 0 1 22 0"/>
+    <path d="M112 188 a11 10 0 0 1 22 0 M134 188 a11 10 0 0 1 22 0 M156 188 a11 10 0 0 1 22 0 M178 188 a11 10 0 0 1 22 0 M200 188 a11 10 0 0 1 22 0 M222 188 a11 10 0 0 1 22 0"/>
+  </g>
+  <!-- 背鳍(前移,让出舱口)与胸鳍 -->
+  <path d="M240 106 Q252 86 272 84 Q280 96 288 104 Z" fill="#ff9a6e" stroke="#171a21" stroke-width="2.4" stroke-linejoin="round"/>
+  <path d="M208 210 Q216 226 232 230 Q228 214 218 208Z" fill="#ff9a6e" stroke="#171a21" stroke-width="2.4" stroke-linejoin="round"/>
+  <!-- 鱼眼/唇/须 -->
+  <circle cx="292" cy="138" r="10" fill="#fff" stroke="#171a21" stroke-width="2.8"/>
+  <circle cx="294" cy="138" r="4.5" fill="#171a21"/>
+  <circle cx="295.5" cy="136.5" r="1.8" fill="#fff"/>
+  <ellipse cx="326" cy="164" rx="7" ry="5" fill="#ffb199" stroke="#171a21" stroke-width="2.4"/>
+  <path d="M322 156 Q312 148 304 150 M322 172 Q312 178 304 176" fill="none" stroke="#ffd23f" stroke-width="2.4" stroke-linecap="round"/>
+  <!-- 背上舱口(深色开口+金边) -->
+  <ellipse cx="183" cy="110" rx="42" ry="17" fill="#8f1d10" stroke="#171a21" stroke-width="2.6"/>
+  <ellipse cx="183" cy="110" rx="42" ry="17" fill="none" stroke="#ffd23f" stroke-width="2.2"/>
+  <!-- 虾(坐入舱口) -->
+  <g transform="translate(128 8) scale(0.66)">
+    <g stroke="#171a21" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M18 8 L131 1 Q147 1 153 14 Q165 37 147 65 Q127 92 84 101 L82 29 Q109 24 143 26 Q139 16 128 17 L18 20 L129 12 Q139 11 143 18 Q140 7 130 7Z" fill="url(#b-shrimp)"/>
+      <path d="M76 29 Q48 30 29 46 L77 93Z" fill="url(#b-shrimp)"/>
+      <path d="M24 52 Q5 74 4 101 L70 101Z" fill="url(#b-shrimp)"/>
+      <path d="M4 109 Q7 137 24 155 L70 109Z" fill="url(#b-shrimp)"/>
+      <path d="M77 116 L31 161 Q51 174 79 175Z" fill="url(#b-shrimp)"/>
+      <path d="M85 116 L86 172 Q110 166 123 148 L110 126Z" fill="url(#b-shrimp)"/>
+      <path d="M86 116 Q96 124 111 115 L121 107 Q130 103 134 111 Q138 120 130 123 L122 124 Q105 143 88 132Z" fill="url(#b-shrimp)"/>
+    </g>
+    <ellipse cx="114" cy="55" rx="23" ry="25" fill="#fff"/>
+    <ellipse cx="115" cy="55" rx="18.4" ry="20.6" fill="#07090b"/>
+    <circle cx="121" cy="47" r="5.8" fill="#fff"/>
+    <path d="M18 8 L130 4 Q144 3 150 18 M18 20 L130 15 Q138 15 143 23" fill="none" stroke="#fff7ee" stroke-width="2.2" stroke-linecap="round"/>
+  </g>
+  <!-- 舱口前唇沿(压于虾下半身之前,锦鲤红+金边+金鳞) -->
+  <g stroke-linecap="round" stroke-linejoin="round">
+    <path d="M136 110 A47 17 0 0 0 230 110 L224 106 A42 11 0 0 1 142 106 Z" fill="#ef3b24" stroke="#171a21" stroke-width="2.4"/>
+    <path d="M136 110 A47 17 0 0 0 230 110" fill="none" stroke="#ffd23f" stroke-width="2.6"/>
+    <path d="M158 116 a9 8 0 0 1 18 0 M186 117 a9 8 0 0 1 18 0" fill="none" stroke="#ffd23f" stroke-width="2"/>
+  </g>
+  <!-- 灯笼杆与挂灯 -->
+  <g stroke-linecap="round" stroke-linejoin="round">
+    <path d="M78 116 Q60 84 40 74" fill="none" stroke="#7f1d1d" stroke-width="3.4"/>
+    <path d="M40 74 L36 82" fill="none" stroke="#171a21" stroke-width="2"/>
+    <rect x="27" y="80" width="16" height="6" rx="2.5" fill="#f6c453" stroke="#171a21" stroke-width="1.8"/>
+    <ellipse cx="35" cy="98" rx="15" ry="17" fill="#e23b3b" stroke="#171a21" stroke-width="2.6"/>
+    <path d="M23 92 Q35 97 47 92 M23 104 Q35 99 47 104" fill="none" stroke="#a12020" stroke-width="1.8"/>
+    <rect x="28" y="113" width="14" height="5" rx="2" fill="#f6c453" stroke="#171a21" stroke-width="1.8"/>
+    <path d="M32 118 L32 130 M38 118 L38 128" fill="none" stroke="#e23b3b" stroke-width="2.2"/>
+    <circle cx="35" cy="119" r="2" fill="#ffd23f"/>
+  </g>
+  <!-- 红包(塞在舱口旁鱼背上) -->
+  <g stroke-linecap="round" stroke-linejoin="round">
+    <path d="M96 94 L121 101 L116 124 L91 117Z" fill="#e23b3b" stroke="#171a21" stroke-width="2.2"/>
+    <path d="M96 94 L106 106 L121 101" fill="none" stroke="#a12020" stroke-width="1.6"/>
+    <circle cx="106" cy="109" r="4" fill="#ffd23f" stroke="#7a4a12" stroke-width="1.4"/>
+  </g>
+</g><g transform="translate(34 8) scale(0.9)"><g stroke-linecap="round">
+  <path d="M0 0 L0 7" stroke="#5c1a1a" stroke-width="2"/>
+  <ellipse cx="0" cy="18" rx="12" ry="10" fill="#f0524a" stroke="#5c1a1a" stroke-width="2"/>
+  <path d="M0 8c-4.4 0-7.8 2.8-8.8 5.8L0 18Z" fill="#ff8a7a"/>
+  <path d="M-4 9.4c-.9 2.4-.9 14.4 0 17.2M4 9.4c.9 2.4.9 14.4 0 17.2" fill="none" stroke="#5c1a1a" stroke-width="0.9" opacity="0.6"/>
+  <rect x="-4" y="27.4" width="8" height="3" rx="1.2" fill="#ffd23f" stroke="#5c1a1a" stroke-width="1.2"/>
+  <path d="M0 30.4 L0 37" stroke="#d62f2f" stroke-width="2"/>
+</g></g><g transform="translate(10 64)"><path d="M0 8 Q6 -2 14 3 Q22 -5 30 2" fill="none" stroke="#c9891b"
+  stroke-width="2.4" stroke-linecap="round"/></g></svg>

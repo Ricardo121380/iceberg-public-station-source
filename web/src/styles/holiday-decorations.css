@@ -322,6 +322,11 @@ body[data-holiday]
 body:not([data-holiday]) .holiday-gift-row {
   display: none;
 }
+/* Seasonal artwork replaces the base theme's boat instead of stacking below it. */
+body[data-holiday] [data-slot='empty-header']::before {
+  content: none;
+  display: none;
+}
 body[data-holiday] [data-slot='empty-header'] > [data-slot='empty-icon'] {
   display: none;
 }
