@@ -35,6 +35,7 @@ import type {
 } from '@/features/dashboard/types'
 import {
   registerIcebergChartThemes,
+  registerHolidayChartTheme,
   resolveChartThemeName,
 } from '@/lib/iceberg-chart-theme'
 import { useThemeRadiusPx } from '@/lib/theme-radius'
@@ -64,7 +65,7 @@ export function ConsumptionDistributionChart(
   props: ConsumptionDistributionChartProps
 ) {
   const { t } = useTranslation()
-  const { resolvedTheme } = useTheme()
+  const { resolvedTheme, holiday } = useTheme()
   const { customization } = useThemeCustomization()
   const chartRadius = useThemeRadiusPx(
     '--radius-md',
@@ -96,25 +97,35 @@ export function ConsumptionDistributionChart(
       const ThemeManager = await themeManagerPromise
       themeManagerRef.current = ThemeManager
       registerIcebergChartThemes(ThemeManager)
+      registerHolidayChartTheme(ThemeManager, holiday, resolvedTheme)
       ThemeManager.setCurrentTheme(
-        resolveChartThemeName(customization.preset, resolvedTheme)
+        resolveChartThemeName(customization.preset, resolvedTheme, holiday)
       )
       setThemeReady(true)
     }
 
     updateTheme()
-  }, [customization.preset, resolvedTheme])
+  }, [customization.preset, resolvedTheme, holiday])
 
-  const chartData = useMemo(
-    () =>
-      processChartData(
-        props.loading ? [] : props.data,
-        timeGranularity,
-        t,
-        chartRadius
-      ),
-    [props.data, props.loading, timeGranularity, t, chartRadius]
-  )
+  const chartData = useMemo(() => {
+    // Analytics builders read the current palette; rebuild when its context changes.
+    void holiday
+    void resolvedTheme
+    return processChartData(
+      props.loading ? [] : props.data,
+      timeGranularity,
+      t,
+      chartRadius
+    )
+  }, [
+    props.data,
+    props.loading,
+    timeGranularity,
+    t,
+    chartRadius,
+    holiday,
+    resolvedTheme,
+  ])
   const spec = chartType === 'bar' ? chartData.spec_line : chartData.spec_area
   const specType = typeof spec?.type === 'string' ? spec.type : chartType
   const chartKey = [
@@ -124,6 +135,7 @@ export function ConsumptionDistributionChart(
     props.data.length,
     resolvedTheme,
     customization.preset,
+    holiday,
   ].join('-')
 
   return (
@@ -167,7 +179,11 @@ export function ConsumptionDistributionChart(
             key={chartKey}
             spec={{
               ...spec,
-              theme: resolveChartThemeName(customization.preset, resolvedTheme),
+              theme: resolveChartThemeName(
+                customization.preset,
+                resolvedTheme,
+                holiday
+              ),
               background: 'transparent',
             }}
             option={VCHART_OPTION}

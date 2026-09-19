@@ -22,9 +22,14 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useLayoutEffect,
   useState,
 } from 'react'
 
+import {
+  getOpeningHoliday,
+  type OpeningHoliday,
+} from '@/features/home/lib/opening-holidays'
 import { getCookie, setCookie, removeCookie } from '@/lib/cookies'
 
 type Theme = 'dark' | 'light' | 'system'
@@ -42,6 +47,7 @@ type ThemeProviderProps = {
 }
 
 type ThemeProviderState = {
+  holiday: OpeningHoliday | null
   defaultTheme: Theme
   resolvedTheme: ResolvedTheme
   theme: Theme
@@ -50,6 +56,7 @@ type ThemeProviderState = {
 }
 
 const initialState: ThemeProviderState = {
+  holiday: null,
   defaultTheme: DEFAULT_THEME,
   resolvedTheme: 'light',
   theme: DEFAULT_THEME,
@@ -81,6 +88,37 @@ export function ThemeProvider({
   storageKey = THEME_COOKIE_NAME,
   ...props
 }: ThemeProviderProps) {
+  const [holiday, setHoliday] = useState(() => getOpeningHoliday().holiday)
+
+  useLayoutEffect(() => {
+    if (holiday) document.body.dataset.holiday = holiday
+    else delete document.body.dataset.holiday
+    return () => {
+      delete document.body.dataset.holiday
+    }
+  }, [holiday])
+
+  useEffect(() => {
+    let timer: ReturnType<typeof setTimeout>
+    const refresh = () => {
+      clearTimeout(timer)
+      setHoliday(getOpeningHoliday().holiday)
+      const day = 86_400_000
+      const beijingNow = Date.now() + 8 * 60 * 60 * 1000
+      timer = setTimeout(refresh, day - (beijingNow % day) + 50)
+    }
+    refresh()
+    window.addEventListener('focus', refresh)
+    window.addEventListener('pageshow', refresh)
+    document.addEventListener('visibilitychange', refresh)
+    return () => {
+      clearTimeout(timer)
+      window.removeEventListener('focus', refresh)
+      window.removeEventListener('pageshow', refresh)
+      document.removeEventListener('visibilitychange', refresh)
+    }
+  }, [])
+
   const [theme, _setTheme] = useState<Theme>(() =>
     getStoredTheme(storageKey, defaultTheme)
   )
@@ -121,13 +159,14 @@ export function ThemeProvider({
 
   const contextValue = useMemo(
     () => ({
+      holiday,
       defaultTheme,
       resolvedTheme,
       resetTheme,
       theme,
       setTheme,
     }),
-    [defaultTheme, resolvedTheme, resetTheme, theme, setTheme]
+    [holiday, defaultTheme, resolvedTheme, resetTheme, theme, setTheme]
   )
 
   return (

@@ -102,7 +102,7 @@ type MarketShareSectionProps = {
  */
 export function MarketShareSection(props: MarketShareSectionProps) {
   const { t } = useTranslation()
-  const { resolvedTheme, themeReady } = useChartTheme()
+  const { resolvedTheme, themeReady, chartTheme } = useChartTheme()
   const chartTextColor =
     resolvedTheme === 'dark'
       ? 'rgba(255, 255, 255, 0.68)'
@@ -228,10 +228,10 @@ export function MarketShareSection(props: MarketShareSectionProps) {
         <div className='h-60 sm:h-72'>
           {themeReady && spec ? (
             <VChart
-              key={`vendor-share-${resolvedTheme}-${props.period}`}
+              key={`vendor-share-${chartTheme}-${props.period}`}
               spec={{
                 ...spec,
-                theme: resolvedTheme === 'dark' ? 'dark' : 'light',
+                theme: chartTheme,
                 background: 'transparent',
               }}
               option={VCHART_OPTION}

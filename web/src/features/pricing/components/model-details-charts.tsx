@@ -98,7 +98,7 @@ export function LatencyTrendChart(props: {
   className?: string
 }) {
   const { t } = useTranslation()
-  const { resolvedTheme, themeReady } = useChartTheme()
+  const { resolvedTheme, themeReady, chartTheme } = useChartTheme()
   const { textColor, gridColor } = getChartThemeTokens(resolvedTheme)
 
   const spec = useMemo(() => {
@@ -174,10 +174,10 @@ export function LatencyTrendChart(props: {
     <div className={cn('h-64 sm:h-72', props.className)}>
       {themeReady && spec && (
         <VChart
-          key={`latency-${resolvedTheme}`}
+          key={`latency-${chartTheme}`}
           spec={{
             ...spec,
-            theme: resolvedTheme === 'dark' ? 'dark' : 'light',
+            theme: chartTheme,
             background: 'transparent',
           }}
           option={VCHART_OPTION}
@@ -196,7 +196,7 @@ export function UptimeTrendChart(props: {
   className?: string
 }) {
   const { t } = useTranslation()
-  const { resolvedTheme, themeReady } = useChartTheme()
+  const { resolvedTheme, themeReady, chartTheme } = useChartTheme()
   const { textColor, gridColor } = getChartThemeTokens(resolvedTheme)
 
   const spec = useMemo(() => {
@@ -302,10 +302,10 @@ export function UptimeTrendChart(props: {
     <div className={cn('h-56 sm:h-64', props.className)}>
       {themeReady && spec && (
         <VChart
-          key={`uptime-trend-${resolvedTheme}`}
+          key={`uptime-trend-${chartTheme}`}
           spec={{
             ...spec,
-            theme: resolvedTheme === 'dark' ? 'dark' : 'light',
+            theme: chartTheme,
             background: 'transparent',
           }}
           option={VCHART_OPTION}
@@ -324,7 +324,7 @@ export function ThroughputBarChart(props: {
   className?: string
 }) {
   const { t } = useTranslation()
-  const { resolvedTheme, themeReady } = useChartTheme()
+  const { resolvedTheme, themeReady, chartTheme } = useChartTheme()
   const { textColor, gridColor } = getChartThemeTokens(resolvedTheme)
   const { customization } = useThemeCustomization()
   const barRadius = useThemeRadiusPx(
@@ -395,10 +395,10 @@ export function ThroughputBarChart(props: {
     <div className={cn('h-48 sm:h-56', props.className)}>
       {themeReady && spec && (
         <VChart
-          key={`tput-${resolvedTheme}`}
+          key={`tput-${chartTheme}`}
           spec={{
             ...spec,
-            theme: resolvedTheme === 'dark' ? 'dark' : 'light',
+            theme: chartTheme,
             background: 'transparent',
           }}
           option={VCHART_OPTION}

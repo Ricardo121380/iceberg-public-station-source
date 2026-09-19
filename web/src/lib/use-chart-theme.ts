@@ -22,6 +22,7 @@ import { useThemeCustomization } from '@/context/theme-customization-provider'
 import { useTheme } from '@/context/theme-provider'
 import {
   registerIcebergChartThemes,
+  registerHolidayChartTheme,
   resolveChartThemeName,
 } from '@/lib/iceberg-chart-theme'
 
@@ -35,7 +36,7 @@ let themeManagerPromise: Promise<
 > | null = null
 
 export function useChartTheme() {
-  const { resolvedTheme } = useTheme()
+  const { resolvedTheme, holiday } = useTheme()
   const { customization } = useThemeCustomization()
   const [themeReady, setThemeReady] = useState(false)
   const themeRef = useRef<
@@ -55,8 +56,9 @@ export function useChartTheme() {
       if (cancelled) return
       themeRef.current = ThemeManager
       registerIcebergChartThemes(ThemeManager)
+      registerHolidayChartTheme(ThemeManager, holiday, resolvedTheme)
       ThemeManager.setCurrentTheme(
-        resolveChartThemeName(customization.preset, resolvedTheme)
+        resolveChartThemeName(customization.preset, resolvedTheme, holiday)
       )
       setThemeReady(true)
     }
@@ -64,7 +66,16 @@ export function useChartTheme() {
     return () => {
       cancelled = true
     }
-  }, [customization.preset, resolvedTheme])
+  }, [customization.preset, resolvedTheme, holiday])
 
-  return { resolvedTheme, themeReady }
+  return {
+    resolvedTheme,
+    themeReady,
+    holiday,
+    chartTheme: resolveChartThemeName(
+      customization.preset,
+      resolvedTheme,
+      holiday
+    ),
+  }
 }

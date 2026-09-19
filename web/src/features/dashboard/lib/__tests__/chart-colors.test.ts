@@ -16,11 +16,16 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
-import { afterEach, describe, expect, test } from 'vitest'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 
 import { getDashboardChartColors } from '../charts'
 
+beforeEach(() => {
+  vi.useFakeTimers()
+  vi.setSystemTime(new Date('2026-07-01T04:00:00Z'))
+})
 afterEach(() => {
+  vi.useRealTimers()
   document.body.removeAttribute('data-theme-preset')
   document.documentElement.classList.remove('dark')
 })

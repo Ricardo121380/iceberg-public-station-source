@@ -43,6 +43,7 @@ import type {
 } from '@/features/dashboard/types'
 import {
   registerIcebergChartThemes,
+  registerHolidayChartTheme,
   resolveChartThemeName,
 } from '@/lib/iceberg-chart-theme'
 import { getRollingDateRange, type TimeGranularity } from '@/lib/time'
@@ -78,7 +79,7 @@ interface UserChartsProps {
 
 export function UserCharts(props: UserChartsProps) {
   const { t } = useTranslation()
-  const { resolvedTheme } = useTheme()
+  const { resolvedTheme, holiday } = useTheme()
   const { customization } = useThemeCustomization()
   const [themeReady, setThemeReady] = useState(false)
   const themeManagerRef = useRef<
@@ -137,13 +138,14 @@ export function UserCharts(props: UserChartsProps) {
       const ThemeManager = await themeManagerPromise
       themeManagerRef.current = ThemeManager
       registerIcebergChartThemes(ThemeManager)
+      registerHolidayChartTheme(ThemeManager, holiday, resolvedTheme)
       ThemeManager.setCurrentTheme(
-        resolveChartThemeName(customization.preset, resolvedTheme)
+        resolveChartThemeName(customization.preset, resolvedTheme, holiday)
       )
       setThemeReady(true)
     }
     updateTheme()
-  }, [customization.preset, resolvedTheme])
+  }, [customization.preset, resolvedTheme, holiday])
 
   const { data: userData, isLoading } = useQuery({
     queryKey: ['dashboard', 'user-quota', timeRange],
@@ -152,16 +154,25 @@ export function UserCharts(props: UserChartsProps) {
     staleTime: 60_000,
   })
 
-  const chartData = useMemo(
-    () =>
-      processUserChartData(
-        isLoading ? [] : (userData ?? []),
-        timeGranularity,
-        t,
-        topUserLimit
-      ),
-    [userData, isLoading, timeGranularity, t, topUserLimit]
-  )
+  const chartData = useMemo(() => {
+    // Analytics builders read the current palette; rebuild when its context changes.
+    void holiday
+    void resolvedTheme
+    return processUserChartData(
+      isLoading ? [] : (userData ?? []),
+      timeGranularity,
+      t,
+      topUserLimit
+    )
+  }, [
+    userData,
+    isLoading,
+    timeGranularity,
+    t,
+    topUserLimit,
+    holiday,
+    resolvedTheme,
+  ])
 
   return (
     <div className='space-y-3'>
@@ -253,12 +264,13 @@ export function UserCharts(props: UserChartsProps) {
                   themeReady &&
                   spec && (
                     <VChart
-                      key={`user-${chart.value}-${topUserLimit}-${resolvedTheme}`}
+                      key={`user-${chart.value}-${topUserLimit}-${resolvedTheme}-${holiday}`}
                       spec={{
                         ...spec,
                         theme: resolveChartThemeName(
                           customization.preset,
-                          resolvedTheme
+                          resolvedTheme,
+                          holiday
                         ),
                         background: 'transparent',
                       }}

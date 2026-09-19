@@ -18,6 +18,10 @@ For commercial licensing, please contact support@quantumnous.com
 */
 import type { ITheme } from '@visactor/vchart'
 
+import type { OpeningHoliday } from '@/features/home/lib/opening-holidays'
+
+import holidayTokens from './holiday-chart-tokens.json'
+
 /**
  * Iceberg VChart themes. Charts are the console's visual center of gravity;
  * VChart only ships generic light/dark themes, so the station registers its
@@ -29,7 +33,6 @@ import type { ITheme } from '@visactor/vchart'
 
 export const ICEBERG_CHART_THEME_LIGHT = 'iceberg-light'
 export const ICEBERG_CHART_THEME_DARK = 'iceberg-dark'
-
 
 type ThemeManagerLike = {
   themeExist: (name: string) => boolean
@@ -128,8 +131,10 @@ export function registerIcebergChartThemes(
  */
 export function resolveChartThemeName(
   preset: string,
-  resolvedTheme: 'light' | 'dark'
+  resolvedTheme: 'light' | 'dark',
+  holiday?: OpeningHoliday | null
 ): string {
+  if (holiday) return `iceberg-${holiday}-${resolvedTheme}`
   if (preset === 'iceberg') {
     return resolvedTheme === 'dark'
       ? ICEBERG_CHART_THEME_DARK
@@ -145,9 +150,60 @@ export function resolveChartThemeName(
  */
 export function icebergSeriesRamp(
   resolvedTheme: 'light' | 'dark',
-  size: number
+  size: number,
+  holiday?: OpeningHoliday | null
 ): string[] {
+  if (holiday) {
+    const tokens = holidayTokens[holiday][resolvedTheme]
+    const colors = [
+      tokens['chart-1'],
+      tokens['chart-2'],
+      tokens['chart-3'],
+      tokens['chart-4'],
+      tokens['chart-5'],
+    ]
+    return Array.from({ length: size }, (_, i) => colors[i % colors.length])
+  }
   const base = resolvedTheme === 'dark' ? DARK_SERIES : LIGHT_SERIES
   if (size <= base.length) return base.slice(0, size)
   return Array.from({ length: size }, (_, i) => base[i % base.length])
+}
+
+// sRGB equivalents of the approved OKLCH palette, preconverted for VChart.
+export function registerHolidayChartTheme(
+  manager: ThemeManagerLike,
+  holiday: OpeningHoliday | null | undefined,
+  mode: 'light' | 'dark'
+): void {
+  if (!holiday) return
+  const name = resolveChartThemeName('iceberg', mode, holiday)
+  if (manager.themeExist(name)) return
+  const base = manager.getTheme(mode)
+  const tokens = holidayTokens[holiday][mode]
+  const text = tokens['muted-foreground']
+  const foreground = tokens.foreground
+  const border = tokens.border
+  manager.registerTheme(name, {
+    ...base,
+    background: 'transparent',
+    colorScheme: { default: icebergSeriesRamp(mode, 5, holiday) },
+    component: {
+      ...base.component,
+      axis: {
+        label: { style: { fill: text } },
+        line: { style: { stroke: border } },
+        grid: { style: { line: { style: { stroke: border } } } },
+      },
+      legend: { label: { style: { fill: text } } },
+      tooltip: {
+        panel: {
+          backgroundColor: tokens.card,
+          border: { color: border, width: 1, radius: 10 },
+        },
+        titleLabel: { fontColor: foreground },
+        keyLabel: { fontColor: text },
+        valueLabel: { fontColor: foreground },
+      },
+    } as ITheme['component'],
+  })
 }

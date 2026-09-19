@@ -1,0 +1,122 @@
+{
+  "mid-autumn": {
+    "light": {
+      "foreground": "#1c2842",
+      "card": "#fbfeff",
+      "muted-foreground": "#485974",
+      "border": "#cddbe9",
+      "chart-1": "#ad8604",
+      "chart-2": "#4867a8",
+      "chart-3": "#5693bd",
+      "chart-4": "#be7125",
+      "chart-5": "#c74c8e"
+    },
+    "dark": {
+      "foreground": "#e1e9f2",
+      "card": "#141f32",
+      "muted-foreground": "#a4b6ce",
+      "border": "#303e52",
+      "chart-1": "#e2c162",
+      "chart-2": "#98c3e8",
+      "chart-3": "#6885c3",
+      "chart-4": "#df9a53",
+      "chart-5": "#e97ab2"
+    }
+  },
+  "national-day": {
+    "light": {
+      "foreground": "#442321",
+      "card": "#fffdf9",
+      "muted-foreground": "#745146",
+      "border": "#e6d8c9",
+      "chart-1": "#ac3033",
+      "chart-2": "#976c00",
+      "chart-3": "#b66028",
+      "chart-4": "#2e598f",
+      "chart-5": "#c34189"
+    },
+    "dark": {
+      "foreground": "#efeae2",
+      "card": "#311b19",
+      "muted-foreground": "#c6b3a5",
+      "border": "#4e3a36",
+      "chart-1": "#f27168",
+      "chart-2": "#e5bf6d",
+      "chart-3": "#d17746",
+      "chart-4": "#84aee3",
+      "chart-5": "#ec76b3"
+    }
+  },
+  "new-year": {
+    "light": {
+      "foreground": "#19273a",
+      "card": "#fbfeff",
+      "muted-foreground": "#495a6b",
+      "border": "#d0dbe5",
+      "chart-1": "#3e71bc",
+      "chart-2": "#5f788a",
+      "chart-3": "#2695ac",
+      "chart-4": "#6f59a6",
+      "chart-5": "#c74c8e"
+    },
+    "dark": {
+      "foreground": "#e1e9f0",
+      "card": "#121d2d",
+      "muted-foreground": "#a5b7c7",
+      "border": "#303b4a",
+      "chart-1": "#77b5fb",
+      "chart-2": "#a3bccb",
+      "chart-3": "#6ec6db",
+      "chart-4": "#9e87e0",
+      "chart-5": "#ec76b3"
+    }
+  },
+  "spring-festival": {
+    "light": {
+      "foreground": "#41251e",
+      "card": "#fcfaf1",
+      "muted-foreground": "#735647",
+      "border": "#e2d8c3",
+      "chart-1": "#c1361a",
+      "chart-2": "#9d7200",
+      "chart-3": "#086a73",
+      "chart-4": "#b54481",
+      "chart-5": "#237356"
+    },
+    "dark": {
+      "foreground": "#efebe0",
+      "card": "#351c18",
+      "muted-foreground": "#c6b4a0",
+      "border": "#533c34",
+      "chart-1": "#ee694f",
+      "chart-2": "#e5bf6d",
+      "chart-3": "#69bac3",
+      "chart-4": "#e97ab2",
+      "chart-5": "#58ba93"
+    }
+  },
+  "dragon-boat": {
+    "light": {
+      "foreground": "#0f3023",
+      "card": "#f8fdf9",
+      "muted-foreground": "#416055",
+      "border": "#cdded2",
+      "chart-1": "#097c56",
+      "chart-2": "#0b7d87",
+      "chart-3": "#a97416",
+      "chart-4": "#c04688",
+      "chart-5": "#235430"
+    },
+    "dark": {
+      "foreground": "#e1ebe3",
+      "card": "#0e241a",
+      "muted-foreground": "#a2bcad",
+      "border": "#2f4238",
+      "chart-1": "#5ac293",
+      "chart-2": "#7dcdd9",
+      "chart-3": "#e5b568",
+      "chart-4": "#ec76b3",
+      "chart-5": "#3c7847"
+    }
+  }
+}

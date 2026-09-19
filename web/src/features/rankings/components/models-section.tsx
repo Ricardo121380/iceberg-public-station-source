@@ -50,7 +50,7 @@ type ModelsSectionProps = {
  */
 export function ModelsSection(props: ModelsSectionProps) {
   const { t } = useTranslation()
-  const { resolvedTheme, themeReady } = useChartTheme()
+  const { resolvedTheme, themeReady, chartTheme } = useChartTheme()
   const chartTextColor =
     resolvedTheme === 'dark'
       ? 'rgba(255, 255, 255, 0.68)'
@@ -190,10 +190,10 @@ export function ModelsSection(props: ModelsSectionProps) {
         <div className='h-60 sm:h-72'>
           {themeReady && spec ? (
             <VChart
-              key={`models-history-${resolvedTheme}-${props.period}`}
+              key={`models-history-${chartTheme}-${props.period}`}
               spec={{
                 ...spec,
-                theme: resolvedTheme === 'dark' ? 'dark' : 'light',
+                theme: chartTheme,
                 background: 'transparent',
               }}
               option={VCHART_OPTION}

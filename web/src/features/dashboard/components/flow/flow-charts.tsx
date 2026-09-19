@@ -254,7 +254,7 @@ function formatFlowMetricNumber(value: number): string {
 
 export function FlowCharts(props: FlowChartsProps) {
   const { t } = useTranslation()
-  const { resolvedTheme, themeReady } = useChartTheme()
+  const { themeReady, chartTheme } = useChartTheme()
   const chartInstanceRef = useRef<IVChart | null>(null)
   const user = useAuthStore((state) => state.auth.user)
   const isRoot = Boolean(user?.role && user.role >= ROLE.SUPER_ADMIN)
@@ -343,37 +343,37 @@ export function FlowCharts(props: FlowChartsProps) {
   })
 
   const maskSensitive = props.sensitiveVisible === false
-  const flowData = useMemo(
-    () =>
-      buildDashboardFlowData(isLoading ? [] : (flowRows ?? []), metric, {
-        role: flowRole,
-        selectedUsers,
-        selectedNodes,
-        activeNode: activeFlowNode,
-        activeLink: activeFlowLink,
-        visibleStages,
-        topNodeLimit,
-        overflowMode,
-        maskSensitive,
-        deletedTokenLabel: (tokenId) => t('Deleted ({{id}})', { id: tokenId }),
-        otherNodeLabel: (kind) => t(FLOW_OTHER_NODE_LABEL_KEYS[kind]),
-      }),
-    [
-      flowRole,
-      flowRows,
-      isLoading,
-      metric,
-      overflowMode,
-      activeFlowNode,
-      activeFlowLink,
-      selectedNodes,
+  const flowData = useMemo(() => {
+    void chartTheme // Rebuild explicit node colors when the theme changes.
+    return buildDashboardFlowData(isLoading ? [] : (flowRows ?? []), metric, {
+      role: flowRole,
       selectedUsers,
-      topNodeLimit,
+      selectedNodes,
+      activeNode: activeFlowNode,
+      activeLink: activeFlowLink,
       visibleStages,
+      topNodeLimit,
+      overflowMode,
       maskSensitive,
-      t,
-    ]
-  )
+      deletedTokenLabel: (tokenId) => t('Deleted ({{id}})', { id: tokenId }),
+      otherNodeLabel: (kind) => t(FLOW_OTHER_NODE_LABEL_KEYS[kind]),
+    })
+  }, [
+    flowRole,
+    flowRows,
+    isLoading,
+    metric,
+    overflowMode,
+    activeFlowNode,
+    activeFlowLink,
+    selectedNodes,
+    selectedUsers,
+    topNodeLimit,
+    visibleStages,
+    maskSensitive,
+    chartTheme,
+    t,
+  ])
   const userFilterOptions = useMemo(
     () =>
       flowData.filterOptions.users.map((user) => ({
@@ -462,7 +462,6 @@ export function FlowCharts(props: FlowChartsProps) {
       }),
     [chartTitle, flowData.flow, t]
   )
-  const chartTheme = resolvedTheme === 'dark' ? 'dark' : 'light'
   const chartKey = [
     metric,
     topNodeLimit,
@@ -477,7 +476,7 @@ export function FlowCharts(props: FlowChartsProps) {
     visibleStages.join(','),
     maskSensitive ? 'masked' : 'plain',
     flowRows?.length ?? 0,
-    resolvedTheme,
+    chartTheme,
   ].join('-')
   const displayState = flowDisplayState({
     isLoading,
