@@ -21,6 +21,7 @@ import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 
 import { copyToClipboard as copyToClipboardUtil } from '@/lib/copy-to-clipboard'
+import { holidaySuccess } from '@/lib/holiday-success'
 
 type UseCopyToClipboardOptions = {
   /** Whether to show a global toast notification (default: true) */
@@ -65,7 +66,7 @@ export function useCopyToClipboard(options?: UseCopyToClipboardOptions) {
       if (success) {
         setCopiedText(text)
         if (notify) {
-          toast.success(resolvedSuccessMessage)
+          holidaySuccess(resolvedSuccessMessage)
         }
 
         // Clear previous timeout

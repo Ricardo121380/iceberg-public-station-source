@@ -18,6 +18,7 @@ For commercial licensing, please contact support@quantumnous.com
 */
 import { cva, type VariantProps } from 'class-variance-authority'
 
+import { HolidayDecoration } from '@/components/holiday-decoration'
 import { cn } from '@/lib/utils'
 
 function Empty({ className, ...props }: React.ComponentProps<'div'>) {
@@ -33,13 +34,20 @@ function Empty({ className, ...props }: React.ComponentProps<'div'>) {
   )
 }
 
-function EmptyHeader({ className, ...props }: React.ComponentProps<'div'>) {
+function EmptyHeader({
+  className,
+  children,
+  ...props
+}: React.ComponentProps<'div'>) {
   return (
     <div
       data-slot='empty-header'
       className={cn('flex max-w-sm flex-col items-center gap-2', className)}
       {...props}
-    />
+    >
+      <HolidayDecoration kind='empty' />
+      {children}
+    </div>
   )
 }
 

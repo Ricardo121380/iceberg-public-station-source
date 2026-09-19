@@ -99,6 +99,18 @@ export function ThemeProvider({
   }, [holiday])
 
   useEffect(() => {
+    const pause = () => {
+      document.body.toggleAttribute('data-holiday-paused', document.hidden)
+    }
+    pause()
+    document.addEventListener('visibilitychange', pause)
+    return () => {
+      document.removeEventListener('visibilitychange', pause)
+      document.body.removeAttribute('data-holiday-paused')
+    }
+  }, [])
+
+  useEffect(() => {
     let timer: ReturnType<typeof setTimeout>
     const refresh = () => {
       clearTimeout(timer)

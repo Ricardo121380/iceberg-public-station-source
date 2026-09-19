@@ -18,6 +18,7 @@ For commercial licensing, please contact support@quantumnous.com
 */
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 
+import { HolidayDecoration } from '@/components/holiday-decoration'
 import { Sidebar, SidebarContent, SidebarRail } from '@/components/ui/sidebar'
 import { useLayout } from '@/context/layout-provider'
 import { useSidebarView } from '@/hooks/use-sidebar-view'
@@ -71,6 +72,7 @@ export function AppSidebar() {
         </AnimatePresence>
       </SidebarContent>
 
+      <HolidayDecoration kind='corner' className='holiday-sidebar-art' />
       <SidebarRail />
     </Sidebar>
   )

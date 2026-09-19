@@ -21,6 +21,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
+import { holidaySuccess } from '@/lib/holiday-success'
 
 const stationBaseUrl = 'https://iceberg.tiktok.vip/v1'
 const requestExample = `export ICEBERG_API_KEY='YOUR_API_KEY'
@@ -37,6 +38,7 @@ export function StationConnection() {
     try {
       await navigator.clipboard.writeText(stationBaseUrl)
       setCopyState('success')
+      holidaySuccess(t('Address copied.'))
     } catch {
       setCopyState('error')
     }

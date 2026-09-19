@@ -22,6 +22,7 @@ import * as React from 'react'
 import { useState, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { HolidayDecoration } from '@/components/holiday-decoration'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useDebounce } from '@/hooks'
@@ -362,6 +363,7 @@ export function DataTableToolbar<TData>(props: DataTableToolbarProps<TData>) {
         <div className='flex flex-wrap items-center gap-2 sm:gap-3'>
           {props.leftActions}
           <div className='ms-auto flex shrink-0 items-center gap-1.5 sm:gap-2'>
+            <HolidayDecoration kind='mark' className='hidden sm:inline-block' />
             {props.preActions}
             {resetButton}
             {searchButton}
@@ -386,6 +388,7 @@ export function DataTableToolbar<TData>(props: DataTableToolbarProps<TData>) {
       {expanded && hasExpandable && props.expandable}
 
       <div className='ms-auto flex shrink-0 items-center gap-1.5 sm:gap-2'>
+        <HolidayDecoration kind='mark' className='hidden sm:inline-block' />
         {props.preActions}
         {resetButton}
         {searchButton}

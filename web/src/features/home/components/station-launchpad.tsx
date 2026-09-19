@@ -28,6 +28,8 @@ import {
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { holidaySuccess } from '@/lib/holiday-success'
+
 export function StationLaunchpad(props: { isAuthenticated: boolean }) {
   const { t } = useTranslation()
   const [copyState, setCopyState] = useState<'idle' | 'copied' | 'error'>(
@@ -39,6 +41,7 @@ export function StationLaunchpad(props: { isAuthenticated: boolean }) {
     try {
       await navigator.clipboard.writeText(address)
       setCopyState('copied')
+      holidaySuccess(t('Address copied.'))
     } catch {
       setCopyState('error')
     }

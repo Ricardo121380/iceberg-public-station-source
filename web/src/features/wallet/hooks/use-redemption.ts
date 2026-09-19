@@ -22,6 +22,7 @@ import { toast } from 'sonner'
 
 import { getSelf } from '@/lib/api'
 import { formatQuota } from '@/lib/format'
+import { holidaySuccess } from '@/lib/holiday-success'
 
 import { redeemTopupCode } from '../api'
 
@@ -44,7 +45,7 @@ export function useRedemption() {
 
       if (response.success && response.data) {
         const quotaAdded = response.data
-        toast.success(
+        holidaySuccess(
           i18next.t('Redemption successful! Added: {{quota}}', {
             quota: formatQuota(quotaAdded),
           })
@@ -55,7 +56,7 @@ export function useRedemption() {
 
       toast.error(response.message || i18next.t('Redemption failed'))
       return false
-    } catch (_error) {
+    } catch {
       toast.error(i18next.t('Redemption failed'))
       return false
     } finally {

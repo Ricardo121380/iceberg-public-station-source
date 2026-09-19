@@ -31,6 +31,7 @@ For commercial licensing, please contact support@quantumnous.com
 @import './theme-presets.css';
 @import './iceberg-cabin.css';
 @import './holiday-themes.css';
+@import './holiday-decorations.css';
 
 /* Shiki dual themes: token colors follow dark theme (pre background stays `bg-background` on the block) */
 @layer components {

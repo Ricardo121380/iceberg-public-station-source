@@ -19,6 +19,7 @@ For commercial licensing, please contact support@quantumnous.com
 import { Link } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 
+import { HolidayDecoration } from '@/components/holiday-decoration'
 import {
   SidebarMenu,
   SidebarMenuButton,
@@ -73,6 +74,7 @@ export function SystemBrand(props: SystemBrandProps) {
           />
         </div>
         <span className='max-w-[12rem] truncate'>{name}</span>
+        <HolidayDecoration kind='mark' ambient />
       </Link>
     )
   }

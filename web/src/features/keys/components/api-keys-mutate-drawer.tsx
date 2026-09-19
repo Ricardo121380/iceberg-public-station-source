@@ -65,6 +65,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { useStatus } from '@/hooks/use-status'
 import { getUserModels, getUserGroups } from '@/lib/api'
 import { getCurrencyDisplay, getCurrencyLabel } from '@/lib/currency'
+import { holidaySuccess } from '@/lib/holiday-success'
 import { cn } from '@/lib/utils'
 
 import {
@@ -288,7 +289,7 @@ export function ApiKeysMutateDrawer({
           id: currentRow.id,
         })
         if (result.success) {
-          toast.success(t(SUCCESS_MESSAGES.API_KEY_UPDATED))
+          holidaySuccess(t(SUCCESS_MESSAGES.API_KEY_UPDATED))
           onOpenChange(false)
           triggerRefresh()
         } else {
@@ -316,7 +317,7 @@ export function ApiKeysMutateDrawer({
         }
 
         if (successCount > 0) {
-          toast.success(
+          holidaySuccess(
             t('Successfully created {{count}} API Key(s)', {
               count: successCount,
             })
